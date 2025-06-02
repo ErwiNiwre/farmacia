@@ -60,6 +60,6 @@ class PermisosSeeder extends Seeder
         Permission::create(['name' => 'laboratorio_servicios.create']);
         Permission::create(['name' => 'laboratorio_servicios.show']);
         Permission::create(['name' => 'laboratorio_servicios.edit']);
-        Permission::create(['name' => 'laboratorio_servicios.destroy']); 
+        Permission::create(['name' => 'laboratorio_servicios.destroy']);  
     }
 }

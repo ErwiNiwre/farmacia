@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class LaboratorioServicios extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $table = 'laboratorio_servicios';
+    protected $table = 'laboratorio_servicios'; 
 }

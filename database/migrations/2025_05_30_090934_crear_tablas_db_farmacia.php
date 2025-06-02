@@ -220,5 +220,6 @@ return new class extends Migration
         Schema::dropIfExists('presentaciones');
         Schema::dropIfExists('accion_terapeuticas');
         
+    
     }
 };
