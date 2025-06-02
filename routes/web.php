@@ -2,10 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
-Route::get('/vis', function () {
-    return view('app.app');
+// Route::get('/vis', function () {
+//     return view('app.app');
+// });
+
+Route::get('/', function () {
+    return view('auth.login');
 });
