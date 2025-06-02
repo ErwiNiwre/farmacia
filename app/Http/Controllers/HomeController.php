@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -11,7 +12,28 @@ class HomeController extends Controller
      */
     public function index()
     {
-        //
+        $session_auth = auth()->user();
+        $session_name = "";
+
+        if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
+            $session_name = $session_auth->username;
+        } else {
+            $session_staff = User::where('user_id', '=', $session_auth->id)->first();
+            $session_name = $session_staff->nombre;
+        }
+
+        // $patients = Patient::All();
+        // $employees = Staff::All()->slice(1);
+
+        return view(
+            'home.index',
+            compact(
+                'session_auth',
+                'session_name'
+                // 'patients',
+                // 'employees'
+            )
+        );
     }
 
     /**
