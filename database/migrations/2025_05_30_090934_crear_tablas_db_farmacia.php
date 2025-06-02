@@ -206,16 +206,19 @@ return new class extends Migration
      */
     public function down(): void
     {
-
+        Schema::dropIfExists('unidad_medidas');
+        Schema::dropIfExists('clasificaciones');
+        Schema::dropIfExists('laboratorio_servicios');
         Schema::dropIfExists('venta_detalles');
         Schema::dropIfExists('ventas');
         Schema::dropIfExists('compra_detalles');
         Schema::dropIfExists('compras');
-        Schema::dropIfExists('kardex');
+        Schema::dropIfExists('kardex');        
         Schema::dropIfExists('productos');
         Schema::dropIfExists('concentraciones');
         Schema::dropIfExists('marcas');
         Schema::dropIfExists('presentaciones');
         Schema::dropIfExists('accion_terapeuticas');
+        
     }
 };

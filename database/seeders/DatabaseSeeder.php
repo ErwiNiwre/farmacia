@@ -485,7 +485,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         DB::table('unidad_medidas')->insert([  
-            ['id' =>	' 	1	' 	,	'unidad_medida' => '	BOBINAS	'	,	'	created_at' => '2025/06/02', 'updated_at' => '2025/06/02'],
+            ['id' =>'1', 'unidad_medida' => '	BOBINAS	'	,	'	created_at' => '2025/06/02', 'updated_at' => '2025/06/02'],
             ['id' =>'2', 'unidad_medida' => 'BALDE'	,	'	created_at' => '2025/06/02', 'updated_at' => '2025/06/02'],
             ['id' =>'3', 'unidad_medida' => 'BARRILES'	,	'	created_at' => '2025/06/02', 'updated_at' => '2025/06/02'],
             ['id' =>'4', 'unidad_medida' => 'BOLSA'	,	'	created_at' => '2025/06/02', 'updated_at' => '2025/06/02'],
