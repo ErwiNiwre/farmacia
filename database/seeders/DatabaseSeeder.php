@@ -613,5 +613,5 @@ class DatabaseSeeder extends Seeder
             ['id' =>'126', 'unidad_medida' => 'KILATES',	'created_at' => '2025/06/02', 'updated_at' => '2025/06/02'],
 
         ]);
-    }
+    } 
 }
