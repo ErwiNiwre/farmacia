@@ -162,6 +162,16 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+        // Tabla: unidad_medida
+        Schema::create('unidad_medidas', function (Blueprint $table) {
+            $table->id();
+            $table->string('unidad_medida');
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
     /**
