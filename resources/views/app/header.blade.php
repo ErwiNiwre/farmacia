@@ -49,7 +49,7 @@
                                         @endif
                                     </small>
                                 </div>
-                                <img src="{!! $session_photo == "" ? asset('images/avatar/avatar-1.png'): Storage::URL($session_photo) !!}" class="avatar rounded-10 bg-primary-light h-40 w-40" alt="" />
+                                <img src="{!! asset('images/avatar/avatar-1.png') !!}" class="avatar rounded-10 bg-primary-light h-40 w-40" alt="" />
                             </div>
                         </a>
                         <ul class="dropdown-menu animated flipInX">
@@ -94,7 +94,7 @@
                 <i data-feather="settings"></i>Roles
             </a>
         </li>
-        <li>
+        {{-- <li>
             <a href="{{ route('users.index') }}">
                 <i class="fa fa-fw fa-user-md"></i>Usuarios
             </a>
@@ -128,7 +128,7 @@
             <a href="{{ route('purchases.index') }}">
                 <i class="fa fa-fw fa-shopping-cart"></i>Reportes
             </a>
-        </li>
+        </li> --}}
         {{-- <li><a href="#"><i data-feather="activity"></i>Doctors</a>
             <ul>
                 <li><a href="doctor_list.html"><i class="icon-Commit"><span class="path1"></span><span
