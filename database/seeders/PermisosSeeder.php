@@ -40,5 +40,26 @@ class PermisosSeeder extends Seeder
         Permission::create(['name' => 'producto.show']);
         Permission::create(['name' => 'producto.edit']);
         Permission::create(['name' => 'producto.destroy']);
+
+        // Operaciones de unidad_medidas
+        Permission::create(['name' => 'unidad_medidas.index']);
+        Permission::create(['name' => 'unidad_medidas.create']);
+        Permission::create(['name' => 'unidad_medidas.show']);
+        Permission::create(['name' => 'unidad_medidas.edit']);
+        Permission::create(['name' => 'unidad_medidas.destroy']);
+
+        // Operaciones de clasificaciones
+        Permission::create(['name' => 'clasificaciones.index']);
+        Permission::create(['name' => 'clasificaciones.create']);
+        Permission::create(['name' => 'clasificaciones.show']);
+        Permission::create(['name' => 'clasificaciones.edit']);
+        Permission::create(['name' => 'clasificaciones.destroy']);
+
+        // Operaciones de laboratorio_servicios
+        Permission::create(['name' => 'laboratorio_servicios.index']);
+        Permission::create(['name' => 'laboratorio_servicios.create']);
+        Permission::create(['name' => 'laboratorio_servicios.show']);
+        Permission::create(['name' => 'laboratorio_servicios.edit']);
+        Permission::create(['name' => 'laboratorio_servicios.destroy']);
     }
 }
