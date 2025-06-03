@@ -94,11 +94,12 @@
                 <i data-feather="settings"></i>Roles
             </a>
         </li>
-        {{-- <li>
-            <a href="{{ route('users.index') }}">
-                <i class="fa fa-fw fa-user-md"></i>Usuarios
+        <li>
+            <a href="{{ route('productos.index') }}">
+                <i class="fa fa-fw fa-user-md"></i>Productos
             </a>
         </li>
+        {{-- 
         <li>
             <a href="{{ route('patients.index') }}">
                 <i data-feather="users"></i>Pacientes

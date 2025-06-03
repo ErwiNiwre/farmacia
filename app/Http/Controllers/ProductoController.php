@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccionTerapeutica;
+use App\Models\Concentracion;
+use App\Models\Marca;
+use App\Models\Presentacion;
 use App\Models\Producto;
+use App\Models\UnidadMedida;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
@@ -12,7 +17,24 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        //
+        $session_auth = auth()->user();
+        $session_name = "";
+
+        if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
+            $session_name = $session_auth->username;
+        } else {
+            $session_name = $session_auth->nombre;
+        }
+
+        $productos = Producto::all();
+        return view(
+            'productos.index',
+            compact(
+                'session_auth',
+                'session_name',
+                'productos'
+            )
+        );
     }
 
     /**
@@ -20,7 +42,29 @@ class ProductoController extends Controller
      */
     public function create()
     {
-        //
+        $session_auth = auth()->user();
+        $session_name = "";
+
+        if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
+            $session_name = $session_auth->username;
+        } else {
+            $session_name = $session_auth->nombre;
+        }
+
+        $permissions = Concentracion::get();
+        $permissions = Marca::get();
+        $permissions = Presentacion::get();
+        $permissions = AccionTerapeutica::get();
+        $permissions = UnidadMedida::get();
+
+        return view(
+            'roles.create',
+            compact(
+                'session_auth',
+                'session_name',
+                'permissions'
+            )
+        );
     }
 
     /**
