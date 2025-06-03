@@ -11,6 +11,41 @@ return new class extends Migration
      */
     public function up(): void
     {
+         // Tabla: unidad_medida
+        Schema::create('unidad_medidas', function (Blueprint $table) {
+            $table->id();
+            $table->string('unidad_medida');
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        // Tabla: clasificaciones
+        Schema::create('clasificaciones', function (Blueprint $table) {
+            $table->id();
+            $table->string('clasificacion');
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+         // Tabla: laboratorio_servicios
+        Schema::create('laboratorio_servicios', function (Blueprint $table) {
+            $table->id();
+            $table->string('servicio');
+            $table->decimal('precio', 13, 2);
+            $table->foreignId('clasificacion_id')->constrained('clasificaciones')->restrictOnDelete();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
         // Tabla: accion_terapeuticas
         Schema::create('accion_terapeuticas', function (Blueprint $table) {
             $table->id();
@@ -68,6 +103,7 @@ return new class extends Migration
             $table->foreignId('marca_id')->constrained('marcas')->restrictOnDelete();
             $table->foreignId('presentacion_id')->constrained('presentaciones')->restrictOnDelete();
             $table->foreignId('accion_terapeutica_id')->constrained('accion_terapeuticas')->restrictOnDelete();
+            $table->foreignId('unidad_medida_id')->constrained('unidad_medidas')->restrictOnDelete();
             $table->enum('estado', ['A', 'M', 'D'])->default('A');
             $table->unsignedInteger('stock_minimo');
             // $table->unsignedInteger('total_productos')->default(0);
@@ -162,33 +198,28 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-        // Tabla: unidad_medida
-        Schema::create('unidad_medidas', function (Blueprint $table) {
-            $table->id();
-            $table->string('unidad_medida');
-            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
-            $table->timestamps();
-            $table->softDeletes();
-        });
-    }
+       
+    } 
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-
+        Schema::dropIfExists('unidad_medidas');
+        Schema::dropIfExists('clasificaciones');
+        Schema::dropIfExists('laboratorio_servicios');
         Schema::dropIfExists('venta_detalles');
         Schema::dropIfExists('ventas');
         Schema::dropIfExists('compra_detalles');
         Schema::dropIfExists('compras');
-        Schema::dropIfExists('kardex');
+        Schema::dropIfExists('kardex');        
         Schema::dropIfExists('productos');
         Schema::dropIfExists('concentraciones');
         Schema::dropIfExists('marcas');
         Schema::dropIfExists('presentaciones');
         Schema::dropIfExists('accion_terapeuticas');
+        
+    
     }
 };
