@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-         // Tabla: unidad_medida
+        // Tabla: unidad_medida
         Schema::create('unidad_medidas', function (Blueprint $table) {
             $table->id();
             $table->string('unidad_medida');
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-         // Tabla: laboratorio_servicios
+        // Tabla: laboratorio_servicios
         Schema::create('laboratorio_servicios', function (Blueprint $table) {
             $table->id();
             $table->string('servicio');
@@ -198,8 +198,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-       
-    } 
+    }
 
     /**
      * Reverse the migrations.
@@ -213,13 +212,11 @@ return new class extends Migration
         Schema::dropIfExists('ventas');
         Schema::dropIfExists('compra_detalles');
         Schema::dropIfExists('compras');
-        Schema::dropIfExists('kardex');        
+        Schema::dropIfExists('kardex');
         Schema::dropIfExists('productos');
         Schema::dropIfExists('concentraciones');
         Schema::dropIfExists('marcas');
         Schema::dropIfExists('presentaciones');
         Schema::dropIfExists('accion_terapeuticas');
-        
-    
     }
 };

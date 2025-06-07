@@ -51,18 +51,22 @@ class ProductoController extends Controller
             $session_name = $session_auth->nombre;
         }
 
-        $permissions = Concentracion::get();
-        $permissions = Marca::get();
-        $permissions = Presentacion::get();
-        $permissions = AccionTerapeutica::get();
-        $permissions = UnidadMedida::get();
+        $concentraciones = Concentracion::get();
+        $marcas = Marca::get();
+        $presentaciones = Presentacion::get();
+        $accionTerapeuticas = AccionTerapeutica::get();
+        $unidadMedidas = UnidadMedida::get();
 
         return view(
-            'roles.create',
+            'productos.create',
             compact(
                 'session_auth',
                 'session_name',
-                'permissions'
+                'concentraciones',
+                'marcas',
+                'presentaciones',
+                'accionTerapeuticas',
+                'unidadMedidas'
             )
         );
     }
