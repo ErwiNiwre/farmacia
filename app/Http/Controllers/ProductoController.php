@@ -9,6 +9,9 @@ use App\Models\Presentacion;
 use App\Models\Producto;
 use App\Models\UnidadMedida;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class ProductoController extends Controller
 {
@@ -76,7 +79,39 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'barras' => 'required|unique:productos,barras',
+            'producto' => 'required|regex:/^[a-zA-Z\s]+$/u',
+            'generico' => 'nullable|regex:/^[a-zA-Z\s]+$/u',
+            'precio_unitario' => 'required|numeric|gt:0',
+            'precio_unitario' => 'required|numeric|gt:0',
+        ]);
+
+        $producto = new Producto();
+        $producto->user_id = auth()->id();
+        $producto->codigo = 'FAR-' . $producto->id;
+        $producto->tipo_producto = $request->tipo_producto;
+        $producto->barras = $request->barras;
+        $producto->producto = $request->producto;
+        $producto->generico = $request->generico;
+        $producto->concentracion_id = $request->concentracion_id;
+        $producto->marca_id = $request->marca_id;
+        $producto->accion_terapeutica_id = $request->accion_terapeutica_id;
+        $producto->presentacion_id = $request->presentacion_id;
+        $producto->unidad_medida_id = $request->unidad_medida_id;
+        $producto->stock_minimo = $request->stock_minimo;
+        $producto->precio_unitario = $request->precio_unitario;
+        $producto->porcentaje = $request->porcentaje;
+        $producto->precio_venta = $request->precio_venta;
+
+        $producto->created_by = auth()->id();
+        $producto->created_at = Carbon::now();
+        $producto->save();
+
+        // $producto->codigo = 'FAR-' . $producto->id;
+        // $producto->save();
+
+        return redirect()->route('productos.index');
     }
 
     /**

@@ -183,7 +183,7 @@
                                         {!! $errors->first('porcentaje', '<small class="text-danger">:message</small>') !!}
                                     </div>
                                 </div>
-                                <div class="col center">
+                                {{-- <div class="col center">
                                     <div class="badge badge-info text-center">
                                         <label class="form-label">Porcentaje</label>
                                         <input id="porcentaje" type="text" value="{{ old('porcentaje', 0) }}"
@@ -191,13 +191,12 @@
                                             data-bts-button-up-class="btn btn-secondary">
                                         {!! $errors->first('porcentaje', '<small class="text-danger">:message</small>') !!}
                                     </div>
-                                </div>
-                                {{-- <div
-                                    class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 col-xxl-4 col-xxxl-4 badge badge-info text-center">
+                                </div> --}}
+                                <div class="col badge badge-info text-center">
                                     <input type="hidden" id="precio_venta" name="precio_venta"
                                         value="{{ old('precio_venta') }}">
                                     <div id="precio" class="fs-40">Bs. 0.00</div>
-                                </div> --}}
+                                </div>
                             </div>
 
                         </div>
@@ -216,7 +215,7 @@
 
 @section('page-script')
     <script>
-        $('#stock_minimo').TouchSpin({
+        $("#stock_minimo").TouchSpin({
             min: 1,
             max: 1000
         });
@@ -232,7 +231,7 @@
             prefix: 'BS.'
         });
 
-        $('#porcentaje').TouchSpin({
+        $("#porcentaje").TouchSpin({
             min: 0,
             max: 100,
             // step: 0.1,
@@ -242,18 +241,26 @@
             postfix: '%'
         });
 
+        calcularPrecio();
+        $("#precio_unitario, #porcentaje").change(function() {
+            calcularPrecio();
+        });
 
+        function calcularPrecio() {
+            let precio = parseFloat($("#precio_unitario").val());
+            let porcentaje = parseFloat($("#porcentaje").val());
 
-        // $("input[name='porcentaje']").TouchSpin({
-        //     min: 0,
-        //     max: 100,
-        //     // step: 0.1,
-        //     // decimals: 2,
-        //     // boostat: 1,
-        //     // maxboostedstep: 10,
-        //     postfix: '%'
-        // });
+            if (isNaN(precio) || isNaN(porcentaje)) {
+                console.error("Por favor, ingrese valores numéricos válidos.");
+                return;
+            }
 
-        $("input[name='stock_minimo']").TouchSpin();
+            let aux = parseFloat((precio * (porcentaje / 100)).toFixed(2));
+            let total = parseFloat((precio + aux).toFixed(2));
+
+            $("#precio_venta").val(total);
+            $('#precio').text('Bs. ' + total.toFixed(2));
+            console.log("Precio:", precio, "Porcentaje:", porcentaje, "Aumento:", aux, "Total:", total);
+        }
     </script>
 @endsection
