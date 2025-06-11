@@ -56,8 +56,8 @@ class PermisosSeeder extends Seeder
         Permission::create(['name' => 'clasificaciones.destroy']);
 
         // Operaciones de laboratorio_servicios
-        Permission::create(['name' => 'laboratorio_servicios.index']);
-        Permission::create(['name' => 'laboratorio_servicios.create']);
+        Permission::create(['name' => 'laboratorioServicios.index']);
+        Permission::create(['name' => 'laboratorioServicios.create']);
         Permission::create(['name' => 'laboratorio_servicios.show']);
         Permission::create(['name' => 'laboratorio_servicios.edit']);
         Permission::create(['name' => 'laboratorio_servicios.destroy']);  

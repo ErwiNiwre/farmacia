@@ -99,6 +99,11 @@
                 <i class="fa fa-fw fa-user-md"></i>Productos
             </a>
         </li>
+          <li>
+            <a href="{{ route('laboratorioServicios.index') }}">
+                <i class="fa fa-fw fa-stethoscope"></i>Laboratorio
+            </a>
+        </li>
         {{-- 
         <li>
             <a href="{{ route('patients.index') }}">

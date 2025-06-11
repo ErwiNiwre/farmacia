@@ -7,10 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="{{asset('images/ico/logoFiori.ico')}}">
+    <link rel="icon" href="{{ asset('images/ico/logoFiori.ico') }}">
 
     <title>Centro Médico Fiori | @yield('title')</title>
-    
+
     <!-- Vendors Style-->
     <link rel="stylesheet" href="{{ asset('css/vendors_css.css') }}">
 
@@ -85,6 +85,7 @@
     </div>
 
     <!-- Vendor JS -->
+
     <script src="{{ asset('js/vendors.min.js') }}"></script>
     <script src="{{ asset('assets/icons/feather-icons/feather.min.js') }}"></script>
     <script src="{{ asset('assets/vendor_plugins/input-mask/jquery.inputmask.js') }}"></script>
@@ -94,10 +95,25 @@
     <script src="{{ asset('assets/vendor_components/sweetalert/sweetalert.min.js') }}"></script>
     <script src="{{ asset('assets/vendor_components/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.js') }}"></script>
 
+
+
+    {{-- librerias necesarias para el dropdownlist search --}}
+    <script src="{{ asset('assets/vendor_components/moment/min/moment.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor_plugins/iCheck/icheck.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor_plugins/timepicker/bootstrap-timepicker.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/select2/dist/js/select2.full.js') }}"></script>
+    <script src="{{ asset('assets/vendor_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js') }}"></script>
+
+
+
+
     <!-- Rhythm Admin App -->
     <script src="{{ asset('js/jquery.smartmenus.js') }}"></script>
     <script src="{{ asset('js/menus.js') }}"></script>
     <script src="{{ asset('js/template.js') }}"></script>
+{{-- librerias necesarias para el dropdownlist search --}}
+    <script src="{{ asset('js/pages/advanced-form-element.js') }}"></script>
 
     <!-- -->
     {{-- <script src="{{ asset('js/pages/data-table.js') }}"></script> --}}
