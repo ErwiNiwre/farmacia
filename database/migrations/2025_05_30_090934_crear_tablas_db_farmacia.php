@@ -93,10 +93,10 @@ return new class extends Migration
         // Tabla: productos
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            // $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->enum('tipo_producto', ['M', 'I']);
-            $table->string('codigo');
-            $table->string('barras');
+            $table->string('codigo')->nullable();
+            $table->string('barras')->unique();
             $table->string('producto');
             $table->string('generico')->nullable();
             $table->foreignId('concentracion_id')->constrained('concentraciones')->restrictOnDelete();
@@ -106,6 +106,7 @@ return new class extends Migration
             $table->foreignId('unidad_medida_id')->constrained('unidad_medidas')->restrictOnDelete();
             $table->enum('estado', ['A', 'M', 'D'])->default('A');
             $table->unsignedInteger('stock_minimo');
+            $table->unsignedInteger('cantidad')->default(0);
             // $table->unsignedInteger('total_productos')->default(0);
             // $table->unsignedInteger('entradas')->default(0);
             // $table->unsignedInteger('salidas')->default(0);

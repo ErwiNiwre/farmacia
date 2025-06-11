@@ -1,12 +1,15 @@
 @extends('app.app')
 
+
 @section('title')
     Productos
 @endsection
 
+
 @section('caption')
     <i class="ti-home me-2"></i> Modulo Productos
 @endsection
+
 
 @section('content')
     <section class="content">
@@ -31,6 +34,7 @@
                                             @else
                                                 <option value="M">Medicamentos</option>
                                             @endif
+
 
                                             @if (old('tipo_producto') == 'I')
                                                 <option value="I" selected>Insumos</option>
@@ -199,6 +203,7 @@
                                 </div>
                             </div>
 
+
                         </div>
                         <div class="box-footer text-end">
                             <a href="{{ route('productos.index') }}" class="btn btn-warning me-1"><i
@@ -213,12 +218,14 @@
     </section>
 @endsection
 
+
 @section('page-script')
     <script>
         $("#stock_minimo").TouchSpin({
             min: 1,
             max: 1000
         });
+
 
         $("#precio_unitario").TouchSpin({
             min: 0,
@@ -231,6 +238,7 @@
             prefix: 'BS.'
         });
 
+
         $("#porcentaje").TouchSpin({
             min: 0,
             max: 100,
@@ -241,22 +249,27 @@
             postfix: '%'
         });
 
+
         calcularPrecio();
         $("#precio_unitario, #porcentaje").change(function() {
             calcularPrecio();
         });
 
+
         function calcularPrecio() {
             let precio = parseFloat($("#precio_unitario").val());
             let porcentaje = parseFloat($("#porcentaje").val());
+
 
             if (isNaN(precio) || isNaN(porcentaje)) {
                 console.error("Por favor, ingrese valores numéricos válidos.");
                 return;
             }
 
+
             let aux = parseFloat((precio * (porcentaje / 100)).toFixed(2));
             let total = parseFloat((precio + aux).toFixed(2));
+
 
             $("#precio_venta").val(total);
             $('#precio').text('Bs. ' + total.toFixed(2));
