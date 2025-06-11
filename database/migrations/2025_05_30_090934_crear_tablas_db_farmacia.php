@@ -143,6 +143,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->dateTime('compra_fecha')->nullable();
             $table->string('proveedor');
+            $table->string('tipo');
             $table->string('numero_compra');
             $table->decimal('total', 13, 2)->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
