@@ -77,135 +77,102 @@
         </div>
     </section>
 
-
-    <!-- Modal-Show-Producto -->
-    <div class="modal center-modal fade" id="modal-show-producto" data-bs-backdrop="static" tabindex="-1">
-        <div class="modal-dialog" style="max-width: 900px">
+    <!-- Modal for Read Roles -->
+    <div class="modal center-modal fade" id="modal-read" data-bs-backdrop="static" tabindex="-1">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="titulo_show"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12">
-                            <div class="row">
-                                <div class="col">
-                                    <dl class="dl-horizontal">
-                                        <dt>Producto:</dt>
-                                        <dd id="producto"></dd>
-                                    </dl>
-                                </div>
-                                <div class="col">
-                                    <dl class="dl-horizontal">
-                                        <dt>Generico:</dt>
-                                        <dd id="generico"></dd>
-                                    </dl>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <dl class="dl-horizontal">
-                                        <dt>Concentracion:</dt>
-                                        <dd id="concentracion"></dd>
-                                    </dl>
-                                </div>
-                                <div class="col">
-                                    <dl class="dl-horizontal">
-                                        <dt>Marca:</dt>
-                                        <dd id="marca"></dd>
-                                    </dl>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <dl class="dl-horizontal">
-                                        <dt>Presentacion:</dt>
-                                        <dd id="presentacion"></dd>
-                                    </dl>
-                                </div>
-                                <div class="col">
-                                    <dl class="dl-horizontal">
-                                        <dt>Unidad Medida:</dt>
-                                        <dd id="unidadMedida"></dd>
-                                    </dl>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <dl class="dl-horizontal">
-                                        <dt>Accion Terapeutica:</dt>
-                                        <dd id="accionTerapeutica"></dd>
-                                    </dl>
-                                </div>
-                                <div class="col">
-                                    <dl class="dl-horizontal">
-                                        <dt>Stock:</dt>
-                                        <dd id="stock"></dd>
-                                    </dl>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <dl class="dl-horizontal">
-                                        <dt>Precio Bs.:</dt>
-                                        <dd id="precio"></dd>
-                                    </dl>
-                                </div>
-                                <div class="col">
-                                    <dl class="dl-horizontal">
-                                        <dt>Porcentaje %:</dt>
-                                        <dd id="porcentaje"></dd>
-                                    </dl>
-                                </div>
-                                <div class="col">
-                                    <dl class="dl-horizontal">
-                                        <dt>Precio Venta Bs.:</dt>
-                                        <dd id="precioVenta"></dd>
-                                    </dl>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer modal-footer-uniform">
-                    <button type="button" class="btn btn-danger pull-right" data-bs-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Modal-Delete-Producto -->
-    <div class="modal center-modal fade" id="modal-delete-producto" data-bs-backdrop="static" tabindex="-1">
-        <div class="modal-dialog" style="max-width: 900px">
-            <form id="deleteProducto" autocomplete="off">
-                @csrf
-                @method('DELETE')
-                <input type="hidden" id="delete_producto_id" name="delete_attention_id">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Confirmar Eliminación</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="text-end">
+                        <button type="button" class="btn-close end-100" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div
-                                class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12 text-center badge badge-danger">
-                                ¿Estás seguro de que deseas eliminar esta Atención?
-                            </div>
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12">
-                                <dl id="delete_attention_data" class="dl-horizontal">
-                                </dl>
+                                <div class="row">
+                                    <div class="col">
+                                        <dl class="dl-horizontal">
+                                            <dt>Producto:</dt>
+                                            <dd id="producto"></dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col">
+                                        <dl class="dl-horizontal">
+                                            <dt>Generico:</dt>
+                                            <dd id="generico"></dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <dl class="dl-horizontal">
+                                            <dt>Concentracion:</dt>
+                                            <dd id="concentracion"></dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col">
+                                        <dl class="dl-horizontal">
+                                            <dt>Marca:</dt>
+                                            <dd id="marca"></dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <dl class="dl-horizontal">
+                                            <dt>Presentacion:</dt>
+                                            <dd id="presentacion"></dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col">
+                                        <dl class="dl-horizontal">
+                                            <dt>Unidad Medida:</dt>
+                                            <dd id="unidadMedida"></dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <dl class="dl-horizontal">
+                                            <dt>Accion Terapeutica:</dt>
+                                            <dd id="accionTerapeutica"></dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col">
+                                        <dl class="dl-horizontal">
+                                            <dt>Stock:</dt>
+                                            <dd id="stock"></dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <dl class="dl-horizontal">
+                                            <dt>Precio Bs.:</dt>
+                                            <dd id="precio"></dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col">
+                                        <dl class="dl-horizontal">
+                                            <dt>Porcentaje %:</dt>
+                                            <dd id="porcentaje"></dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col">
+                                        <dl class="dl-horizontal">
+                                            <dt>Precio Venta Bs.:</dt>
+                                            <dd id="precioVenta"></dd>
+                                        </dl>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer modal-footer-uniform">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary float-end">Confirmar</button>
+                        <button type="button" class="btn btn-danger pull-right" data-bs-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 @endsection
@@ -235,77 +202,6 @@
                 }
             });
 
-
-            $(document).on('click', '#btn_read', function() {
-                event.preventDefault();
-                var id = $(this).val();
-                console.log(id);
-                $.ajax({
-                    type: "GET",
-                    url: "{{ route('productos.show', ':id') }}".replace(':id', id),
-                    success: function(response) {
-                        console.log(response);
-                        if (response.status === 200) {
-                            $('#titulo_show').text(response.data.producto.tipo_producto ===
-                                'M' ? 'Vista del Medicamento' : 'Vista del Insumo');
-
-
-                            $('#producto').text(response.data.producto.producto.toUpperCase());
-                            $('#generico').text(response.data.producto.generico.toUpperCase());
-                            $('#concentracion').text(response.data.concentracion.concentracion);
-                            $('#marca').text(response.data.marca.marca);
-                            $('#presentacion').text(response.data.presentacion.presentacion);
-                            $('#unidadMedida').text(response.data.unidadMedida.unidad_medida);
-                            $('#accionTerapeutica').text(response.data.accionTerapeutica
-                                .accion_terapeutica);
-
-
-                            $('#stock').text(response.data.producto.stock_minimo);
-                            $('#precio').text(response.data.producto.precio_unitario);
-                            $('#porcentaje').text(parseFloat(response.data.producto.porcentaje)
-                                .toFixed(0));
-                            $('#precioVenta').text(response.data.producto.precio_venta);
-                        }
-
-
-                        $('#modal-show-producto').modal('show');
-                    }
-                });
-            });
-
-
-            $(document).on('click', '#btn_deleteAttention', function() {
-                event.preventDefault();
-                var id = $(this).val();
-                $.ajax({
-                    type: "GET",
-                    url: "{{ route('productos.show', ':id') }}".replace(':id', id),
-                    success: function(response) {
-                        console.log(response);
-                        if (response.status === 200) {
-                            $('#delete_attention_id').val(response.data.attention.id);
-                            var delete_attention_data = $('#delete_attention_data');
-                            delete_attention_data.empty();
-                            var content = `
-                                <dt>Fecha de Atención:</dt><dd>${response.data.attention.attention_date}</dd>
-                                <dt>Tipo Atención:</dt><dd>${response.data.attention.attention_type.toUpperCase()}</dd>
-                                <dt>Paciente:</dt><dd>${response.data.attention.patient}</dd>
-                            `;
-                            if (response.data.attention.specialty != null) {
-                                content +=
-                                    `<dt>Especialidad:</dt><dd>${response.data.attention.specialty.toUpperCase()}</dd>`;
-                            }
-                            content += `
-                                <dt>Atención:</dt><dd>${response.data.attention.attention}</dd>
-                                <dt>Monto:</dt><dd>${response.data.attention.amount + ' Bs.'}</dd>
-                                <dt>Cantidad del Detalle:</dt><dd>${response.data.attention_details.length + ' Servicios'}</dd>
-                            `;
-                            delete_attention_data.append(content);
-                            $("#modal-delete-attention").modal('show');
-                        }
-                    }
-                });
-            });
         });
     </script>
 @endsection
