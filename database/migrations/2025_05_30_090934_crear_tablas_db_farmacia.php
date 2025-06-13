@@ -97,6 +97,7 @@ return new class extends Migration
             $table->enum('tipo_producto', ['M', 'I']);
             $table->string('codigo')->nullable();
             $table->string('barras')->unique();
+            $table->enum('codigo_generado', ['S', 'N'])->default('N');
             $table->string('producto');
             $table->string('generico')->nullable();
             $table->foreignId('concentracion_id')->constrained('concentraciones')->restrictOnDelete();

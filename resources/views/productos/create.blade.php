@@ -1,15 +1,12 @@
 @extends('app.app')
 
-
 @section('title')
     Productos
 @endsection
 
-
 @section('caption')
     <i class="ti-home me-2"></i> Modulo Productos
 @endsection
-
 
 @section('content')
     <section class="content">
@@ -35,7 +32,6 @@
                                                 <option value="M">Medicamentos</option>
                                             @endif
 
-
                                             @if (old('tipo_producto') == 'I')
                                                 <option value="I" selected>Insumos</option>
                                             @else
@@ -50,6 +46,19 @@
                                         <input type="text" id="barras" name="barras" class="form-control"
                                             value="{{ old('barras') }}" placeholder="Codigo Barras">
                                         {!! $errors->first('barras', '<small class="text-danger">:message</small>') !!}
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="mb-3">Generar Codigo</label>
+                                        <div class="c-inputs-stacked">
+                                            <input type="checkbox" id="codigo_generado" name="codigo_generado"
+                                                class="filled-in chk-col-info" value="{{ old('codigo_generado') }}"
+                                                {{ old('codigo_generado') ? 'checked' : '' }} />
+                                            <label for="codigo_generado" class="me-30">
+                                                <span id="label_codigo_generado">No</span>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -203,12 +212,11 @@
                                 </div>
                             </div>
 
-
                         </div>
                         <div class="box-footer text-end">
-                            <a href="{{ route('productos.index') }}" class="btn btn-warning me-1"><i
-                                    class="ti-trash"></i>
-                                Cancelar</a>
+                            <a href="{{ route('productos.index') }}" class="btn btn-warning me-1">
+                                <i class="ti-trash"></i> Cancelar
+                            </a>
                             <button type="submit" class="btn btn-primary"><i class="ti-save-alt"></i> Guardar</button>
                         </div>
                     </div>
@@ -218,62 +226,79 @@
     </section>
 @endsection
 
-
 @section('page-script')
     <script>
-        $("#stock_minimo").TouchSpin({
-            min: 1,
-            max: 1000
-        });
+        $(document).ready(function() {
 
+            actualizarEstado();
 
-        $("#precio_unitario").TouchSpin({
-            min: 0,
-            max: 1000000000,
-            step: 0.01,
-            decimals: 2,
-            boostat: 1,
-            stepinterval: 50,
-            maxboostedstep: 10,
-            prefix: 'BS.'
-        });
+            $('#codigo_generado').on('change', actualizarEstado);
 
+            $("#stock_minimo").TouchSpin({
+                min: 1,
+                max: 1000
+            });
 
-        $("#porcentaje").TouchSpin({
-            min: 0,
-            max: 100,
-            // step: 0.1,
-            // decimals: 2,
-            // boostat: 1,
-            // maxboostedstep: 10,
-            postfix: '%'
-        });
+            $("#precio_unitario").TouchSpin({
+                min: 0,
+                max: 1000000000,
+                step: 0.01,
+                decimals: 2,
+                boostat: 1,
+                stepinterval: 50,
+                maxboostedstep: 10,
+                prefix: 'BS.'
+            });
 
+            $("#porcentaje").TouchSpin({
+                min: 0,
+                max: 100,
+                // step: 0.1,
+                // decimals: 2,
+                // boostat: 1,
+                // maxboostedstep: 10,
+                postfix: '%'
+            });
 
-        calcularPrecio();
-        $("#precio_unitario, #porcentaje").change(function() {
             calcularPrecio();
-        });
 
+            $("#precio_unitario, #porcentaje").change(function() {
+                calcularPrecio();
+            });
 
-        function calcularPrecio() {
-            let precio = parseFloat($("#precio_unitario").val());
-            let porcentaje = parseFloat($("#porcentaje").val());
+            function calcularPrecio() {
+                let precio = parseFloat($("#precio_unitario").val());
+                let porcentaje = parseFloat($("#porcentaje").val());
 
+                if (isNaN(precio) || isNaN(porcentaje)) {
+                    console.error("Por favor, ingrese valores numéricos válidos.");
+                    return;
+                }
 
-            if (isNaN(precio) || isNaN(porcentaje)) {
-                console.error("Por favor, ingrese valores numéricos válidos.");
-                return;
+                let aux = parseFloat((precio * (porcentaje / 100)).toFixed(2));
+                let total = parseFloat((precio + aux).toFixed(2));
+
+                $("#precio_venta").val(total);
+                $('#precio').text('Bs. ' + total.toFixed(2));
+                console.log("Precio:", precio, "Porcentaje:", porcentaje, "Aumento:", aux, "Total:", total);
             }
 
-
-            let aux = parseFloat((precio * (porcentaje / 100)).toFixed(2));
-            let total = parseFloat((precio + aux).toFixed(2));
-
-
-            $("#precio_venta").val(total);
-            $('#precio').text('Bs. ' + total.toFixed(2));
-            console.log("Precio:", precio, "Porcentaje:", porcentaje, "Aumento:", aux, "Total:", total);
-        }
+            function actualizarEstado() {
+                if ($('#codigo_generado').is(':checked')) {
+                    $('#barras').prop('readonly', true).val('S/B');
+                    $('#barras').addClass('has-success');
+                    $('#codigo_generado').val(1);
+                    $('#label_codigo_generado').text('Sí');
+                } else {
+                    $('#barras').prop('readonly', false);
+                    $('#barras').removeClass('has-success');
+                    $('#codigo_generado').val(0);
+                    $('#label_codigo_generado').text('No');
+                    if ($('#barras').val() === 'S/B') {
+                        $('#barras').val('');
+                    }
+                }
+            }
+        });
     </script>
 @endsection
