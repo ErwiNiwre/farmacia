@@ -93,7 +93,7 @@ return new class extends Migration
         // Tabla: productos
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            //$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->enum('tipo_producto', ['M', 'I']);
             $table->string('codigo');
             $table->string('barras');
@@ -140,10 +140,10 @@ return new class extends Migration
         Schema::create('compras', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->dateTime('compra_fecha')->nullable();
+            $table->dateTime('compra_fecha')->nullable();            
+            $table->bigInteger('numero_compra');
             $table->string('proveedor');
             $table->string('tipo');
-            $table->string('numero_compra');
             $table->decimal('total', 13, 2)->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
@@ -160,6 +160,8 @@ return new class extends Migration
             $table->integer('cantidad');
             $table->decimal('precio_unitario', 13, 2);
             $table->decimal('subtotal', 13, 2);
+            $table->date('vencimiento')->nullable();
+            $table->integer('cantidad_total');
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
@@ -172,8 +174,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->dateTime('venta_fecha')->nullable();
-            $table->string('cliente');
-            $table->string('numero_venta');
+            $table->bigInteger('numero_venta');
+            $table->string('cliente');            
             $table->enum('metodo_pago', ['N', 'E', 'Q', 'M'])->default('N');
             $table->decimal('total', 13, 2)->nullable();
             $table->decimal('efectivo', 13, 2)->nullable();
