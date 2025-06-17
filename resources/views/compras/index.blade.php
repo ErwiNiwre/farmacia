@@ -127,6 +127,7 @@
                                 <thead >
                                     <tr>
                                         <th  >Productos</th>
+                                        <th  class="text-center">Caducidad</th>
                                         <th  class="text-end">Precios (Bs)</th>
                                         <th  class="text-end">Cantidades</th>
                                         <th  class="text-end">Subtotales</th>
@@ -249,7 +250,8 @@ function modalCompras(id){
                         if(response.status === 200){
                              var fecha = moment(response.data.compras.compra_fecha)
                 .format('DD-MM-YYYY');
-                            $('#proveedor').text(response.data.compras.proveedor);
+                          
+                             $('#proveedor').text(response.data.compras.proveedor);
                             $('#tipo').text(response.data.compras.tipo);
                             $('#numero_compra').text(response.data.compras.numero_compra);
                              $('#total').text(response.data.compras.total+" BS");
@@ -265,9 +267,11 @@ function modalCompras(id){
                              var compraDetalles = response.data.compraDetalles;
 
                             compraDetalles.forEach(function(detail) {
+                                var vencimiento = moment(detail.vencimiento).format('DD-MM-YYYY');
                                 var row = `
                                     <tr>
                                         <td style="width: 55%;" >${detail.producto}</td>
+                                        <td style="width: 55%;" class="text-center">`+vencimiento+`</td>
                                         <td style="width: 20%;" class="text-end">${detail.precio_unitario} Bs.</td>
                                         <td style="width: 10%;" class="text-end">${detail.cantidad}</td>
                                         <td style="width: 15%;" class="text-end">${detail.subtotal} Bs.</td>

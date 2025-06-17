@@ -9,6 +9,8 @@ use App\Http\Controllers\RolController;
 use App\Http\Controllers\ClasificacionController;
 use App\Http\Controllers\LaboratorioServicioController;
 use App\Http\Controllers\CompraController;
+use App\Http\Controllers\CompraDetalleController;
+use App\Http\Controllers\VentaController;
 
 Route::get('/', function () {
    return view('welcome');
@@ -46,26 +48,37 @@ Route::middleware('auth', 'verified')->group(function () {
    Route::delete('/productos/{producto}', [ProductoController::class, 'destroy'])->name('productos.destroy');
 
 
-   // Rutas para LaboratorioServicio
-   Route::get('/laboratorioServicios', [LaboratorioServicioController::class, 'index'])->name('laboratorioServicios.index');
-   Route::get('/laboratorioServicios/create', [LaboratorioServicioController::class, 'create'])->name('laboratorioServicios.create');
-   Route::post('/laboratorioServicios/store', [LaboratorioServicioController::class, 'store'])->name('laboratorioServicios.store');
-   Route::get('getListLaboratorioServicio', [LaboratorioServicioController::class, 'getListLaboratorioServicio'])->name('getListLaboratorioServicio');
-   Route::get('/laboratorioServicios/{servicio}/edit', [LaboratorioServicioController::class, 'edit'])->name('laboratorioServicios.edit');
-   Route::put('/laboratorioServicios/{servicio}', [LaboratorioServicioController::class, 'update'])->name('laboratorioServicios.update');
-   Route::get('/laboratorioServicios/{servicio}/destroy', [LaboratorioServicioController::class, 'destroy'])->name('laboratorioServicios.destroy');
+       // Rutas para LaboratorioServicio
+    Route::get('/laboratorioServicios', [LaboratorioServicioController::class, 'index'])->name('laboratorioServicios.index');
+    Route::get('/laboratorioServicios/create', [LaboratorioServicioController::class, 'create'])->name('laboratorioServicios.create');
+    Route::post('/laboratorioServicios/store', [LaboratorioServicioController::class, 'store'])->name('laboratorioServicios.store');
+    Route::get('getListLaboratorioServicio', [LaboratorioServicioController::class, 'getListLaboratorioServicio'])->name('getListLaboratorioServicio');
+    Route::get('/laboratorioServicios/{servicio}/edit', [LaboratorioServicioController::class, 'edit'])->name('laboratorioServicios.edit');
+    Route::put('/laboratorioServicios/{servicio}', [LaboratorioServicioController::class, 'update'])->name('laboratorioServicios.update');
+    Route::get('/laboratorioServicios/{servicio}/destroy', [LaboratorioServicioController::class, 'destroy'])->name('laboratorioServicios.destroy');
+    
+    
+       // Rutas para Compra
+    Route::get('/compras', [CompraController::class, 'index'])->name('compras.index');
+    Route::get('/compras/create', [CompraController::class, 'create'])->name('compras.create');
+    Route::post('/compras/store', [CompraController::class, 'store'])->name('compras.store');
+    Route::get('getListCompras', [CompraController::class, 'getListCompras'])->name('getListCompras');
+    Route::get('/compras/{compras}/show', [CompraController::class, 'show'])->name('compras.show');
+    Route::get('/compras/{compras}/edit', [CompraController::class, 'edit'])->name('compras.edit');
+    Route::get('/compras/{compras}/destroy', [CompraController::class, 'destroy'])->name('compras.destroy');
+    
+       // Rutas para ProductClasificaciones
+    // Route::get('/clasificaciones', [ClasificacionController::class, 'index'])->name('clasificaciones.index');
+    // Route::get('/clasificaciones/create', [ClasificacionController::class, 'create'])->name('clasificaciones.create');
+    // Route::post('/clasificaciones/store', [ClasificacionController::class, 'store'])->name('clasificaciones.store');
 
+    // Rutas para Compra
+    Route::get('/ventas', [VentaController::class, 'index'])->name('ventas.index');
+    Route::get('/ventas/create', [VentaController::class, 'create'])->name('ventas.create');
+    Route::post('/ventas/store', [VentaController::class, 'store'])->name('ventas.store');
+    
+    // Rutas para Compra Detalle
 
-   // Rutas para Compra
-   Route::get('/compras', [CompraController::class, 'index'])->name('compras.index');
-   Route::get('/compras/create', [CompraController::class, 'create'])->name('compras.create');
-   Route::post('/compras/store', [CompraController::class, 'store'])->name('compras.store');
-   Route::get('getListCompras', [CompraController::class, 'getListCompras'])->name('getListCompras');
-   Route::get('/compras/{compras}/show', [CompraController::class, 'show'])->name('compras.show');
-   Route::get('/compras/{compras}/destroy', [CompraController::class, 'destroy'])->name('compras.destroy');
-   // Rutas para ProductClasificaciones
-   // Route::get('/clasificaciones', [ClasificacionController::class, 'index'])->name('clasificaciones.index');
-   // Route::get('/clasificaciones/create', [ClasificacionController::class, 'create'])->name('clasificaciones.create');
-   // Route::post('/clasificaciones/store', [ClasificacionController::class, 'store'])->name('clasificaciones.store');
-
+    Route::get('/compraDetalles/{compras}/destroy', [CompraDetalleController::class, 'destroy'])->name('compraDetalles.destroy');    
+    Route::put('/compraDetalles/store', [CompraDetalleController::class, 'store'])->name('compraDetalles.store');
 });
