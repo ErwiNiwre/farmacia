@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-         // Tabla: unidad_medida
+        // Tabla: unidad_medida
         Schema::create('unidad_medidas', function (Blueprint $table) {
             $table->id();
             $table->string('unidad_medida');
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-         // Tabla: laboratorio_servicios
+        // Tabla: laboratorio_servicios
         Schema::create('laboratorio_servicios', function (Blueprint $table) {
             $table->id();
             $table->string('servicio');
@@ -95,8 +95,9 @@ return new class extends Migration
             $table->id();
             //$table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->enum('tipo_producto', ['M', 'I']);
-            $table->string('codigo');
-            $table->string('barras');
+            $table->string('codigo')->nullable();
+            $table->string('barras')->unique();
+            $table->enum('codigo_generado', ['S', 'N'])->default('N');
             $table->string('producto');
             $table->string('generico')->nullable();
             $table->foreignId('concentracion_id')->constrained('concentraciones')->restrictOnDelete();
@@ -106,6 +107,7 @@ return new class extends Migration
             $table->foreignId('unidad_medida_id')->constrained('unidad_medidas')->restrictOnDelete();
             $table->enum('estado', ['A', 'M', 'D'])->default('A');
             $table->unsignedInteger('stock_minimo');
+            $table->unsignedInteger('cantidad')->default(0);
             // $table->unsignedInteger('total_productos')->default(0);
             // $table->unsignedInteger('entradas')->default(0);
             // $table->unsignedInteger('salidas')->default(0);
@@ -201,8 +203,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-       
-    } 
+    }
 
     /**
      * Reverse the migrations.
@@ -216,13 +217,11 @@ return new class extends Migration
         Schema::dropIfExists('ventas');
         Schema::dropIfExists('compra_detalles');
         Schema::dropIfExists('compras');
-        Schema::dropIfExists('kardex');        
+        Schema::dropIfExists('kardex');
         Schema::dropIfExists('productos');
         Schema::dropIfExists('concentraciones');
         Schema::dropIfExists('marcas');
         Schema::dropIfExists('presentaciones');
         Schema::dropIfExists('accion_terapeuticas');
-        
-    
     }
 };
