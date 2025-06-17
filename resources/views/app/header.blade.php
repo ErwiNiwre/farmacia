@@ -8,7 +8,8 @@
                 <div class="logo-lg">
                     {{-- <span class="light-logo"><img src="../images/logo-dark-text.png" alt="logo"></span>
                     --}}
-                    <span class="dark-logo"><img src="{{ asset('images/cmFioriWhite.png')}}" alt="logo" height="45px"></span>
+                    <span class="dark-logo"><img src="{{ asset('images/cmFioriWhite.png') }}" alt="logo"
+                            height="45px"></span>
                 </div>
             </a>
         </div>
@@ -49,7 +50,8 @@
                                         @endif
                                     </small>
                                 </div>
-                                <img src="{!! asset('images/avatar/avatar-1.png') !!}" class="avatar rounded-10 bg-primary-light h-40 w-40" alt="" />
+                                <img src="{!! asset('images/avatar/avatar-1.png') !!}" class="avatar rounded-10 bg-primary-light h-40 w-40"
+                                    alt="" />
                             </div>
                         </a>
                         <ul class="dropdown-menu animated flipInX">
@@ -61,9 +63,10 @@
                                     <a class="dropdown-item" href="{{ route('users.show', $session_auth->id) }}">
                                         <i class="ti-user text-muted me-2"></i> Perfil
                                     </a>
-                                @endif                                
+                                @endif
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <a class="dropdown-item"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     <i class="ti-lock text-muted me-2"></i> Cerrar Sesión
                                 </a>
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
@@ -96,10 +99,20 @@
         </li>
         <li>
             <a href="{{ route('productos.index') }}">
-                <i class="fa fa-fw fa-user-md"></i>Productos
+                <i class="fa fa-fw fa-shopping-basket"></i>Productos
             </a>
         </li>
-          <li>
+        <li>
+            <a href="{{ route('compras.index') }}">
+                <i class="fa fa-fw fa-shopping-bag"></i>Compras
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('ventas.index') }}">
+                <i class="fa fa-fw fa-shopping-cart"></i>Ventas
+            </a>
+        </li>
+        <li>
             <a href="{{ route('laboratorioServicios.index') }}">
                 <i class="fa fa-fw fa-stethoscope"></i>Laboratorio
             </a>

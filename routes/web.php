@@ -66,7 +66,7 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::get('/compras/{compras}/show', [CompraController::class, 'show'])->name('compras.show');
     Route::get('/compras/{compras}/edit', [CompraController::class, 'edit'])->name('compras.edit');
     Route::get('/compras/{compras}/destroy', [CompraController::class, 'destroy'])->name('compras.destroy');
-    
+    Route::put('/compras/{compras}', [CompraController::class, 'update'])->name('compras.update');
        // Rutas para ProductClasificaciones
     // Route::get('/clasificaciones', [ClasificacionController::class, 'index'])->name('clasificaciones.index');
     // Route::get('/clasificaciones/create', [ClasificacionController::class, 'create'])->name('clasificaciones.create');

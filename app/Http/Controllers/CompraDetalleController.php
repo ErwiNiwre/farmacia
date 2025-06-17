@@ -47,6 +47,10 @@ class CompraDetalleController extends Controller
           
         try{
             $compraDetalle = new CompraDetalle();
+            $compras = Compra::find($request->create_compra_id);
+            $compras->total=$compras->total+$request->create_subtotal;
+            $compras->save();
+            
             $compraDetalle->created_by = $session_auth->id;
             $compraDetalle->compra_id = $request->create_compra_id ;
             $compraDetalle->cantidad =  $request->edit_cantidad;

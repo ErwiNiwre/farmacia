@@ -149,6 +149,8 @@
 @section('page-script')
     <script>
         $(document).ready(function() {
+            $('#tipo').select2();
+            $('#producto_id').select2();
             const productosList = @json($producto);
             toggleSaveButton();
             $('#createcompras').keydown(function(event){
@@ -455,7 +457,7 @@
                 
             });
 
-            const saveButtonEnabled = proveedorFilled && comprasFilled&& allProductsFilled;;
+            const saveButtonEnabled = proveedorFilled && comprasFilled&& allProductsFilled;
             $('#btn_save').prop('disabled', !saveButtonEnabled);
         }
          

@@ -113,7 +113,7 @@
     <script src="{{ asset('js/menus.js') }}"></script>
     <script src="{{ asset('js/template.js') }}"></script>
 {{-- librerias necesarias para el dropdownlist search --}}
-    <script src="{{ asset('js/pages/advanced-form-element.js') }}"></script>
+    {{-- <script src="{{ asset('js/pages/advanced-form-element.js') }}"></script> --}}
 
     <!-- -->
     {{-- <script src="{{ asset('js/pages/data-table.js') }}"></script> --}}

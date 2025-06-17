@@ -306,9 +306,35 @@ class CompraController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Compra $compra)
+   public function update(Request $request, $id)
     {
-        //
+        $session_auth = auth()->user();
+        $session_name = "";
+
+        if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
+            $session_name = $session_auth->username;
+        } else {
+            $session_staff = Staff::where('user_id', '=', $session_auth->id)->first();
+            $session_name = $session_staff->paternal_surname . ' ' . $session_staff->maternal_surname . ' ' . $session_staff->names;
+        }
+// print_r($request->All());
+// exit;
+        $compras = Compra::find($id);
+        if (!$compras) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Compra no encontrada'
+            ]);
+        }
+        $compras->proveedor = $request->proveedor;
+        $compras->tipo = $request->tipo;
+        $compras->updated_by = $session_auth->id;
+        $compras->save();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Datos Actualizados'
+        ]);
     }
 
     /**

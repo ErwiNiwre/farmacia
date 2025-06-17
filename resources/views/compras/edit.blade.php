@@ -66,30 +66,9 @@
 						
 						
 						<div class="row">
-							<div class="col-md-4">
-								<div class="form-group">
-									<label for="wfirstName2" class="form-label"> Codigo de Barras : <span class="danger">*</span> </label>
-									<input type="text" class="form-control required" id="barras" name="codigo"> 
-								</div>
-							</div>
-							<div class="col-md-4">
-								  <div class="form-group">
-                                        <label class="form-label">Producto</label>
-                                        <select id="producto_id" class="form-control select2" name="producto_id"
-                                            class="form-select">
-                                            @foreach ($producto as $productos)
-                                                @if (old('producto_id') == $productos->id)
-                                                    <option value="{{ $productos->id }}" selected>
-                                                        {{ $productos->productos }}</option>
-                                                @else
-                                                    <option value="{{ $productos->id }}">
-                                                        {{ $productos->producto }}
-                                                    </option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
-							</div>
+							
+						<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xl-8 col-xxl-8 col-xxxl-8">
+                        </div>
                             <div class="col-md-4">
 								<div class="form-group">
 									
@@ -146,10 +125,10 @@
     
     <div class="modal-dialog" style="max-width: 900px">
         
-        <form id="updatePurchase">
+        <form id="update_compras">
             @csrf
             @method('PUT')
-            <input type="hidden" id="compra_id" name="purchase_id">
+            {{-- <input type="hidden" id="compra_id" name="purchase_id"> --}}
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Editar la Compra</h5>
@@ -163,13 +142,13 @@
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12">
                             <div class="form-group">
                                 <label class="form-label">Proveedor</label>
-                                <input type="text" id="proveedor" name="supplier" class="form-control" placeholder="Proveedor">
+                                <input type="text" id="proveedor" name="proveedor" class="form-control" placeholder="Proveedor">
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12">
                             <div class="form-group">
                                         <label class="form-label">Tipo</label>
-                                        <select id="tipo" class="form-control" style="width: 100%;">
+                                        <select id="tipo" name="tipo" class="form-control" style="width: 100%;">
                                             <option>Compra</option>
                                             <option>Ingreso Directo</option>
                                         </select>
@@ -180,7 +159,7 @@
                 </div>
                 <div class="modal-footer modal-footer-uniform">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" id="purchase_btn" class="btn btn-primary float-end">Guardar</button>
+                    <button type="submit" id="update_compas_btn" class="btn btn-primary float-end">Guardar</button>
                   </div>
             </div>
         </form>
@@ -210,7 +189,7 @@
                         <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6 col-xxxl-6">
                             <div class="form-group">
                                 <label class="form-label">Producto</label>
-                                <select id="create_producto_id"  name="create_producto_id">
+                                <select id="create_producto_id"  name="create_producto_id" class="form-select">
                                             @foreach ($producto as $productos)
                                                 @if (old('producto_id') == $productos->id)
                                                     <option value="{{ $productos->id }}" selected>
@@ -359,6 +338,7 @@
 @section('page-script')
     <script>
         $(document).ready(function(){
+             $(".select2").select2();
              const compraDetalles = @json($compraDetalles);
              const productosList = @json($producto);
              function busquedaProductosList(indice,atributo){
@@ -423,10 +403,10 @@
                      "mRender": function(data, type, row) {
 						      	var btn_eliminar;
                                 if(data.cantidad==data.cantidad_total)
-                                        btn_eliminar='<button type="button" id="btn_delete_compras_detail" value='+data.id+' class="waves-effect waves-light btn btn-danger mb-5" data-container="body" title="" data-bs-original-title="Eliminar"><i class="fa fa-bitbucket" aria-hidden="true"></i></button>';
+                                      return  btn_eliminar='<button type="button" id="btn_delete_compras_detail" value='+data.id+' class="waves-effect waves-light btn btn-danger mb-5" data-container="body" title="" data-bs-original-title="Eliminar"><i class="fa fa-bitbucket" aria-hidden="true"></i></button>';
                                     else
-                                        btn_eliminar='';
-						        return ' <button type="button" id="btn_edit_compras_detail" value='+data.id+' class="btn btn-secondary" data-bs-toggle="tooltip" data-container="body" title="" data-bs-original-title="Editar"><i class="fa fa-edit"></i></button>'+btn_eliminar;
+                                    return    btn_eliminar='';
+						        //return ' <button type="button" id="btn_edit_compras_detail" value='+data.id+' class="btn btn-secondary" data-bs-toggle="tooltip" data-container="body" title="" data-bs-original-title="Editar"><i class="fa fa-edit"></i></button>'+btn_eliminar;
                                  
 						    }}
                     
@@ -447,7 +427,7 @@
                 }
             });
 
-
+                
             $(document).on('click', '#btn_create_compras', function(){
                 // $("#create_product").empty();
                 // $("#create_unit_price").val(0);
@@ -455,9 +435,30 @@
                 // $("#create_subtotal").val('0.00');
                 $("#modal-create-compra-detail").modal('show');
                 //togglecreatePurchaseDetailButton();
-
+                validateCreateDetail();
             });
             // $('#create_product').on('input', togglecreatePurchaseDetailButton);
+            $('#update_compras').on('submit', function(event) {
+                event.preventDefault(); // Evita el envío normal del formulario
+
+                //var id = $('#compra_id').val();
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: "{{ route('compras.update', ':id') }}".replace(':id', '{{ $compras->id }}'),
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if(response.status === 200) {
+                            location.reload(); // Recargar o actualizar la vista según sea necesario
+                        } else {
+                            alert('Ocurrió un error al guardar los cambios.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Ocurrió un error: ' + error);
+                    }
+                });
+            });
 
             $('#create_precio_unitario, #create_cantidad').on('input', function () {
                 let precio_unidad = $("#create_precio_unitario").val();
@@ -466,6 +467,7 @@
                 $("#create_subtotal_label").val(subtotal);
                 $("#create_compra_id").val({{ $compras->id }});
                 $("#create_subtotal").val(subtotal);
+                validateCreateDetail();
                 //togglecreatePurchaseDetailButton();
                 //calculateTotalcreate();
             });
@@ -485,7 +487,7 @@
                         
                 }
                 var formCreate = $(this).serialize();
-                 console.log(formCreate);
+                // console.log(formCreate);
                 $.ajax({
                     url: "{{ route('compraDetalles.store') }}",
                     type: 'POST',
@@ -493,13 +495,13 @@
                    // _token: "{{ csrf_token() }}",
                     success: function(response) {
                         if(response.status === 200) {
-                            //location.reload();
+                            location.reload();
                         } else {
                             alert('Ocurrió un error al guardar los cambios.');
                         }
                     },
                     error: function(xhr, status, error) {
-                        alert('Ocurrió un error111: ' + error);
+                        alert('Ocurrió un error: ' + error);
                     }
                 });
             });
@@ -525,7 +527,7 @@
                 });
             });
 
-            $(document).on('click', '#btn_edit_compras_detail', function(){
+         /*   $(document).on('click', '#btn_edit_compras_detail', function(){
                 event.preventDefault();
                 var id = $(this).val();
                 //console.log(id);
@@ -546,7 +548,7 @@
                        
                     
                 
-            });
+            });*/
             $(document).on('click', '#btn_delete_compras_detail', function(){
                 event.preventDefault();
                 var id = $(this).val();
@@ -583,6 +585,20 @@
 
             });
               });
+
+
+
+
+           function validateCreateDetail() {
+            const create_precio_unitario_value = $('#create_precio_unitario').val();
+            const create_cantidad_value = $('#create_cantidad').val();
+            
+            const create_precio_unitario_filled = create_precio_unitario_value > 0;
+             const create_cantidad_filled = create_cantidad_value > 0;
+            //alert(create_cantidad_value);
+            const saveButtonEnabled = create_precio_unitario_filled&&create_cantidad_filled;
+            $('#create_compra_detalle_btn').prop('disabled', !saveButtonEnabled);
+        }
             
     </script>
 @endsection
