@@ -25,7 +25,8 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label class="form-label">Tipo Producto</label>
-                                        <select id="tipo_producto" name="tipo_producto" class="form-select">
+                                        <select id="tipo_producto" name="tipo_producto" class="form-select select2"
+                                            style="width: 100%;">
                                             @if (old('tipo_producto') == 'M')
                                                 <option value="M" selected>Medicamentos</option>
                                             @else
@@ -82,7 +83,8 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label class="form-label">Concentracion</label>
-                                        <select id="concentracion_id" name="concentracion_id" class="form-select">
+                                        <select id="concentracion_id" name="concentracion_id" class="form-select select2"
+                                            style="width: 100%;">
                                             @foreach ($concentraciones as $concentracion)
                                                 @if (old('concentracion_id') == $concentracion->id)
                                                     <option value="{{ $concentracion->id }}" selected>
@@ -99,7 +101,8 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label class="form-label">Marca</label>
-                                        <select id="marca_id" name="marca_id" class="form-select">
+                                        <select id="marca_id" name="marca_id" class="form-select select2"
+                                            style="width: 100%;">
                                             @foreach ($marcas as $marca)
                                                 @if (old('marca_id') == $marca->id)
                                                     <option value="{{ $marca->id }}" selected>
@@ -118,7 +121,8 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label class="form-label">Accion Terapeuticas</label>
-                                        <select id="accion_terapeutica_id" name="accion_terapeutica_id" class="form-select">
+                                        <select id="accion_terapeutica_id" name="accion_terapeutica_id"
+                                            class="form-select select2" style="width: 100%;">
                                             @foreach ($accionTerapeuticas as $accionTerapeuticas)
                                                 @if (old('accion_terapeutica_id') == $accionTerapeuticas->id)
                                                     <option value="{{ $accionTerapeuticas->id }}" selected>
@@ -135,7 +139,8 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label class="form-label">Presentacion</label>
-                                        <select id="presentacion_id" name="presentacion_id" class="form-select">
+                                        <select id="presentacion_id" name="presentacion_id" class="form-select select2"
+                                            style="width: 100%;">
                                             @foreach ($presentaciones as $presentacion)
                                                 @if (old('presentacion_id') == $presentacion->id)
                                                     <option value="{{ $presentacion->id }}" selected>
@@ -152,7 +157,8 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label class="form-label">Unidad Medida</label>
-                                        <select id="unidad_medida_id" name="unidad_medida_id" class="form-select">
+                                        <select id="unidad_medida_id" name="unidad_medida_id" class="form-select select2"
+                                            style="width: 100%;">
                                             @foreach ($unidadMedidas as $unidadMedida)
                                                 @if (old('unidad_medida_id') == $unidadMedida->id)
                                                     <option value="{{ $unidadMedida->id }}" selected>
@@ -229,6 +235,7 @@
 @section('page-script')
     <script>
         $(document).ready(function() {
+            $('.select2').select2();
 
             actualizarEstado();
 
