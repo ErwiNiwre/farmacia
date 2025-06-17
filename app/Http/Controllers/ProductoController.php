@@ -201,14 +201,6 @@ class ProductoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // $request->validate([
-        //     'barras' => 'required|unique:productos,barras',
-        //     'producto' => 'required|regex:/^[a-zA-Z\s]+$/u',
-        //     'generico' => 'nullable|regex:/^[a-zA-Z\s]+$/u',
-        //     'precio_unitario' => 'required|numeric|gt:0',
-        //     'precio_unitario' => 'required|numeric|gt:0',
-        // ]);
-
         $producto = Producto::find($id);
         $producto->tipo_producto = $request->tipo_producto;
 

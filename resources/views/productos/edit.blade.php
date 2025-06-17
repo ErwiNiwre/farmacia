@@ -236,9 +236,6 @@
 @section('page-script')
     <script>
         $(document).ready(function() {
-            if (@json($producto->barras) === 'S') {
-                const codigoGenerado = @json($producto->barras);
-            }
 
             actualizarEstado();
 
@@ -299,7 +296,7 @@
                     $('#codigo_generado').val(1);
                     $('#label_codigo_generado').text('Sí');
                 } else {
-                    $('#barras').prop('readonly', false).val('');
+                    $('#barras').prop('readonly', false).val(@json($producto->barras));
                     $('#barras').removeClass('has-success');
                     $('#codigo_generado').val(0);
                     $('#label_codigo_generado').text('No');
