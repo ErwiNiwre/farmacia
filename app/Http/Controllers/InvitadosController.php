@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+// use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 
 class InvitadosController extends Controller
 {
@@ -104,6 +105,36 @@ class InvitadosController extends Controller
                 'laboratorio_servicios'
             )
         );
+    }
+
+    public function print()
+    {
+
+        return \PDF::loadView(
+            'pdf.app',
+
+        )
+            // ->setPaper('letter')
+            ->setPaper('a4')
+            ->setOption('encoding', 'utf-8')
+            ->setOption('margin-top', '15mm')
+            ->setOption('margin-bottom', '15mm')
+            ->setOption('margin-right', '10mm')
+            ->setOption('margin-left', '0mm')
+            // ->setOption('header-html', route('pdf.header'))
+            // ->setOption('footer-right', 'Página [page] de [toPage]')
+            // ->setOption('footer-html', route('pdf.footer'))
+            ->stream('recibo');
+
+        // Aquí puedes pasar datos dinámicos a la vista si quieres.
+
+        // return \PDF::loadView('pdf.app')
+        //     ->setPaper([0, 0, 226.77, 1000]) // 80mm ancho x variable altura (en pt, 1mm = 2.83 pt)
+        //     ->setOption('margin-top', 5)
+        //     ->setOption('margin-bottom', 5)
+        //     ->setOption('margin-left', 5)
+        //     ->setOption('margin-right', 5)
+        //     ->stream('recibo.pdf'); // o ->download('recibo.pdf')
     }
 
     /**
