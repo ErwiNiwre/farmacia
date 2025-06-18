@@ -51,12 +51,12 @@
     <ul id="main-menu" class="sm sm-blue">
         <li>
             <a href="{{ route('invitados.farmacia') }}">
-                <i data-feather="settings"></i>Farmacia
+                <i class="fa fa-fw fa-shopping-basket"></i>Farmacia
             </a>
         </li>
         <li>
             <a href="{{ route('invitados.servicios') }}">
-                <i data-feather="settings"></i>Servicios
+                <i class="fa fa-fw fa-stethoscope"></i>Servicios
             </a>
         </li>
     </ul>

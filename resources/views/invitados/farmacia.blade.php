@@ -5,7 +5,7 @@
 @endsection
 
 @section('caption')
-    <i class="ti-home me-2"></i> Modulo Productos
+    <i class="fa fa-fw fa-shopping-basket me-2"></i>Farmacia
 @endsection
 
 @section('content')
@@ -13,20 +13,17 @@
         <div class="row">
             <div class="col-12">
                 <div class="box">
-                    <div class="box-header middle">
-                        <h3 class="box-title">Farmacia</h3>
-                    </div>
                     <div class="box-body">
                         <ul class="nav nav-tabs customtab" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" data-bs-toggle="tab" href="#tab_medicamentos" role="tab">
-                                    <span class="hidden-sm-up"><i class="ion-home"></i></span>
+                                    <span class="hidden-sm-up"><i class="fa fa-fw fa-medkit"></i></span>
                                     <span class="hidden-xs-down">Medicamentos</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" data-bs-toggle="tab" href="#tab_insumos" role="tab">
-                                    <span class="hidden-sm-up"><i class="ion-person"></i></span>
+                                    <span class="hidden-sm-up"><i class="fa fa-fw fa-shopping-cart"></i></span>
                                     <span class="hidden-xs-down">Insumos</span></a>
                             </li>
                         </ul>
@@ -55,74 +52,22 @@
                                                             <td>{{ $medicamento->id }}</td>
                                                             <td>{{ $medicamento->producto }}</td>
                                                             <td>{{ $medicamento->generico }}</td>
-                                                            <td>{{ $medicamento->marca }}</td>
-                                                            <td>{{ $medicamento->presentacion }}</td>
-                                                            <td>{{ $medicamento->accion_terapeutica }}</td>
-                                                            <td class="text-center">{{ $medicamento->estado }}</td>
+                                                            <td>{{ $medicamento->marca == 'NINGUNO' ? '' : $medicamento->marca }}
+                                                            </td>
+                                                            <td>{{ $medicamento->presentacion == 'NINGUNO' ? '' : $medicamento->presentacion }}
+                                                            </td>
+                                                            <td>{{ $medicamento->accion_terapeutica == 'NINGUNO' ? '' : $medicamento->accion_terapeutica }}
+                                                            </td>
+                                                            <td class="text-center">
+                                                                {!! match ($medicamento->estado) {
+                                                                    'A' => '<span class="badge badge-pill badge-danger">AGOTADO</span>',
+                                                                    'M' => '<span class="badge badge-pill badge-warning">MENOR-STOCK</span>',
+                                                                    'D' => '<span class="badge badge-pill badge-success">DISPONIBLE</span>',
+                                                                    default => '<span class="badge badge-pill badge-danger">DESCONOCIDO</span>',
+                                                                } !!}
+                                                            </td>
                                                             <td class="text-center">{{ $medicamento->cantidad }}</td>
                                                             <td class="text-end">{{ $medicamento->precio_venta }}</td>
-                                                            {{-- <td>
-                                                                <dl class="dl-horizontal mb-0">
-                                                                    <dt>N°:</dt>
-                                                                    <dd class="mb-0">
-                                                                        {{ 'HC - ' . $attention->archive_number }}</dd>
-                                                                    <dt>Paciente:</dt>
-                                                                    <dd class="mb-0">{{ $attention->patient }}</dd>
-                                                                </dl>
-                                                            </td>
-                                                            <td>
-                                                                <dl class="dl-horizontal mb-0">
-                                                                    <dt>Tipo Atención:</dt>
-                                                                    <dd class="mb-0">{{ $attention->attention_type }}</dd>
-                                                                    @if ($attention->specialty != null)
-                                                                        <dt>Especialidad:</dt>
-                                                                        <dd class="mb-0">{{ $attention->specialty }}</dd>
-                                                                    @endif
-                                                                    @if ($attention->staff_id != null)
-                                                                        <dt>Doctor:</dt>
-                                                                        <dd class="mb-0">{{ $attention->specialty }}</dd>
-                                                                    @endif
-                                                                    <dt>Fecha Atención:</dt>
-                                                                    <dd class="mb-0">
-                                                                        {{ \Carbon\Carbon::parse($attention->attention_date)->format('d/m/Y H:i:s') }}
-                                                                    </dd>
-                                                                </dl>
-                                                            </td>
-                                                            <td>
-                                                                <dl class="dl-horizontal mb-0">
-                                                                    <dt>Atención:</dt>
-                                                                    <dd>
-                                                                        {!! match ($attention->attention_state) {
-                                                                            'P' => '<span class="badge badge-pill badge-danger">PENDIENTE</span>',
-                                                                            'S' => '<span class="badge badge-pill badge-primary">EN SALA</span>',
-                                                                            'C' => '<span class="badge badge-pill badge-info">EN CONSULTA</span>',
-                                                                            'R' => '<span class="badge badge-pill badge-success">REALIZADO</span>',
-                                                                            'X' => '<span class="badge badge-pill badge-danger">CANCELADO</span>',
-                                                                            'N' => '<span class="badge badge-pill badge-danger">NO VINO</span>',
-                                                                            default => '<span class="badge badge-pill badge-danger">DESCONOCIDO</span>',
-                                                                        } !!}
-                                                                    </dd>
-                                                                    <dt>Pago:</dt>
-                                                                    <dd>
-                                                                        {!! match ($attention->payment_state) {
-                                                                            'E' => '<span class="badge badge-pill badge-danger">EN ESPERA</span>',
-                                                                            'P' => '<span class="badge badge-pill badge-success">PAGADO</span>',
-                                                                            'C' => '<span class="badge badge-pill badge-danger">CANCELADO</span>',
-                                                                            default => '<span class="badge badge-pill badge-danger">DESCONOCIDO</span>',
-                                                                        } !!}
-                                                                    </dd>
-                                                                    <dt>Metodo Pago:</dt>
-                                                                    <dd>
-                                                                        {!! match ($attention->payment_method) {
-                                                                            'N' => '<span class="badge badge-pill badge-danger">NINGUNO</span>',
-                                                                            'E' => '<span class="badge badge-pill badge-success">EFECTIVO</span>',
-                                                                            'Q' => '<span class="badge badge-pill badge-success">QR</span>',
-                                                                            'M' => '<span class="badge badge-pill badge-success">MIXTO</span>',
-                                                                            default => '<span class="badge badge-pill badge-danger">DESCONOCIDO</span>',
-                                                                        } !!}
-                                                                    </dd>
-                                                                </dl>
-                                                            </td> --}}
                                                         </tr>
                                                     @endforeach
                                                 </tbody>
@@ -154,112 +99,18 @@
                                                             <td>{{ $insumo->id }}</td>
                                                             <td>{{ $insumo->producto }}</td>
                                                             <td>{{ $insumo->marca }}</td>
-                                                            <td>{{ $insumo->presentacion }}</td>
-                                                            <td>{{ $insumo->estado }}</td>
-                                                            <td>{{ $insumo->cantidad }}</td>
-                                                            <td>{{ $insumo->precio_venta }}</td>
-                                                            {{-- <td>
-                                                                <dl class="dl-horizontal mb-0">
-                                                                    <dt>N°:</dt>
-                                                                    <dd class="mb-0">
-                                                                        {{ 'HC - ' . $procedure->archive_number }}</dd>
-                                                                    <dt>Paciente:</dt>
-                                                                    <dd class="mb-0">{{ $procedure->patient }}</dd>
-                                                                </dl>
+                                                            <td>{{ $insumo->presentacion == 'NINGUNO' ? '-' : $insumo->presentacion }}
                                                             </td>
-                                                            <td>
-                                                                <dl class="dl-horizontal mb-0">
-                                                                    <dt>Especialidad:</dt>
-                                                                    <dd class="mb-0">{{ $procedure->specialty }}</dd>
-                                                                    <dt>Fecha Procedimiento:</dt>
-                                                                    <dd class="mb-0">
-                                                                        {{ \Carbon\Carbon::parse($procedure->procedure_date)->format('d/m/Y H:i:s') }}
-                                                                    </dd>
-                                                                    @if ($procedure->staff_id != null)
-                                                                        <dt>Doctor:</dt>
-                                                                        <dd class="mb-0">{{ $procedure->staff_id }}</dd>
-                                                                    @endif
-                                                                    <dt>Centro Referencia:</dt>
-                                                                    <dd class="mb-0">{{ $procedure->reference_center }}
-                                                                    </dd>
-                                                                    <dt>Referencia:</dt>
-                                                                    <dd class="mb-0">{{ $procedure->doctor_sends }}</dd>
-                                                                </dl>
+                                                            <td class="text-center">
+                                                                {!! match ($insumo->estado) {
+                                                                    'A' => '<span class="badge badge-pill badge-danger">AGOTADO</span>',
+                                                                    'M' => '<span class="badge badge-pill badge-warning">MENOR-STOCK</span>',
+                                                                    'D' => '<span class="badge badge-pill badge-success">DISPONIBLE</span>',
+                                                                    default => '<span class="badge badge-pill badge-danger">DESCONOCIDO</span>',
+                                                                } !!}
                                                             </td>
-                                                            <td>
-                                                                <div class="d-block text-dark flexbox">
-                                                                    @if ($procedure->file_route != null && $procedure->diagnostic_status == 'S')
-                                                                        @if ($procedure->file_type == 'P')
-                                                                            <button type="button" id="btn_showAttention"
-                                                                                value="{{ $procedure->file_route }}"
-                                                                                class="btn btn-default btn-sm"
-                                                                                data-bs-toggle="tooltip"
-                                                                                data-container="body"
-                                                                                data-bs-original-title="Ver Orden PDF"><i
-                                                                                    class="mdi mdi-file-pdf me-15"></i>Orden</button>
-                                                                        @else
-                                                                            <button type="button" id="btn_showAttention"
-                                                                                value="{{ $procedure->file_route }}"
-                                                                                class="btn btn-default btn-sm"
-                                                                                data-bs-toggle="tooltip"
-                                                                                data-container="body"
-                                                                                data-bs-original-title="Ver Orden Imagen"><i
-                                                                                    class="mdi mdi-file-image me-15"></i>Orden</button>
-                                                                        @endif
-                                                                    @endif
-                                                                    @if (count($procedure->details) != 0)
-                                                                        @foreach ($procedure->details as $consent)
-                                                                            @if ($consent->consent_state == 'S')
-                                                                                <button type="button"
-                                                                                    id="btn_showAttention"
-                                                                                    value="{{ $consent->consent_name }}"
-                                                                                    class="btn btn-dark btn-sm"
-                                                                                    data-bs-toggle="tooltip"
-                                                                                    data-container="body"
-                                                                                    data-bs-original-title="Ver {{ $consent->procedure_type }}"><i
-                                                                                        class="mdi mdi-file-pdf me-15"></i>{{ $consent->consent_name }}</button>
-                                                                            @endif
-                                                                        @endforeach
-                                                                    @endif
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <dl class="dl-horizontal mb-0">
-                                                                    <dt>Procedimiento:</dt>
-                                                                    <dd>
-                                                                        {!! match ($procedure->procedure_state) {
-                                                                            'S' => '<span class="badge badge-pill badge-primary">EN SALA</span>',
-                                                                            'C' => '<span class="badge badge-pill badge-info">EN CONSULTA</span>',
-                                                                            'R' => '<span class="badge badge-pill badge-success">REALIZADO</span>',
-                                                                            'P' => '<span class="badge badge-pill badge-warning">PAGAR</span>',
-                                                                            'F' => '<span class="badge badge-pill badge-success">FINALIZADO</span>',
-                                                                            'X' => '<span class="badge badge-pill badge-danger">CANCELADO</span>',
-                                                                            'N' => '<span class="badge badge-pill badge-danger">NO VINO</span>',
-                                                                            default => '<span class="badge badge-pill badge-danger">DESCONOCIDO</span>',
-                                                                        } !!}
-                                                                    </dd>
-                                                                    <dt>Pago:</dt>
-                                                                    <dd>
-                                                                        {!! match ($procedure->payment_state) {
-                                                                            'E' => '<span class="badge badge-pill badge-danger">EN ESPERA</span>',
-                                                                            'A' => '<span class="badge badge-pill badge-warning">ADELANTADO</span>',
-                                                                            'P' => '<span class="badge badge-pill badge-success">PAGADO</span>',
-                                                                            'C' => '<span class="badge badge-pill badge-danger">CANCELADO</span>',
-                                                                            default => '<span class="badge badge-pill badge-danger">DESCONOCIDO</span>',
-                                                                        } !!}
-                                                                    </dd>
-                                                                    <dt>Metodo Pago:</dt>
-                                                                    <dd>
-                                                                        {!! match ($procedure->payment_method) {
-                                                                            'N' => '<span class="badge badge-pill badge-danger">NINGUNO</span>',
-                                                                            'E' => '<span class="badge badge-pill badge-success">EFECTIVO</span>',
-                                                                            'Q' => '<span class="badge badge-pill badge-success">QR</span>',
-                                                                            'M' => '<span class="badge badge-pill badge-success">MIXTO</span>',
-                                                                            default => '<span class="badge badge-pill badge-danger">DESCONOCIDO</span>',
-                                                                        } !!}
-                                                                    </dd>
-                                                                </dl>
-                                                            </td> --}}
+                                                            <td class="text-center">{{ $insumo->cantidad }}</td>
+                                                            <td class="text-end">{{ $insumo->precio_venta }}</td>
                                                         </tr>
                                                     @endforeach
                                                 </tbody>
