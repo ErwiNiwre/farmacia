@@ -1,4 +1,4 @@
-@extends('extranet.app.app')
+@extends('app.app')
 
 @section('title')
     Servicios

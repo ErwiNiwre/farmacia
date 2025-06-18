@@ -3,7 +3,7 @@
     <div class="inside-header">
         <div class="d-flex align-items-center logo-box justify-content-start">
             <!-- Logo -->
-            <a href="{{ route('welcome') }}" class="logo">
+            <a href="{{ route('invitados.farmacia') }}" class="logo">
                 <!-- logo-->
                 <div class="logo-lg">
                     {{-- <span class="light-logo"><img src="../images/logo-dark-text.png" alt="logo"></span>
@@ -50,12 +50,12 @@
     <!-- Sample menu definition -->
     <ul id="main-menu" class="sm sm-blue">
         <li>
-            <a href="{{ route('extranet.farmacia') }}">
+            <a href="{{ route('invitados.farmacia') }}">
                 <i data-feather="settings"></i>Farmacia
             </a>
         </li>
         <li>
-            <a href="{{ route('extranet.servicios') }}">
+            <a href="{{ route('invitados.servicios') }}">
                 <i data-feather="settings"></i>Servicios
             </a>
         </li>

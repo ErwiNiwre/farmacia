@@ -1,4 +1,4 @@
-@extends('extranet.app.app')
+@extends('app.app')
 
 @section('title')
     Productos
@@ -10,14 +10,14 @@
 
 @section('content')
     <section class="content">
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-xl-2 col-md-6 col-6">
                 <div class="box">
                     <div class="box-body">
                         <div class="text-center">
                             <h1 class="fs-50 text-primary"><i class="mdi mdi-wheelchair-accessibility"></i></h1>
-                            <h2>4,569</h2>
-                            <span class="badge badge-pill badge-primary px-10 mb-10">Patient</span>
+                            <h2>{{ $medicamentos->count() }}</h2>
+                            <span class="badge badge-pill badge-primary px-10 mb-10">Medicamentos</span>
                         </div>
                     </div>
                 </div>
@@ -28,7 +28,7 @@
                         <div class="text-center">
                             <h1 class="fs-50 text-warning"><i class="mdi mdi-file-document"></i></h1>
                             <h2>23,009</h2>
-                            <span class="badge badge-pill badge-warning px-10 mb-10">Encounters</span>
+                            <span class="badge badge-pill badge-warning px-10 mb-10">Insumos</span>
                         </div>
                     </div>
                 </div>
@@ -77,7 +77,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </section>
 @endsection
 

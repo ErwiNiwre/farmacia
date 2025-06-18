@@ -10,26 +10,16 @@ use App\Http\Controllers\ClasificacionController;
 use App\Http\Controllers\LaboratorioServicioController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\CompraDetalleController;
-use App\Http\Controllers\ExtranetController;
+use App\Http\Controllers\InvitadosController;
 use App\Http\Controllers\VentaController;
 
 // Route::get('/', function () {
 //    return view('extranet.welcome');
 // });
-Route::get('/', [ExtranetController::class, 'index'])->name('welcome');
+// Route::get('/', [InvitadosController::class, 'index'])->name('welcome');
 
-Route::get('/farmacia', [ExtranetController::class, 'farmacia'])->name('extranet.farmacia');
-Route::get('/servicios', [ExtranetController::class, 'servicios'])->name('extranet.servicios');
-
-// Route::get('/vis', function () {
-//     return view('app.app');
-// });
-
-// Route::get('/', function () {
-//     return view('auth.login');
-// });
-
-// Route::get('/login', [HomeController::class, 'index'])->name('login');
+Route::get('/', [InvitadosController::class, 'farmacia'])->name('invitados.farmacia');
+Route::get('/servicios', [InvitadosController::class, 'servicios'])->name('invitados.servicios');
 
 Route::middleware('auth', 'verified')->group(function () {
    // Pagina Inicial
@@ -52,7 +42,6 @@ Route::middleware('auth', 'verified')->group(function () {
    Route::put('/productos/{producto}', [ProductoController::class, 'update'])->name('productos.update');
    Route::delete('/productos/{producto}', [ProductoController::class, 'destroy'])->name('productos.destroy');
 
-
    // Rutas para LaboratorioServicio
    Route::get('/laboratorioServicios', [LaboratorioServicioController::class, 'index'])->name('laboratorioServicios.index');
    Route::get('/laboratorioServicios/create', [LaboratorioServicioController::class, 'create'])->name('laboratorioServicios.create');
@@ -61,7 +50,6 @@ Route::middleware('auth', 'verified')->group(function () {
    Route::get('/laboratorioServicios/{servicio}/edit', [LaboratorioServicioController::class, 'edit'])->name('laboratorioServicios.edit');
    Route::put('/laboratorioServicios/{servicio}', [LaboratorioServicioController::class, 'update'])->name('laboratorioServicios.update');
    Route::get('/laboratorioServicios/{servicio}/destroy', [LaboratorioServicioController::class, 'destroy'])->name('laboratorioServicios.destroy');
-
 
    // Rutas para Compra
    Route::get('/compras', [CompraController::class, 'index'])->name('compras.index');

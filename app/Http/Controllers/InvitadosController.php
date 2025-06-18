@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
-class ExtranetController extends Controller
+class InvitadosController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,13 +14,12 @@ class ExtranetController extends Controller
     public function index()
     {
         //
-
         $medicamentos = Producto::where('tipo_producto', 'M')->get();
         $insumos = Producto::where('tipo_producto', 'I')->get();
 
         // return $medicamentos;
         return view(
-            'extranet.welcome',
+            'welcome',
             compact(
                 'medicamentos',
                 'insumos'
@@ -78,7 +77,7 @@ class ExtranetController extends Controller
             ->get();
 
         return view(
-            'extranet.farmacia',
+            'invitados.farmacia',
             compact(
                 'medicamentos',
                 'insumos'
@@ -100,7 +99,7 @@ class ExtranetController extends Controller
             ->get();
 
         return view(
-            'extranet.servicios',
+            'invitados.servicios',
             compact(
                 'laboratorio_servicios'
             )

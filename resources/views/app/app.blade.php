@@ -27,7 +27,14 @@
     <div class="wrapper">
         <div id="loader"></div>
         <!-- Section Header -->
-        @include('app.header')
+        {{-- @include('app.header') --}}
+        @auth
+            @include('app.header')
+        @endauth
+
+        @guest
+            @include('app.headerInvitado')
+        @endguest
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
@@ -97,8 +104,6 @@
     <script src="{{ asset('assets/vendor_components/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.js') }}">
     </script>
 
-
-
     {{-- librerias necesarias para el dropdownlist search --}}
     <script src="{{ asset('assets/vendor_components/moment/min/moment.min.js') }}"></script>
     <script src="{{ asset('assets/vendor_plugins/iCheck/icheck.min.js') }}"></script>
@@ -107,9 +112,6 @@
     <script src="{{ asset('assets/vendor_components/select2/dist/js/select2.full.js') }}"></script>
     <script src="{{ asset('assets/vendor_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js') }}">
     </script>
-
-
-
 
     <!-- Rhythm Admin App -->
     <script src="{{ asset('js/jquery.smartmenus.js') }}"></script>
