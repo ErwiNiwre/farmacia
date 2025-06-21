@@ -115,15 +115,18 @@ class InvitadosController extends Controller
 
         )
             // ->setPaper('letter')
-            ->setPaper('a4')
+            ->setOption('page-width', '80mm')        // ancho del recibo
+            ->setOption('page-height', '200mm')      // alto estimado; puede ser más
             ->setOption('encoding', 'utf-8')
             ->setOption('margin-top', '15mm')
             ->setOption('margin-bottom', '15mm')
             ->setOption('margin-right', '10mm')
-            ->setOption('margin-left', '0mm')
+            ->setOption('margin-left', '10mm')
             // ->setOption('header-html', route('pdf.header'))
             // ->setOption('footer-right', 'Página [page] de [toPage]')
             // ->setOption('footer-html', route('pdf.footer'))
+            ->setOption('disable-smart-shrinking', true)
+            ->setOption('no-stop-slow-scripts', true)
             ->stream('recibo');
 
         // Aquí puedes pasar datos dinámicos a la vista si quieres.

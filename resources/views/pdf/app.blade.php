@@ -5,18 +5,17 @@
     <meta charset="UTF-8">
     <title>Recibo</title>
     <style>
-        @page {
+        /* @page {
             margin: 5mm 5mm;
             size: 80mm auto;
-            /* ancho de rollo típico */
-        }
+        } */
 
         body {
             font-family: 'Courier New', Courier, monospace;
             font-size: 10pt;
             margin: 0;
             padding: 0;
-            width: 80mm;
+            /* width: 80mm; */
         }
 
         .center {
