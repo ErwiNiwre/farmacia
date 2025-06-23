@@ -164,6 +164,7 @@ return new class extends Migration
             $table->decimal('subtotal', 13, 2);
             $table->date('vencimiento')->nullable();
             $table->integer('cantidad_total');
+            $table->integer('lote')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();

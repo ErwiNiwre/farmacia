@@ -74,7 +74,7 @@
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 col-xxl-4 col-xxxl-4 badge badge-success text-center">
                                 {{-- <input type="hidden" id="amount" name="amount" class="form-control" value="{{ old('amount') }}"> --}}
-                                <div id="cambio_display" class="fs-40">Cambio Bs. 0.00</div>
+                               <label  class="fs-40">Cambio Bs. </label> <label id="cambio_display" class="fs-40">0.00</div>
                             </div>
                                 
                             </div>
@@ -176,6 +176,7 @@
 @section('page-script')
     <script>
         $(document).ready(function() {
+            $(".select2").select2();
             const productosList = @json($producto);
             toggleSaveButton();
             $('#createventas').keydown(function(event){
@@ -263,8 +264,9 @@
             
    
            $('#cliente').on('input', toggleSaveButton);
-           $('#efectivo,#qr').on('input', (toggleSaveButton));
-           $('#efectivo,#qr').on('input', (calculoCambio));
+           $('#efectivo, #qr').on('input', (calculoCambio));
+           
+           $('#efectivo, #qr').on('input', (toggleSaveButton));
            // $('#venta_details_table').on('input', 'input[name="cantidad[]"]', toggleSaveButton);
 
             const table = $('#venta_details_table').DataTable({
@@ -340,31 +342,36 @@
                 total = isNaN(total) ? 0 : total;
                 let cambio=efectivo-total+qr;
                 //alert(total+'+'+qr+'-'+efectivo)
-                $('#cambio_display').text('Cambio Bs. ' + cambio.toFixed(2));
+                $('#cambio_display').text( cambio.toFixed(2));
 
             }
+           
             function calculateTotal() {
                 let total = 0;
-
-                $('#venta_details_table tbody tr').each(function() {
-                    const $subtotalCell = $(this).find('td:eq(4)');
-                    //console.log($(this).find('td:eq(3)'));
-
+               
+                $('#venta_details_table').DataTable().rows().nodes().each(function(row, index) {
+                    
+                     const $subtotalCell =   $(row).find('td:eq(4)').text();
+                    //console.log($subtotalCell);
                    
-                    if ($subtotalCell.length > 0) {
+                    /*if ($subtotalCell.length > 0) {
                         const subtotal = parseFloat($subtotalCell.text().replace('Bs. ', ''));
-                        total += isNaN(subtotal) ? 0 : subtotal;
-                    }
+                        total += isNaN($subtotalCell) ? 0 : $subtotalCell;
+                    }*/
+                    total += parseFloat($subtotalCell);
+                    // alert(row[4]);
                 });
-                total = isNaN(total) ? 0 : total;
-
+                //alert(total);
+                 total = isNaN(total) ? 0 : parseFloat(total).toFixed(2);
+                $('#total_display').text('Total Bs. ' + total);
+                $('#price_table').text('Bs. ' + total);
+                $('#total').val(total);
+              
                 
+                // // $('#amount').val(total.toFixed(2));
+                // //$('#price_display').text('Bs. ' + total.toFixed(2));
                 // $('#price_table').text('Bs. ' + total.toFixed(2));
-                // $('#amount').val(total.toFixed(2));
-                $('#total_display').text('Total Bs. ' + total.toFixed(2));
-                $('#price_table').text('Bs. ' + total.toFixed(2));
-                $('#total').val(total.toFixed(2));
-                
+                 
             }
             /*$( "#efectivo" ).on( "blur", function() {
                 calculoCambio();
@@ -427,8 +434,8 @@
                     },
                     success: function(response) {
                         if (response.status === 200) {
-                            location
-                                .reload(); // Recargar o actualizar la vista según sea necesario
+                            // location
+                            //     .reload(); // Recargar o actualizar la vista según sea necesario
                         } else {
                             alert('Ocurrió un error al guardar los cambios.');
                         }
@@ -518,10 +525,12 @@
             const clienteValue= $('#cliente').val().trim();
             const EfectivoValue = parseFloat($('#efectivo').val());
             const QrValue = parseFloat($('#qr').val());
-           
+            const cambio= parseFloat($('#cambio_display').text());
+            
             const clienteFilled = clienteValue.length > 0;
             const EfectivoFilled = (EfectivoValue+QrValue) > 0;
-          // alert(EfectivoFilled);
+            const CambioFilled = cambio > 0;
+       // alert(cambio +'>'+ 0);
             let allProductsFilled = true;
             $('#venta_details_table tbody tr').each(function() {
                 const productInput = $(this).find('input[name="cantidades[]"]');
@@ -534,7 +543,8 @@
                 
             });
 
-            const saveButtonEnabled = clienteValue && EfectivoFilled&& allProductsFilled;;
+
+            const saveButtonEnabled = clienteValue && EfectivoFilled&& allProductsFilled&&CambioFilled;;
             $('#btn_save').prop('disabled', !saveButtonEnabled);
         }
          

@@ -149,7 +149,7 @@
 @section('page-script')
     <script>
         $(document).ready(function() {
-            $('#tipo').select2();
+            $(".select2").select2();
             $('#producto_id').select2();
             const productosList = @json($producto);
             toggleSaveButton();

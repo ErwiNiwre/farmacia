@@ -75,10 +75,13 @@ Route::middleware('auth', 'verified')->group(function () {
     // Rutas para Compra
     Route::get('/ventas', [VentaController::class, 'index'])->name('ventas.index');
     Route::get('/ventas/create', [VentaController::class, 'create'])->name('ventas.create');
-    Route::post('/ventas/store', [VentaController::class, 'store'])->name('ventas.store');
-    
+    Route::post('/ventas/store', [VentaController::class, 'store'])->name('ventas.store');    
+    Route::get('/ventas/{ventas}/show', [VentaController::class, 'show'])->name('ventas.show');    
+    Route::get('getListVentas', [VentaController::class, 'getListVentas'])->name('getListVentas');    
+    Route::get('/ventas/{ventas}/destroy', [VentaController::class, 'destroy'])->name('ventas.destroy');
     // Rutas para Compra Detalle
 
     Route::get('/compraDetalles/{compras}/destroy', [CompraDetalleController::class, 'destroy'])->name('compraDetalles.destroy');    
     Route::put('/compraDetalles/store', [CompraDetalleController::class, 'store'])->name('compraDetalles.store');
+    
 });

@@ -18,7 +18,28 @@ class VentaController extends Controller
      */
     public function index()
     {
-        //
+        $session_auth = auth()->user();
+        $session_name = "";
+
+        if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
+            $session_name = $session_auth->username;
+        } else {
+            $session_name = $session_auth->nombre;
+        }
+
+
+
+
+        $ventas = Venta::all();
+      
+        return view(
+            'ventas.index',
+            compact(
+                'session_auth',
+                'session_name',
+                'ventas'
+            )
+        );
     }
 
     /**
@@ -86,44 +107,15 @@ class VentaController extends Controller
             
             
             $cantidad_total=0;
-            $i=0;
             foreach ($venta_detalles as $detalle) {
                     
 
-                 $cantidad_total=$detalle['cantidad'];
-                //  echo $detalle['cantidad'];
-                //  exit;
+                 
                  $producto = Producto::find($detalle['producto_id']);
                  $compraDetalles = CompraDetalle::where('producto_id', '=', $detalle['producto_id'])->
                  where('cantidad_total', '<>','0')
                  ->orderBy('vencimiento', 'asc')
                  ->get();
-            //  print_r($compraDetalles);
-            //   exit;
-                 foreach ($compraDetalles as $compradetalle) {
-                   
-                    $compraDet = CompraDetalle::find($compradetalle->id);
-            //             if($i==1){
-            //             print_r($compraDet->cantidad_total.'-'.$cantidad_total);
-            //   exit;
-            //         }
-                    $cantidad_total=$compraDet->cantidad_total-$cantidad_total;
-                    
-
-                    if($cantidad_total<=0){
-                        $compraDet->cantidad_total=0;
-                        $cantidad_total=$cantidad_total*-1;
-            //                 print_r($cantidad_total);
-            //   exit;
-                    }else{
-                        $compraDet->cantidad_total=$cantidad_total;
-                                
-                        $cantidad_total=0;
-                    }
-                     $compraDet->save();
-                     $i++;
-                 }
-
                 $venta_detalle = new VentaDetalle();
                 // print_r($detalle);
                 // exit;
@@ -144,6 +136,39 @@ class VentaController extends Controller
                      $producto->precio_unitario=$detalle['unidad_precio'];
                 }
                 $producto->save();
+
+                $cantidad_total=$detalle['cantidad'];
+                //  echo $detalle['cantidad'];
+                //  exit;
+                
+            //  print_r($compraDetalles);
+            //   exit;
+                 foreach ($compraDetalles as $compradetalle) {
+                   
+                    $compraDet = CompraDetalle::find($compradetalle->id);
+            //             if($i==1){
+            //             print_r($compraDet->cantidad_total.'-'.$cantidad_total);
+            //   exit;
+            //         }
+                    $cantidad_total=$compraDet->cantidad_total-$cantidad_total;
+                    
+
+                    if($cantidad_total<=0){
+                        $compraDet->cantidad_total=0;
+                        $cantidad_total=abs($cantidad_total);
+            //                 print_r($cantidad_total);
+            //   exit;
+                    }else{
+                        $compraDet->cantidad_total=$cantidad_total;
+                                
+                        $cantidad_total=0;
+                    }
+                     $compraDet->lote=$venta_detalle->id;
+                    // echo $venta_detalle->id;
+                     $compraDet->save();
+                    
+                 }
+
             }
            
             DB::commit(); // Confirmar la transacción
@@ -169,10 +194,63 @@ class VentaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Venta $venta)
+  
+       public function show($id)
     {
-        //
+         $session_auth = auth()->user();
+        $session_name = "";
+
+        if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
+            $session_name = $session_auth->username;
+        } else {
+            $session_name = $session_auth->nombre;
+        }
+
+        $ventas = Venta::find($id);
+       
+
+        if (!$ventas) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'No hay datos de la Compra'
+            ], 404);
+        }
+        
+      // $compraDetalle = CompraDetalle::where('compra_id', '=', 1);
+       $ventaDetalle= DB::table('venta_detalles')
+            ->select(
+                'venta_detalles.id as id',
+                'productos.producto',
+                
+                'venta_detalles.precio_unitario',
+                'venta_detalles.cantidad',
+                'venta_detalles.subtotal'
+            )
+           
+           ->join('productos', 'productos.id', '=', 'venta_detalles.producto_id')
+           ->where('venta_detalles.venta_id',"=",$id)
+            ->whereNull('venta_detalles.deleted_at')
+            ->orderBy('venta_detalles.id', 'desc')
+            ->get();
+       //$compraDetalle ="";
+        // print_r( $compraDetalle->all());
+        // exit;
+        /*if ($compraDetalle->isEmpty()) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'No hay detalles de la Compra.'
+            ], 404);
+        }
+*/
+        return response()->json([
+            'status' => 200,
+            'data' => [
+                'ventas' => $ventas,
+                'ventaDetalles' => $ventaDetalle
+            ]
+        ]);
     }
+    
 
     /**
      * Show the form for editing the specified resource.
@@ -193,8 +271,62 @@ class VentaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Venta $venta)
+    public function destroy($id)
     {
-        //
+        $session_auth = auth()->user();
+        $session_name = "";
+
+        if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
+            $session_name = $session_auth->username;
+        } else {
+            $session_name = $session_auth->nombre;
+        }
+
+
+        $ventas = Venta::find($id);
+
+        if ($ventas) {
+             $ventas->deleted_by = $session_auth->id;
+             $ventas->save();
+
+            VentaDetalle::where('venta_id', '=', $ventas->id)
+                ->update(['deleted_by' => $session_auth->id]);
+            $ventaDetalles = VentaDetalle::where('venta_id', '=', $ventas->id)->get();
+            
+           
+           // $price = DB::table('orders')->max('price');
+            // print_r($compraDetalles);
+            // exit;
+            foreach ($ventaDetalles as $ventaDetalle) {
+                // $precio_maximo = CompraDetalle::where('producto_id', '=', $compraDetalle->producto_id)->
+                // where('compra_id', '<>', $compras->id)->max('precio_unitario');
+                //  print_r($precio_maximo);
+                //  exit;
+
+                 $compraDetalles = CompraDetalle::where('producto_id', '=', $ventaDetalle->producto_id)
+                 //->where('cantidad_total', '<>','0')
+                 ->orderBy('vencimiento', 'asc')
+                 ->get();
+
+
+
+                if ($ventaDetalle) {
+                     $productos = Producto::find($ventaDetalle->producto_id);
+                     $productos->stock_minimo=$productos->stock_minimo-$compraDetalle->cantidad;
+                         if($precio_maximo){
+                     $productos->precio_unitario=$precio_maximo;
+                     $productos->precio_venta=(($productos->porcentaje/100)*$precio_maximo)+$precio_maximo;
+                      }
+                     $productos->save();
+
+                    
+                }
+            }
+            VentaDetalle::where('venta_id', '=', $ventas->id)->delete();
+            $ventas->delete();
+
+             return redirect()->route('ventas.index');
+        } 
+
     }
 }
