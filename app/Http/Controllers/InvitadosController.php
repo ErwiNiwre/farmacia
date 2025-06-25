@@ -110,18 +110,15 @@ class InvitadosController extends Controller
     public function print()
     {
 
-        return \PDF::loadView(
-            'pdf.app',
-
-        )
+        return \PDF::loadView('pdf.app')
             // ->setPaper('letter')
             ->setOption('page-width', '80mm')        // ancho del recibo
-            ->setOption('page-height', '200mm')      // alto estimado; puede ser más
+            ->setOption('page-height', '1000mm')      // alto estimado; puede ser más
             ->setOption('encoding', 'utf-8')
-            ->setOption('margin-top', '15mm')
-            ->setOption('margin-bottom', '15mm')
-            ->setOption('margin-right', '10mm')
-            ->setOption('margin-left', '10mm')
+            ->setOption('margin-top', '10mm')
+            ->setOption('margin-bottom', '10mm')
+            ->setOption('margin-right', '2mm')
+            ->setOption('margin-left', '2mm')
             // ->setOption('header-html', route('pdf.header'))
             // ->setOption('footer-right', 'Página [page] de [toPage]')
             // ->setOption('footer-html', route('pdf.footer'))
