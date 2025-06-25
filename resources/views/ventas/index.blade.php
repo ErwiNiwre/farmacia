@@ -233,8 +233,9 @@
                      "mRender": function(data, type, row) {
                         var fecha = moment(data.venta_fecha).format('YYYY-MM-DD');
                         var btn_delete="";
-                        
-                        if(fecha<moment().format('YYYY-MM-DD'))
+                       // alert(data.id);
+                       // alert(fecha+'=='+moment().format('YYYY-MM-DD'));
+                        if(fecha==moment().format('YYYY-MM-DD'))
 						     btn_delete='<button type="button" id="btn_delete_ventas" value='+data.id+' class="waves-effect waves-light btn btn-danger mb-5" data-container="body" title="" data-bs-original-title="Eliminar"><i class="fa fa-bitbucket" aria-hidden="true"></i></button>';
                                
                                       return '<button type="button" onclick="modalVentas('+data.id+')" id="btn_view_compras" value='+data.id+' class="btn btn-info" data-bs-toggle="tooltip" data-container="body" data-bs-original-title="Ver Compra"><i class="mdi mdi-eye"></i></button>'+btn_delete;
@@ -251,7 +252,7 @@
                     "type": "num",
                     "visible": false
                 }],
-                pageLength: 10,
+                pageLength: 5,
                 lengthChange: false,
                 initComplete: function() {
                     this.api()

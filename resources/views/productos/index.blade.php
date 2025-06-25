@@ -47,22 +47,32 @@
                                             <td class="text-end">{{ number_format($producto->porcentaje, 0) . '%' }}</td>
                                             <td class="text-end">{{ $producto->precio_venta }}</td>
                                             <td class="text-end">{{ $producto->cantidad }}</td>
-                                            <td class="text-center">{{ $producto->estado }}</td>
+                                            <td class="text-center">
+                                                {!! match ($producto->estado) {
+                                                    'A' => '<span class="badge badge-pill badge-danger">AGOTADO</span>',
+                                                    'M' => '<span class="badge badge-pill badge-warning">MENOR-STOCK</span>',
+                                                    'D' => '<span class="badge badge-pill badge-success">DISPONIBLE</span>',
+                                                    default => '<span class="badge badge-pill badge-danger">DESCONOCIDO</span>',
+                                                } !!}
+                                            </td>
                                             <td class="text-center">
                                                 <div class="d-block text-dark flexbox">
                                                     <button type="button" id="btn_read" value="{{ $producto->id }}"
                                                         class="btn btn-info" data-bs-toggle="tooltip" data-container="body"
                                                         data-bs-original-title="Ver Producto">
-                                                        <i class="mdi mdi-eye"></i></button>
+                                                        <i class="mdi mdi-eye"></i>
+                                                    </button>
                                                     <a class="btn btn-secondary" data-bs-toggle="tooltip"
                                                         data-container="body" title=""
                                                         data-bs-original-title="Editar Produto"
                                                         href="{{ route('productos.edit', $producto->id) }}">
-                                                        <i class="fa fa-edit"></i></a>
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
                                                     <button type="button" id="btn_delete" value="{{ $producto->id }}"
                                                         class="btn btn-danger" data-bs-toggle="tooltip"
                                                         data-container="body" data-bs-original-title="Eliminar Produto">
-                                                        <i class="mdi mdi-delete"></i></button>
+                                                        <i class="mdi mdi-delete"></i>
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>

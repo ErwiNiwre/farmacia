@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use App\Models\CompraDetalle;
 use App\Models\Producto;
+use App\Models\kardex;
 use DataTables;
 
 class CompraController extends Controller
@@ -71,6 +72,20 @@ class CompraController extends Controller
         );
     }
 
+    function kardex($compra,$detalles,$tipo_movimiento,$user_id){
+         $kardex = new Kardex();
+        foreach ($detalles as $detalle) {
+            
+         $kardex->producto_id = $detalle['producto_id'];
+         $kardex->tipo_movimiento = $tipo_movimiento;
+         $kardex->cantidad = $detalle['cantidad'];
+         $kardex->precio_unitario = $detalle['unidad_precio'];
+         $kardex->subtotal = $detalle['subtotal'];
+         $compra->user_id =  $compra->user_id;
+         $kardex->save();
+    }
+    }
+    
     /**
      * Store a newly created resource in storage.
      */
@@ -90,15 +105,20 @@ class CompraController extends Controller
           DB::beginTransaction();
        try {
             $compra = new Compra();
+           
             $compra->compra_fecha = date("Y-m-d H:i:s");
             $compra->user_id =  $session_auth->id;
             $compra->proveedor = Str::upper(preg_replace('/\s+/', ' ', trim($request->proveedor)));
             $compra->tipo = $request->tipo;
             // print_r(count(Compra::withTrashed()->get())+1);
             // exit;
+
             $compra->numero_compra = count(Compra::withTrashed()->get())+1;
+            if( $compra->tipo=='Compra')
             $compra->total = $request->total;    
-                    
+            else
+            $compra->total=0;
+        
             $compra->created_by = $session_auth->id;
            
             $compra->save();
@@ -113,23 +133,30 @@ class CompraController extends Controller
                 $compraDetalle->created_by = $session_auth->id;
                 $compraDetalle->compra_id = $compra->id; 
                 $compraDetalle->producto_id = $detalle['producto_id'];
-                $compraDetalle->precio_unitario = $detalle['unidad_precio'];
+                
                 $compraDetalle->cantidad = $detalle['cantidad'];
                 $compraDetalle->cantidad_total = $detalle['cantidad'];
                 if($detalle['vencimiento']){
                 $compraDetalle->vencimiento = $detalle['vencimiento'];
                 }
+                if($compra->tipo=='Compra')
+                $compraDetalle->precio_unitario = $detalle['unidad_precio'];
+                else{
+                $compraDetalle->precio_unitario = 0;
+                 $compraDetalle->subtotal = 0;
                 
+                }
 
                 if ($detalle['subtotal'] == ($compraDetalle->precio_unitario * $compraDetalle->cantidad)) {
                     $compraDetalle->subtotal = $detalle['subtotal'];
                 }
                 
                 $compraDetalle->save();
-                $producto->stock_minimo=$producto->stock_minimo+$detalle['cantidad'];
+                $producto->cantidad=$producto->cantidad+$detalle['cantidad'];
                 // echo $detalle['estado'];
                 // exit;
-                if($detalle['estado']==1){
+               
+                if($detalle['estado']==1&&$compra->tipo=='Compra'){
                    
                          $producto->precio_unitario=$detalle['unidad_precio'];
                        $precio=($producto->porcentaje/100)*$detalle['unidad_precio'];
@@ -139,7 +166,7 @@ class CompraController extends Controller
                 // exit;
                 }
                 $producto->save();
-                
+                //$this->kardex($compra,$compra_detalles,$compra->tipo);
            
             }
              DB::commit();
@@ -373,8 +400,8 @@ class CompraController extends Controller
                 //  exit;
                 if ($compraDetalle) {
                      $productos = Producto::find($compraDetalle->producto_id);
-                     $productos->stock_minimo=$productos->stock_minimo-$compraDetalle->cantidad;
-                         if($precio_maximo){
+                     $productos->cantidad=$productos->cantidad-$compraDetalle->cantidad;
+                         if($precio_maximo>$productos->precio_unitario){
                      $productos->precio_unitario=$precio_maximo;
                      $productos->precio_venta=(($productos->porcentaje/100)*$precio_maximo)+$precio_maximo;
                       }
@@ -414,8 +441,8 @@ class CompraController extends Controller
             ->get();*/
 
            $listCompras= Compra::query()
-    ->select('compras.*')
-    ->addSelect(DB::raw('(SELECT cantidad=cantidad_total FROM public.compra_detalles as estado where compra_id=compras.id 
+    ->select('compras.id','compras.compra_fecha','compras.numero_compra','compras.proveedor','compras.tipo','compras.total')
+    ->addSelect(DB::raw('(SELECT cantidad=cantidad_total as estado FROM public.compra_detalles  where compra_id=compras.id 
 ORDER BY estado ASC limit 1) as estado'))
     ->get();
                 // print_r($listCompras);
@@ -497,7 +524,7 @@ ORDER BY estado ASC limit 1) as estado'))
                 //  echo  $precio_maximo;
                 //  exit;
             $productos = Producto::find($comprasDetalle->producto_id);
-                     $productos->stock_minimo=$productos->stock_minimo-$comprasDetalle->cantidad;
+                     $productos->cantidad=$productos->cantidad-$comprasDetalle->cantidad;
                       if($precio_maximo){
                      $productos->precio_unitario=$precio_maximo;
                      $productos->precio_venta=(($productos->porcentaje/100)*$precio_maximo)+$precio_maximo;

@@ -1,7 +1,7 @@
 @extends('app.app')
 
 @section('title')
-    Laboratorio
+    Compras
 @endsection
 
 @section('caption')
@@ -149,13 +149,11 @@
 @section('page-script')
     <script>
         $(document).ready(function() {
-            $(".select2").select2();
-            $('#producto_id').select2();
             const productosList = @json($producto);
             toggleSaveButton();
             $('#createcompras').keydown(function(event){
             if(event.keyCode == 13) {
-              // alert('You pressed enter! Form submission will be disabled.')
+             //  alert('You pressed enter! Form submission will be disabled.')
              // console.log(event);
                event.preventDefault();
                return false;
@@ -280,7 +278,7 @@
                     },
                     
                 ],
-                pageLength: 5,
+                pageLength: 10,
                 lengthChange: false,
                 "language": {
                     "url": "{{ asset('lang/datatable.es-ES.json') }}"
@@ -344,12 +342,13 @@
 
             $('#createcompras').on('submit', function(event) {
                 event.preventDefault();
+                 $('#btn_save').prop('disabled', true);
                 var proveedor = $('#proveedor').val();
                 var compras = $('#compras').val();
                 var tipo = $('#tipo').val();
                 var total = $('#total').val();
                 var productos = updateProductDetails();
-
+                
                 if (productos.length === 0) {
                     alert('No se ha seleccionado ningún servicio.');
                     return; // Evitar el envío si no hay servicios
@@ -373,10 +372,12 @@
                                 .reload(); // Recargar o actualizar la vista según sea necesario
                         } else {
                             alert('Ocurrió un error al guardar los cambios.');
+                            toggleSaveButton();
                         }
                     },
                     error: function(xhr, status, error) {
-                        alert('Ocurrió un error asegurese de llenar todos los campos: ' + error);
+                        alert('Ocurrió un error un error inesperado: ' + error);
+                        toggleSaveButton();
                     }
                 });
             });
@@ -433,7 +434,7 @@
                 });
                // console.log(JSON.stringify(comprasDetails));
                 // Retornar el array de objetos en formato JSON
-                console.log(JSON.stringify(comprasDetails));
+                //console.log(JSON.stringify(comprasDetails));
                 return JSON.stringify(comprasDetails);
             }
         });

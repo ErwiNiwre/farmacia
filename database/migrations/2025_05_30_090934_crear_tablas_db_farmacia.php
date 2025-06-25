@@ -163,8 +163,7 @@ return new class extends Migration
             $table->decimal('precio_unitario', 13, 2);
             $table->decimal('subtotal', 13, 2);
             $table->date('vencimiento')->nullable();
-            $table->integer('cantidad_total');
-            $table->integer('lote')->nullable();
+            $table->integer('cantidad_total');            
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
@@ -177,12 +176,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->dateTime('venta_fecha')->nullable();
-            $table->bigInteger('numero_venta');
+            $table->bigInteger('numero_venta');       
+            $table->string('tipo');
             $table->string('cliente');            
             $table->enum('metodo_pago', ['N', 'E', 'Q', 'M'])->default('N');
             $table->decimal('total', 13, 2)->nullable();
             $table->decimal('efectivo', 13, 2)->nullable();
-            $table->decimal('qr', 13, 2)->nullable();
+            $table->decimal('qr', 13, 2)->nullable();            
+            $table->text('observacion')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
@@ -194,10 +195,11 @@ return new class extends Migration
         Schema::create('venta_detalles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('venta_id')->constrained('ventas')->cascadeOnDelete();
-            $table->foreignId('producto_id')->constrained('productos')->restrictOnDelete();
+            $table->foreignId('producto_id')->constrained('productos')->restrictOnDelete();     
             $table->integer('cantidad');
             $table->decimal('precio_unitario', 13, 2);
-            $table->decimal('subtotal', 13, 2);
+            $table->decimal('subtotal', 13, 2);            
+            $table->string('lote')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();

@@ -9,5 +9,6 @@
             </li>
         </ul>
     </div>
-    &copy; {{ date('Y') }} <a href="http://cmfdev00/recibosApp/">Centro Médico Fiori</a>. Todos los derechos reservados.
+    &copy; {{ date('Y') }} <a href="http://cmfdev00/farmacia/">Centro Médico Fiori</a>. Todos los derechos
+    reservados.
 </footer>

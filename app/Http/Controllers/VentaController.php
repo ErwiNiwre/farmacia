@@ -92,12 +92,20 @@ class VentaController extends Controller
             $venta->venta_fecha = date("Y-m-d H:i:s");
             $venta->user_id =  $session_auth->id;
             $venta->cliente = Str::upper(preg_replace('/\s+/', ' ', trim($request->cliente)));
-            $venta->metodo_pago = $request->tipo;
-            $venta->numero_venta = 1;
-            $venta->total = $request->total;  
-            $venta->efectivo =  $request->efectivo;;
-            $venta->qr =  $request->qr;;   
-                    
+            $venta->tipo = $request->tipo;
+            $venta->metodo_pago = $request->metodo_pago;
+            $venta->numero_venta = count(Venta::withTrashed()->get())+1;
+            if( $venta->tipo=='Salida Directa'){
+            $venta->total =0;  
+            $venta->efectivo =  0;
+            $venta->qr =  0;
+            $venta->observacion = $request->observacion;  
+            }else{
+                $venta->total = $request->total;  
+            $venta->efectivo =  $request->efectivo;
+            $venta->qr =  $request->qr;
+            $venta->observacion = $request->observacion;  
+            }
             $venta->created_by = $session_auth->id;
            
             $venta->save();
@@ -114,60 +122,82 @@ class VentaController extends Controller
                  $producto = Producto::find($detalle['producto_id']);
                  $compraDetalles = CompraDetalle::where('producto_id', '=', $detalle['producto_id'])->
                  where('cantidad_total', '<>','0')
-                 ->orderBy('vencimiento', 'asc')
+                 ->orderBy('vencimiento', 'asc','id','asc')
                  ->get();
+                $cantidad_total=$detalle['cantidad'];
+                $lote="";
+                $estado=0;
+                $cantidad;
+                 foreach ($compraDetalles as $compradetalle) {
+                   
+                  //  $compraDet = CompraDetalle::find($compradetalle->id);
+            //             if($i==1){
+            //             print_r($compraDet->cantidad_total.'-'.$cantidad_total);
+            
+            //         }
+           if($estado==0){
+        //    print_r($compradetalle->id);
+        //       exit;
+                    $cantidad_total=$compradetalle->cantidad_total-$cantidad_total;
+                    
+
+                    if($cantidad_total<=0){
+                        $cantidad=$compradetalle->cantidad_total;
+                        $compradetalle->cantidad_total=0;
+                        $cantidad_total=abs($cantidad_total);
+            //                 print_r($cantidad_total);
+            //   exit;
+            if($cantidad_total==0){
+                $estado=1;
+            }
+                    }else{
+                         $cantidad= $compradetalle->cantidad_total-$cantidad_total; 
+                        $compradetalle->cantidad_total=$cantidad_total;
+                               
+                        $estado=1;
+                    }
+                     $lote=$lote.' '.$compradetalle->id.';'.$cantidad;
+
+                    // echo $venta_detalle->id;
+                     $compradetalle->save();
+                }
+                }
+
+
                 $venta_detalle = new VentaDetalle();
                 // print_r($detalle);
                 // exit;
                 $venta_detalle->venta_id = $venta->id; 
                 $venta_detalle->producto_id = $detalle['producto_id'];
+                if( $venta->tipo=='Salida Directa')
+                $venta_detalle->precio_unitario = 0;
+                else
                 $venta_detalle->precio_unitario = $detalle['unidad_precio'];
+
                 $venta_detalle->cantidad = $detalle['cantidad'];
+                $venta_detalle->lote = trim($lote);
                 
-               
-                if ($detalle['subtotal'] == ($venta_detalle->precio_unitario * $venta_detalle->cantidad)) {
-                    $venta_detalle->subtotal = $detalle['subtotal'];
-                }
+                //print_r($detalle['subtotal'].' == '.($venta_detalle->precio_unitario * $venta_detalle->cantidad));
+              $venta_detalle->subtotal = $venta_detalle->precio_unitario * $venta_detalle->cantidad;
+                // if ($detalle['subtotal'] == ($venta_detalle->precio_unitario * $venta_detalle->cantidad)) {
+                //     $venta_detalle->subtotal = $detalle['subtotal'];
+                // }
                 $venta_detalle->created_by = $session_auth->id;
                 $venta_detalle->save();
-                $producto->stock_minimo=$producto->stock_minimo-$detalle['cantidad'];
+                $producto->cantidad=$producto->cantidad-$detalle['cantidad'];
                 if(!empty($detalle['estado'])){
                      $producto->precio_venta=(($producto->porcentaje/100)*$detalle['unidad_precio'])+$detalle['unidad_precio'];
                      $producto->precio_unitario=$detalle['unidad_precio'];
                 }
                 $producto->save();
 
-                $cantidad_total=$detalle['cantidad'];
+                
                 //  echo $detalle['cantidad'];
                 //  exit;
                 
             //  print_r($compraDetalles);
             //   exit;
-                 foreach ($compraDetalles as $compradetalle) {
-                   
-                    $compraDet = CompraDetalle::find($compradetalle->id);
-            //             if($i==1){
-            //             print_r($compraDet->cantidad_total.'-'.$cantidad_total);
-            //   exit;
-            //         }
-                    $cantidad_total=$compraDet->cantidad_total-$cantidad_total;
-                    
-
-                    if($cantidad_total<=0){
-                        $compraDet->cantidad_total=0;
-                        $cantidad_total=abs($cantidad_total);
-            //                 print_r($cantidad_total);
-            //   exit;
-                    }else{
-                        $compraDet->cantidad_total=$cantidad_total;
-                                
-                        $cantidad_total=0;
-                    }
-                     $compraDet->lote=$venta_detalle->id;
-                    // echo $venta_detalle->id;
-                     $compraDet->save();
-                    
-                 }
+                
 
             }
            
@@ -282,13 +312,13 @@ class VentaController extends Controller
             $session_name = $session_auth->nombre;
         }
 
-
+try{
         $ventas = Venta::find($id);
 
         if ($ventas) {
              $ventas->deleted_by = $session_auth->id;
              $ventas->save();
-
+$cantidad_total=0;
             VentaDetalle::where('venta_id', '=', $ventas->id)
                 ->update(['deleted_by' => $session_auth->id]);
             $ventaDetalles = VentaDetalle::where('venta_id', '=', $ventas->id)->get();
@@ -302,21 +332,31 @@ class VentaController extends Controller
                 // where('compra_id', '<>', $compras->id)->max('precio_unitario');
                 //  print_r($precio_maximo);
                 //  exit;
+                $lotes=explode(" ",$ventaDetalle->lote);
+               $cantidad_total=$ventaDetalle->cantidad;
+                foreach ($lotes as $lote_array) {
+              
+                    $lote=explode(";",$lote_array);
+                //           print_r($lote[0]);
+                // exit;
+                    $detalleCompra=CompraDetalle::find($lote[0]);
 
-                 $compraDetalles = CompraDetalle::where('producto_id', '=', $ventaDetalle->producto_id)
-                 //->where('cantidad_total', '<>','0')
-                 ->orderBy('vencimiento', 'asc')
-                 ->get();
+                   $detalleCompra->cantidad_total=$detalleCompra->cantidad_total+$lote[1];
+
+                    $detalleCompra->save();
+               
+            }
+            //   $compraDetalles = CompraDetalle::where('producto_id', '=', $ventaDetalle->producto_id)
+            //      //->where('cantidad_total', '<>','0')
+            //      ->orderBy('vencimiento', 'asc')
+            //      ->get();
 
 
 
                 if ($ventaDetalle) {
                      $productos = Producto::find($ventaDetalle->producto_id);
-                     $productos->stock_minimo=$productos->stock_minimo-$compraDetalle->cantidad;
-                         if($precio_maximo){
-                     $productos->precio_unitario=$precio_maximo;
-                     $productos->precio_venta=(($productos->porcentaje/100)*$precio_maximo)+$precio_maximo;
-                      }
+                     $productos->cantidad=$productos->cantidad+$ventaDetalle->cantidad;
+                         
                      $productos->save();
 
                     
@@ -325,7 +365,19 @@ class VentaController extends Controller
             VentaDetalle::where('venta_id', '=', $ventas->id)->delete();
             $ventas->delete();
 
-             return redirect()->route('ventas.index');
+             return response()->json([
+                'status' => 200,
+                'message' => 'Datos de la Compra Creada.',
+            ]);
+        }
+         } catch (\Exception $e) {
+            DB::rollBack();
+            // flash('Error al crear la compra. Por favor, intente nuevamente.', 'alert alert-danger alert-dismissible');
+            // return redirect()->back()->withInput();
+            return response()->json([
+                'status' => 500,
+                'message' => 'Error al guardar la atención: ' . $e->getMessage()
+            ], 500);
         } 
 
     }
