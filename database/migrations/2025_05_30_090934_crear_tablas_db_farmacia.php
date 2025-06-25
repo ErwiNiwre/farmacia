@@ -142,7 +142,7 @@ return new class extends Migration
         Schema::create('compras', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->dateTime('compra_fecha')->nullable();            
+            $table->dateTime('compra_fecha')->nullable();
             $table->bigInteger('numero_compra');
             $table->string('proveedor');
             $table->string('tipo');
@@ -177,7 +177,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->dateTime('venta_fecha')->nullable();
             $table->bigInteger('numero_venta');
-            $table->string('cliente');            
+            $table->string('cliente');
             $table->enum('metodo_pago', ['N', 'E', 'Q', 'M'])->default('N');
             $table->decimal('total', 13, 2)->nullable();
             $table->decimal('efectivo', 13, 2)->nullable();

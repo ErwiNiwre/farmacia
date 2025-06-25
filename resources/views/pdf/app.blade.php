@@ -5,145 +5,222 @@
     <meta charset="UTF-8">
     <title>Recibo</title>
     <style>
-        /* @page {
-            margin: 5mm 5mm;
-            size: 80mm auto;
-        } */
-
         body {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
             font-size: 10pt;
             margin: 0;
             padding: 0;
-            /* width: 80mm; */
+            width: 70mm;
+            word-spacing: 1.5px;
+            /* line-height: 1; */
         }
 
-        .center {
+        .tbl-head {
+            width: 100%;
+            border-collapse: collapse;
+            border-top: 1px dashed black;
+            border-bottom: 1px dashed black;
+        }
+
+        .tbl-head thead th {
+            padding-top: 10px;
+            padding-bottom: 5px;
+            padding-left: 0px;
+            padding-right: 0px;
             text-align: center;
         }
 
-        .bold {
-            font-weight: bold;
+        .tbl-head tbody td {
+            padding-top: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            padding-right: 0px;
+            text-align: center;
         }
 
-        .line {
-            border-top: 1px dashed #000;
-            margin: 5px 0;
+        .tbl-info {
+            width: 100%;
+            border-collapse: collapse;
+            /* border: 1px solid; */
         }
 
-        table {
+        .tbl-info th {
+            padding-top: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            padding-right: 1px;
+            text-align: right;
+            width: 40%;
+        }
+
+        .tbl-info td {
+            padding-top: 0px;
+            padding-bottom: 0px;
+            padding-left: 5px;
+            padding-right: 0px;
+            text-align: justify;
+            width: 60%;
+        }
+
+        .tbl-detalle {
             width: 100%;
             font-size: 9pt;
             border-collapse: collapse;
+            border-top: 1px dashed black;
+            border-bottom: 1px dashed black;
         }
 
-        td {
-            padding: 2px 0;
+        .tbl-detalle thead th {
+            padding-top: 3px;
+            padding-bottom: 3px;
+            padding-left: 2px;
+            padding-right: 2px;
+            text-align: right;
+            border-bottom: 1px dashed black;
         }
 
-        .right {
+        .tbl-detalle tbody td {
+            padding-top: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            padding-right: 0px;
             text-align: right;
         }
 
-        .left {
-            text-align: left;
+        .tbl-detalle-precio {
+            width: 100%;
+            font-size: 9pt;
+            border-collapse: collapse;
+            font-weight: bold;
         }
 
-        .small {
-            font-size: 8pt;
+        .tbl-detalle-precio tbody td {
+            padding-top: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            padding-right: 0px;
+            text-align: right;
+        }
+
+        .tbl-footer {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .tbl-footer tbody td {
+            padding-top: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            padding-right: 0px;
+            text-align: center;
         }
     </style>
 </head>
 
 <body>
-    <div class="center bold">
-        FACTURA<br>
-        CON DERECHO A CRÉDITO FISCAL<br>
-        SEGUROS PROVIDA S.A.<br>
-        Casa Matriz<br>
-        No. Punto de Venta 0<br>
-        AVENIDA 20 DE OCTUBRE NRO. 2524 EDIF.: SAN JOSE PISO: MEZANINE DEPTO.: - ZONA/BARRIO: SOPOCACHI<br>
-        Tel. 2430300<br>
-        LA PAZ<br>
-    </div>
-    <div class="line"></div>
-    <div class="center">
-        <span><strong>NIT</strong></span><br>
-        1020307022<br>
-        <strong>FACTURA N°</strong><br>
-        26<br>
-        <strong>CÓD. AUTORIZACIÓN</strong><br>
-        45CFEEEC37D6BAC6C3127962E2C498393BD1942C426123CB2CDDB1F74
-    </div>
-    <div class="line"></div>
-    <table>
+    <table class="center">
         <tr>
-            <td><strong>NOMBRE/RAZÓN SOCIAL:</strong></td>
-            <td class="right">FLORES CRUZ GONZALO OMAR</td>
-        </tr>
-        <tr>
-            <td><strong>NIT/CI/CEX:</strong></td>
-            <td class="right">4246757014</td>
-        </tr>
-        <tr>
-            <td><strong>COD. CLIENTE:</strong></td>
-            <td class="right">4246757014</td>
-        </tr>
-        <tr>
-            <td><strong>FECHA DE EMISIÓN:</strong></td>
-            <td class="right">21/05/2025 09:16 AM</td>
+            <td>
+                <img src="{{ asset('images/logoFioriN.png') }}" alt="" height="80px">
+            </td>
         </tr>
     </table>
-    <div class="line"></div>
-    <div class="bold">DETALLE</div>
-    <div class="small">81 - ESCRITORIO CON 3 CAJONES<br>Unidad de Medida: Unidad (Bienes)</div>
-    <table>
+    <table class="tbl-head">
+        <thead>
+            <tr>
+                <th>RECIBO</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Av. Luis Guardia y Av. Ballivián # 802</td>
+            </tr>
+            <tr>
+                <td>Zona Primero de Mayo - El Alto</td>
+            </tr>
+            <tr>
+                <td style="padding-bottom: 5px;">Tel/WhatsApp: 69425555</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="tbl-info">
         <tr>
-            <td>2.00 X 450.00 - 0.00</td>
-            <td class="right">900.00</td>
+            <th style="padding-top: 5px;">N°:</th>
+            <td style="padding-top: 5px;">000001</td>
+        </tr>
+        <tr>
+            <th>NOMBRE:</th>
+            <td>JOSE ANTONIO SAAVEDRA DE LA ZAGARNAGA BEIZAGA</td>
+        </tr>
+        <tr>
+            <th>FECHA EMISIÓN:</th>
+            <td>21/05/2025 09:16 AM</td>
+        </tr>
+        <tr>
+            <th>TIPO PAGO:</th>
+            <td>21/05/2025 09:16 AM</td>
+        </tr>
+        <tr>
+            <th style="padding-bottom: 5px;"></th>
+            <td style="text-align: right; padding-bottom: 5px;">BC4449</td>
         </tr>
     </table>
-    <div class="small" style="margin-top:10px;">
-        95 - MODULO 2 PERSONAS CON PUERTA<br>Unidad de Medida: Unidad (Bienes)
-    </div>
-    <table>
-        <tr>
-            <td>1.00 X 600.00 - 0.00</td>
-            <td class="right">600.00</td>
-        </tr>
+
+    <table class="tbl-detalle">
+        <thead>
+            <tr>
+                <th style="width: 45%; text-align: center;">DETALLE</th>
+                <th style="width: 10%;">CANT</th>
+                <th style="width: 20%;">PRECIO</th>
+                <th style="width: 25%;">SUBTOTAL</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align: left;">AGUA PARA INYECCION 5ML</td>
+                <td>50</td>
+                <td>500,60</td>
+                <td>500,60</td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">ALCOHOL MEDICINAL 70% 1L</td>
+                <td>100</td>
+                <td>500,60</td>
+                <td>500,60</td>
+            </tr>
+        </tbody>
     </table>
-    <div class="line"></div>
-    <table>
-        <tr>
-            <td>SUBTOTAL Bs</td>
-            <td class="right">1,500.00</td>
-        </tr>
-        <tr>
-            <td>DESCUENTO Bs</td>
-            <td class="right">0.00</td>
-        </tr>
-        <tr>
-            <td><strong>TOTAL Bs</strong></td>
-            <td class="right"><strong>1,500.00</strong></td>
-        </tr>
-        <tr>
-            <td>MONTO GIFT CARD Bs</td>
-            <td class="right">0.00</td>
-        </tr>
-        <tr>
-            <td><strong>MONTO A PAGAR Bs</strong></td>
-            <td class="right"><strong>1,500.00</strong></td>
-        </tr>
-        <tr>
-            <td><strong>IMPORTE BASE CRÉDITO FISCAL Bs</strong></td>
-            <td class="right"><strong>1,500.00</strong></td>
-        </tr>
+    <table class="tbl-detalle-precio">
+        <tbody>
+            <tr>
+                <td style="width: 45%; padding-top: 5px;"></td>
+                <td style="width: 30%; padding-top: 5px;">EFECTIVO BS.:</td>
+                <td style="width: 25%; padding-top: 5px;">500,60</td>
+            </tr>
+            <tr>
+                <td style="width: 45%;"></td>
+                <td style="width: 30%;">QR BS.:</td>
+                <td style="width: 25%;">500,60</td>
+            </tr>
+            <tr>
+                <td style="width: 45%;"></td>
+                <td style="width: 30%; border-bottom: 1px dashed black;">TOTAL BS.:</td>
+                <td style="width: 25%; border-bottom: 1px dashed black;">500,60</td>
+            </tr>
+        </tbody>
     </table>
-    <div class="line"></div>
-    <div>
-        Son: Un mil quinientos 00/100 Bolivianos
-    </div>
-    <div class="line"></div>
+
+    <table class="tbl-footer">
+        <tbody>
+            <tr>
+                <td style="padding-top: 15px;">GRACIAS POR SU COMPRA</td>
+            </tr>
+            <tr>
+                <td style="padding-bottom: 5px;">NO VALIDO PARA CREDITO FISCAL</td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 
 </html>
