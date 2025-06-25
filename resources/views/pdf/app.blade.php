@@ -147,23 +147,23 @@
     <table class="tbl-info">
         <tr>
             <th style="padding-top: 5px;">N°:</th>
-            <td style="padding-top: 5px;">000001</td>
+            <td style="padding-top: 5px;">{{ $ventas->numero_venta }}</td>
         </tr>
         <tr>
             <th>NOMBRE:</th>
-            <td>JOSE ANTONIO SAAVEDRA DE LA ZAGARNAGA BEIZAGA</td>
+            <td>{{ $ventas->cliente }}</td>
         </tr>
         <tr>
             <th>FECHA EMISIÓN:</th>
-            <td>21/05/2025 09:16 AM</td>
+            <td>{{ $ventas->venta_fecha }}</td>
         </tr>
         <tr>
             <th>TIPO PAGO:</th>
-            <td>21/05/2025 09:16 AM</td>
+            <td>{{ $ventas->metodo_pago }}</td>
         </tr>
         <tr>
             <th style="padding-bottom: 5px;"></th>
-            <td style="text-align: right; padding-bottom: 5px;">BC4449</td>
+            <td style="text-align: right; padding-bottom: 5px;">{{ $ventas->user_id }}</td>
         </tr>
     </table>
 
@@ -177,18 +177,14 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td style="text-align: left;">AGUA PARA INYECCION 5ML</td>
-                <td>50</td>
-                <td>500,60</td>
-                <td>500,60</td>
-            </tr>
-            <tr>
-                <td style="text-align: left;">ALCOHOL MEDICINAL 70% 1L</td>
-                <td>100</td>
-                <td>500,60</td>
-                <td>500,60</td>
-            </tr>
+            @foreach ($venta_detalles as $venta_detalle)
+                <tr>
+                    <td style="text-align: left;">{{ $venta_detalle->producto_id }}</td>
+                    <td>{{ $venta_detalle->cantidad }}</td>
+                    <td>{{ $venta_detalle->precio_unitario }}</td>
+                    <td>{{ $venta_detalle->subtotal }}</td>
+                </tr>
+            @endforeach
         </tbody>
     </table>
     <table class="tbl-detalle-precio">
@@ -196,17 +192,17 @@
             <tr>
                 <td style="width: 45%; padding-top: 5px;"></td>
                 <td style="width: 30%; padding-top: 5px;">EFECTIVO BS.:</td>
-                <td style="width: 25%; padding-top: 5px;">500,60</td>
+                <td style="width: 25%; padding-top: 5px;">{{ number_format($ventas->efectivo ?? 0, 2, ',', '.') }}</td>
             </tr>
             <tr>
                 <td style="width: 45%;"></td>
                 <td style="width: 30%;">QR BS.:</td>
-                <td style="width: 25%;">500,60</td>
+                <td style="width: 25%;">{{ number_format($ventas->qr ?? 0, 2, ',', '.') }}</td>
             </tr>
             <tr>
                 <td style="width: 45%;"></td>
                 <td style="width: 30%; border-bottom: 1px dashed black;">TOTAL BS.:</td>
-                <td style="width: 25%; border-bottom: 1px dashed black;">500,60</td>
+                <td style="width: 25%; border-bottom: 1px dashed black;">{{ $ventas->total }}</td>
             </tr>
         </tbody>
     </table>

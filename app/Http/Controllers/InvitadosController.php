@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
+use App\Models\Venta;
+use App\Models\VentaDetalle;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 // use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
@@ -109,9 +112,47 @@ class InvitadosController extends Controller
 
     public function print()
     {
+        $ventas = new Venta();
 
-        return \PDF::loadView('pdf.app')
-            // ->setPaper('letter')
+        $ventas->id = 1;
+        $ventas->user_id = 1;
+        $ventas->venta_fecha = Carbon::now();
+        $ventas->numero_venta = 1;
+        $ventas->cliente = "Pedro Luna Cortez";
+        $ventas->metodo_pago = "E";
+        $ventas->total = "301.00";
+        $ventas->efectivo = null;
+        $ventas->qr = "250.50";
+        $ventas->venta_fecha = Carbon::parse($ventas->venta_fecha)->format('d-m-Y H:i:s');
+        $ventas->user_id = str_pad($ventas->user_id, 4, '0', STR_PAD_LEFT);
+        $ventas->numero_venta = str_pad($ventas->numero_venta, 6, '0', STR_PAD_LEFT);
+
+        $ventas->metodo_pago = match ($ventas->metodo_pago) {
+            'E' => 'EFECTIVO',
+            'Q' => 'QR',
+            'M' => 'MIXTO',
+            default => 'NINGUNO',
+        };
+
+        $venta_detalles = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $venta_detalle = new VentaDetalle();
+            $venta_detalle->id = $i;
+            $venta_detalle->venta_id = 1;
+            $venta_detalle->producto_id = "AGUA PARA INYECCION 5ML - " . $i;
+            $venta_detalle->cantidad = 2;
+            $venta_detalle->precio_unitario = "500,60";
+            $venta_detalle->subtotal = "500,60";
+            $venta_detalles[] = $venta_detalle;
+        }
+        // return $venta_detalles;
+        return \PDF::loadView(
+            'pdf.app',
+            compact(
+                'ventas',
+                'venta_detalles'
+            )
+        )
             ->setOption('page-width', '80mm')        // ancho del recibo
             ->setOption('page-height', '297mm')      // alto estimado; puede ser más
             ->setOption('margin-top', '0mm')
