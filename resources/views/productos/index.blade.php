@@ -36,48 +36,6 @@
                                         <th class="text-center">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    @foreach ($productos as $producto)
-                                        <tr>
-                                            <td>{{ $producto->id }}</td>
-                                            <td>{{ $producto->producto }}</td>
-                                            <td>{{ $producto->generico }}</td>
-                                            <td>{{ $producto->tipo_producto == 'M' ? 'Medicamento' : 'Insumo' }}</td>
-                                            <td class="text-end">{{ $producto->precio_unitario }}</td>
-                                            <td class="text-end">{{ number_format($producto->porcentaje, 0) . '%' }}</td>
-                                            <td class="text-end">{{ $producto->precio_venta }}</td>
-                                            <td class="text-end">{{ $producto->cantidad }}</td>
-                                            <td class="text-center">
-                                                {!! match ($producto->estado) {
-                                                    'A' => '<span class="badge badge-pill badge-danger">AGOTADO</span>',
-                                                    'M' => '<span class="badge badge-pill badge-warning">MENOR-STOCK</span>',
-                                                    'D' => '<span class="badge badge-pill badge-success">DISPONIBLE</span>',
-                                                    default => '<span class="badge badge-pill badge-danger">DESCONOCIDO</span>',
-                                                } !!}
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="d-block text-dark flexbox">
-                                                    <button type="button" id="btn_read" value="{{ $producto->id }}"
-                                                        class="btn btn-info" data-bs-toggle="tooltip" data-container="body"
-                                                        data-bs-original-title="Ver Producto">
-                                                        <i class="mdi mdi-eye"></i>
-                                                    </button>
-                                                    <a class="btn btn-secondary" data-bs-toggle="tooltip"
-                                                        data-container="body" title=""
-                                                        data-bs-original-title="Editar Produto"
-                                                        href="{{ route('productos.edit', $producto->id) }}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-                                                    <button type="button" id="btn_delete" value="{{ $producto->id }}"
-                                                        class="btn btn-danger" data-bs-toggle="tooltip"
-                                                        data-container="body" data-bs-original-title="Eliminar Produto">
-                                                        <i class="mdi mdi-delete"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -294,25 +252,91 @@
 @section('page-script')
     <script>
         $(document).ready(function() {
-            $('#tbl_Producto').DataTable({
-                "order": [
+            let tbl_Producto = $('#tbl_Producto').DataTable({
+                data: @json($productos),
+                order: [
                     [0, 'desc']
                 ],
-                "columnDefs": [{
-                        "targets": 0, // Primera columna (índice 0)
-                        "visible": false // Ocultar la primera columna
+                columns: [{
+                        data: 'id',
+                        visible: false
                     },
                     {
-                        "targets": -1, // Última columna
-                        "orderable": false,
-                        "searchable": false
+                        data: 'producto'
+                    },
+                    {
+                        data: 'generico'
+                    },
+                    {
+                        data: 'tipo_producto'
+                    },
+                    {
+                        data: 'precio_unitario',
+                        className: 'text-end'
+                    },
+                    {
+                        data: 'porcentaje',
+                        className: 'text-end'
+                    },
+                    {
+                        data: 'precio_venta',
+                        className: 'text-end'
+                    },
+                    {
+                        data: 'cantidad',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'estado',
+                        className: 'text-center',
+                        render: function(data) {
+                            switch (data) {
+                                case 'A':
+                                    return '<span class="badge badge-pill badge-danger">AGOTADO</span>';
+                                case 'M':
+                                    return '<span class="badge badge-pill badge-warning">MENOR-STOCK</span>';
+                                case 'D':
+                                    return '<span class="badge badge-pill badge-success">DISPONIBLE</span>';
+                                default:
+                                    return '<span class="badge badge-pill badge-danger">DESCONOCIDO</span>';
+                            }
+                        }
+                    },
+                    {
+                        data: null,
+                        className: 'text-center',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row) {
+                            return `
+                            <div class="d-block text-dark flexbox">
+                                <button type="button" id="btn_read" value="${row.id}" class="btn btn-info" data-bs-toggle="tooltip" title="Ver Producto">
+                                    <i class="mdi mdi-eye"></i>
+                                </button>
+                                <a class="btn btn-secondary" href="${row.edit_url}" data-bs-toggle="tooltip" title="Editar Producto">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <button type="button" id="btn_delete" value="${row.id}" class="btn btn-danger" data-bs-toggle="tooltip" title="Eliminar Producto">
+                                    <i class="mdi mdi-delete"></i>
+                                </button>
+                            </div>
+                        `;
+                        }
                     }
                 ],
                 pageLength: 5,
                 lengthChange: false,
-                "language": {
+                language: {
                     "url": "{{ asset('lang/datatable.es-ES.json') }}"
                 }
+            });
+
+            tbl_Producto.on('draw', function() {
+                const tooltipTriggerList = [].slice.call(document.querySelectorAll(
+                    '[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function(tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
             });
 
             $(document).on('click', '#btn_read', function() {

@@ -20,6 +20,7 @@ use App\Http\Controllers\VentaController;
 
 Route::get('/', [InvitadosController::class, 'farmacia'])->name('invitados.farmacia');
 Route::get('/servicios', [InvitadosController::class, 'servicios'])->name('invitados.servicios');
+Route::get('/pdf', [InvitadosController::class, 'print'])->name('invitados.print');
 
 Route::middleware('auth', 'verified')->group(function () {
    // Pagina Inicial

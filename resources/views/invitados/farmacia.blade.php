@@ -46,31 +46,6 @@
                                                         <th>Precio</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    @foreach ($medicamentos as $medicamento)
-                                                        <tr>
-                                                            <td>{{ $medicamento->id }}</td>
-                                                            <td>{{ $medicamento->producto }}</td>
-                                                            <td>{{ $medicamento->generico }}</td>
-                                                            <td>{{ $medicamento->marca == 'NINGUNO' ? '' : $medicamento->marca }}
-                                                            </td>
-                                                            <td>{{ $medicamento->presentacion == 'NINGUNO' ? '' : $medicamento->presentacion }}
-                                                            </td>
-                                                            <td>{{ $medicamento->accion_terapeutica == 'NINGUNO' ? '' : $medicamento->accion_terapeutica }}
-                                                            </td>
-                                                            <td class="text-center">
-                                                                {!! match ($medicamento->estado) {
-                                                                    'A' => '<span class="badge badge-pill badge-danger">AGOTADO</span>',
-                                                                    'M' => '<span class="badge badge-pill badge-warning">MENOR-STOCK</span>',
-                                                                    'D' => '<span class="badge badge-pill badge-success">DISPONIBLE</span>',
-                                                                    default => '<span class="badge badge-pill badge-danger">DESCONOCIDO</span>',
-                                                                } !!}
-                                                            </td>
-                                                            <td class="text-center">{{ $medicamento->cantidad }}</td>
-                                                            <td class="text-end">{{ $medicamento->precio_venta }}</td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
                                             </table>
                                         </div>
                                     </div>
@@ -93,27 +68,6 @@
                                                         <th>Precio</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    @foreach ($insumos as $insumo)
-                                                        <tr>
-                                                            <td>{{ $insumo->id }}</td>
-                                                            <td>{{ $insumo->producto }}</td>
-                                                            <td>{{ $insumo->marca }}</td>
-                                                            <td>{{ $insumo->presentacion == 'NINGUNO' ? '-' : $insumo->presentacion }}
-                                                            </td>
-                                                            <td class="text-center">
-                                                                {!! match ($insumo->estado) {
-                                                                    'A' => '<span class="badge badge-pill badge-danger">AGOTADO</span>',
-                                                                    'M' => '<span class="badge badge-pill badge-warning">MENOR-STOCK</span>',
-                                                                    'D' => '<span class="badge badge-pill badge-success">DISPONIBLE</span>',
-                                                                    default => '<span class="badge badge-pill badge-danger">DESCONOCIDO</span>',
-                                                                } !!}
-                                                            </td>
-                                                            <td class="text-center">{{ $insumo->cantidad }}</td>
-                                                            <td class="text-end">{{ $insumo->precio_venta }}</td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
                                             </table>
                                         </div>
                                     </div>
@@ -131,32 +85,123 @@
     <script>
         $(document).ready(function() {
             $('#tbl_medicamentos').DataTable({
-                "order": [
+                data: @json($medicamentos),
+                order: [
                     [0, 'desc']
                 ],
-                "columnDefs": [{
-                    "targets": 0, // Primera columna (índice 0)
-                    "visible": false // Ocultar la primera columna
-                }],
+                columns: [{
+                        data: 'id',
+                        visible: false
+                    },
+                    {
+                        data: 'producto'
+                    },
+                    {
+                        data: 'generico'
+                    },
+                    {
+                        data: 'marca',
+                        render: function(data) {
+                            return data === 'NINGUNO' ? '' : data;
+                        }
+                    },
+                    {
+                        data: 'presentacion',
+                        render: function(data) {
+                            return data === 'NINGUNO' ? '' : data;
+                        }
+                    },
+                    {
+                        data: 'accion_terapeutica',
+                        render: function(data) {
+                            return data === 'NINGUNO' ? '' : data;
+                        }
+                    },
+                    {
+                        data: 'estado',
+                        className: 'text-center',
+                        render: function(data) {
+                            switch (data) {
+                                case 'A':
+                                    return '<span class="badge badge-pill badge-danger">AGOTADO</span>';
+                                case 'M':
+                                    return '<span class="badge badge-pill badge-warning">MENOR-STOCK</span>';
+                                case 'D':
+                                    return '<span class="badge badge-pill badge-success">DISPONIBLE</span>';
+                                default:
+                                    return '<span class="badge badge-pill badge-danger">DESCONOCIDO</span>';
+                            }
+                        }
+                    },
+                    {
+                        data: 'cantidad',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'precio_venta',
+                        className: 'text-end'
+                    }
+                ],
                 pageLength: 5,
                 lengthChange: false,
-                "language": {
-                    "url": "{{ asset('lang/datatable.es-ES.json') }}"
+                language: {
+                    url: "{{ asset('lang/datatable.es-ES.json') }}"
                 }
             });
 
             $('#tbl_insumos').DataTable({
-                "order": [
+                data: @json($insumos),
+                order: [
                     [0, 'desc']
                 ],
-                "columnDefs": [{
-                    "targets": 0, // Primera columna (índice 0)
-                    "visible": false // Ocultar la primera columna
-                }],
+                columns: [{
+                        data: 'id',
+                        visible: false
+                    },
+                    {
+                        data: 'producto'
+                    },
+                    {
+                        data: 'marca',
+                        render: function(data) {
+                            return data === 'NINGUNO' ? '' : data;
+                        }
+                    },
+                    {
+                        data: 'presentacion',
+                        render: function(data) {
+                            return data === 'NINGUNO' ? '' : data;
+                        }
+                    },
+                    {
+                        data: 'estado',
+                        className: 'text-center',
+                        render: function(data) {
+                            switch (data) {
+                                case 'A':
+                                    return '<span class="badge badge-pill badge-danger">AGOTADO</span>';
+                                case 'M':
+                                    return '<span class="badge badge-pill badge-warning">MENOR-STOCK</span>';
+                                case 'D':
+                                    return '<span class="badge badge-pill badge-success">DISPONIBLE</span>';
+                                default:
+                                    return '<span class="badge badge-pill badge-danger">DESCONOCIDO</span>';
+                            }
+                        }
+                    },
+                    {
+                        data: 'cantidad',
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'precio_venta',
+                        className: 'text-end'
+                    }
+                ],
                 pageLength: 5,
                 lengthChange: false,
-                "language": {
-                    "url": "{{ asset('lang/datatable.es-ES.json') }}"
+                language: {
+                    url: "{{ asset('lang/datatable.es-ES.json') }}"
                 }
             });
         });

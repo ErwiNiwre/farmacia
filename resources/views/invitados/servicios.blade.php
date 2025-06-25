@@ -25,16 +25,6 @@
                                         <th>PRECIO</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    @foreach ($laboratorio_servicios as $laboratorio_servicio)
-                                        <tr>
-                                            <td>{{ $laboratorio_servicio->id }}</td>
-                                            <td>{{ $laboratorio_servicio->servicio }}</td>
-                                            <td>{{ $laboratorio_servicio->clasificacion }}</td>
-                                            <td class="text-end">{{ $laboratorio_servicio->precio }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
                                 <tfoot>
                                     <tr>
                                         <th>ID</th>
@@ -67,6 +57,7 @@
             });
 
             var tbl_Servicios = $('#tbl_ServiciosLaboratorio').DataTable({
+                data: @json($laboratorio_servicios),
                 order: [
                     [0, 'desc']
                 ],
@@ -74,6 +65,20 @@
                     targets: 0,
                     visible: false
                 }],
+                columns: [{
+                        data: 'id'
+                    },
+                    {
+                        data: 'servicio'
+                    },
+                    {
+                        data: 'clasificacion'
+                    },
+                    {
+                        data: 'precio',
+                        className: 'text-end'
+                    }
+                ],
                 pageLength: 5,
                 lengthChange: false,
                 language: {

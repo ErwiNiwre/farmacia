@@ -29,7 +29,21 @@ class ProductoController extends Controller
             $session_name = $session_auth->nombre;
         }
 
-        $productos = Producto::all();
+        $productos = Producto::all()->map(function ($producto) {
+            return [
+                'id'              => $producto->id,
+                'producto'        => $producto->producto,
+                'generico'        => $producto->generico,
+                'tipo_producto'   => $producto->tipo_producto == 'M' ? 'Medicamento' : 'Insumo',
+                'precio_unitario' => $producto->precio_unitario,
+                'porcentaje'      => number_format($producto->porcentaje, 0),
+                'precio_venta'    => $producto->precio_venta,
+                'cantidad'        => $producto->cantidad,
+                'estado'          => $producto->estado,
+                'edit_url'           => route('productos.edit', $producto->id),
+            ];
+        });
+
         return view(
             'productos.index',
             compact(
