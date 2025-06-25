@@ -113,28 +113,15 @@ class InvitadosController extends Controller
         return \PDF::loadView('pdf.app')
             // ->setPaper('letter')
             ->setOption('page-width', '80mm')        // ancho del recibo
-            ->setOption('page-height', '1000mm')      // alto estimado; puede ser más
-            ->setOption('encoding', 'utf-8')
-            ->setOption('margin-top', '10mm')
-            ->setOption('margin-bottom', '10mm')
-            ->setOption('margin-right', '2mm')
-            ->setOption('margin-left', '2mm')
-            // ->setOption('header-html', route('pdf.header'))
-            // ->setOption('footer-right', 'Página [page] de [toPage]')
-            // ->setOption('footer-html', route('pdf.footer'))
+            ->setOption('page-height', '297mm')      // alto estimado; puede ser más
+            ->setOption('margin-top', '0mm')
+            ->setOption('margin-bottom', '5mm')
+            ->setOption('margin-right', '0mm')
+            ->setOption('margin-left', '5mm')
             ->setOption('disable-smart-shrinking', true)
+            ->setOption('encoding', 'utf-8')
             ->setOption('no-stop-slow-scripts', true)
             ->stream('recibo');
-
-        // Aquí puedes pasar datos dinámicos a la vista si quieres.
-
-        // return \PDF::loadView('pdf.app')
-        //     ->setPaper([0, 0, 226.77, 1000]) // 80mm ancho x variable altura (en pt, 1mm = 2.83 pt)
-        //     ->setOption('margin-top', 5)
-        //     ->setOption('margin-bottom', 5)
-        //     ->setOption('margin-left', 5)
-        //     ->setOption('margin-right', 5)
-        //     ->stream('recibo.pdf'); // o ->download('recibo.pdf')
     }
 
     /**
