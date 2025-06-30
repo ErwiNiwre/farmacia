@@ -99,7 +99,7 @@
                                             </tbody>
                                             <tfoot class="text-end">
                                                 <tr>
-                                                    <th colspan="4">Total</th>
+                                                    <th colspan="5">Total</th>
                                                     <th>
                                                         <div id="price_table">Bs. 0.00</div>
                                                     </th>
@@ -338,9 +338,10 @@
 @section('page-script')
     <script>
         $(document).ready(function(){
-             $(".select2").select2();
+            
              const compraDetalles = @json($compraDetalles);
              const productosList = @json($producto);
+             $('#price_table').text({{$compras->total}});
              function busquedaProductosList(indice,atributo){
                  result_producto="";   
                  productosList.forEach(function(result) {
@@ -436,6 +437,7 @@
                 $("#modal-create-compra-detail").modal('show');
                 //togglecreatePurchaseDetailButton();
                 validateCreateDetail();
+                calculateTotal();
             });
             // $('#create_product').on('input', togglecreatePurchaseDetailButton);
             $('#update_compras').on('submit', function(event) {
@@ -468,6 +470,7 @@
                 $("#create_compra_id").val({{ $compras->id }});
                 $("#create_subtotal").val(subtotal);
                 validateCreateDetail();
+                calculateTotal()
                 //togglecreatePurchaseDetailButton();
                 //calculateTotalcreate();
             });
@@ -589,7 +592,28 @@
         });
 
 
+            function calculateTotal() {
+                let total = 0;
 
+                $('#compras_details_table tbody tr').each(function() {
+                    const $subtotalCell = $(this).find('td:eq(4)');
+
+                   
+                    if ($subtotalCell.length > 0) {
+                        const subtotal = parseFloat($subtotalCell.text().replace('Bs. ', ''));
+                        total += isNaN(subtotal) ? 0 : subtotal;
+                    }
+                });
+                total = isNaN(total) ? 0 : total;
+
+                
+                // $('#price_table').text('Bs. ' + total.toFixed(2));
+                // $('#amount').val(total.toFixed(2));
+                //$('#price_display').text('Bs. ' + total.toFixed(2));
+                
+                $('#price_table').text('Bs. ' + total.toFixed(2));
+                $('#total').val(total.toFixed(2));
+            }
 
            function validateCreateDetail() {
             const create_precio_unitario_value = $('#create_precio_unitario').val();

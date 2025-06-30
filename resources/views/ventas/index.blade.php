@@ -1,16 +1,16 @@
 @extends('app.app')
 
 @section('title')
-    Compras
+    Ventas
 @endsection
 
 @section('caption')
-    <i class="ti-home me-2"></i> Compras
+    <i class="ti-home me-2"></i> Ventas
 @endsection
 
 @section('content')
     <div class="row">
-        <div class="col-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12">
             <div class="box">
                 <div class="box-header with-border">
                     <div class="row">
@@ -23,10 +23,10 @@
 
                         </div>
                         <div class="col-4">
-                            @can('ventas-Crear')
+                           
                                 <a class="btn btn-success pull-right" href="{{ route('ventas.create') }}">
                                     <i class="fa fa-user-plus"></i> Nuevo</a>
-                            @endcan
+                           
 
                         </div>
                         <div class="col-6">
@@ -40,22 +40,28 @@
                             <thead class="bg-success">
                                 <tr>
                                     <th>Id</th>
-                                    <th>Fecha</th>
-                                    <th>Cliente</th>
-                                    <th>Tipo</th>
-                                    <th>Número de Venta</th>
-                                    <th>Total</th>
-                                    <th>Acciones</th>
+                                    <th style="width: 10%;">Número de Venta</th>
+                                    <th style="width: 15%;">Fecha</th>
+                                    <th style="width: 20%;">Cliente</th>
+                                    <th style="width: 10%;">Tipo de Movimiento</th>
+                                    <th style="width: 15%;">Método de Pago</th>
+                                    
+                                    <th style="width: 15%; "class=" text-end">Total</th>
+                                    <th style="width: 10%;">Acciones</th>
+                                    <th style="width: 5%;" class="text-center">Recibo</th>
                                 </tr>
                             </thead>
                             <tfoot>
                                 <tr>
                                     <th>Id</th>
+                                     <th>Número de Venta</th>
                                     <th>Fecha</th>
                                     <th>Cliente</th>
-                                    <th>Tipo</th>
-                                    <th>Número de Venta</th>
+                                    
+                                    <th>Tipo de Movimiento</th>
+                                    <th>Método de Pago</th>
                                     <th>Total</th>
+                                    <th style="visibility:collapse; display:none;"></th>
                                     <th style="visibility:collapse; display:none;"></th>
                                 </tr>
                             </tfoot>
@@ -99,6 +105,12 @@
                 <strong class="text-blue fs-20">Metodo de Pago: </strong><strong class="text-blue fs-20" id="metodo_pago"> </strong> <br>
 				
 			  </address>
+              <address id="display_observacion" style="display: none">
+				
+				<strong   class="text-blue fs-30">Observación </strong><strong class="text-blue fs-20">  </strong><br>
+                <strong   class="text-blue fs-20"></strong><strong class="text-blue fs-20" id="observacion"> </strong> 
+			  </address>
+            
 			</div>
 			<!-- /.col -->
 			<div class="col-md-4 invoice-col text-end">
@@ -200,46 +212,51 @@
                         "data": "id"
                     },
                     {
+                        "data": "numero_venta"
+                    },
+                    {
                         "data": 'venta_fecha'
                     },
                     {
                         "data": "cliente"
                     },
-                    { "mData": null , 
-                     "mRender": function(data, type, row) {
-
-						    if(data.metodo_pago=='E')
-                return 'EFECTIVO';
-                if(data.metodo_pago=='Q')
-                return 'QR';
-                if(data.metodo_pago=='M')
-                return 'EFECTIVO Y QR';
-                if(data.metodo_pago=='N')
-                return 'NINGUNO';
-						    }
-                        },
                     {
-                        "data": "numero_venta"
+                        "data": "tipo"
+                    },
+                    {
+                        "data": "metodo_pago"
                     },
                     
+                    
+                    
                      {
-                        "data": "total"
+                        "data": "total",
+                        className: 'text-end'
                     },
                     	
                      
                     { "mData": null , 
                     orderable: false,
                         searchable: false,
+                      //  className: 'text-center',
                      "mRender": function(data, type, row) {
                         var fecha = moment(data.venta_fecha).format('YYYY-MM-DD');
-                        var btn_delete="";
+                        var btn_delete="</div>";
                        // alert(data.id);
                        // alert(fecha+'=='+moment().format('YYYY-MM-DD'));
                         if(fecha==moment().format('YYYY-MM-DD'))
-						     btn_delete='<button type="button" id="btn_delete_ventas" value='+data.id+' class="waves-effect waves-light btn btn-danger mb-5" data-container="body" title="" data-bs-original-title="Eliminar"><i class="fa fa-bitbucket" aria-hidden="true"></i></button>';
+						     btn_delete='<button type="button" id="btn_delete_ventas" value='+data.id+' class="btn btn-danger" data-bs-toggle="tooltip" title="Eliminar" ><i class="mdi mdi-delete" ></i></button></div>';
                                
-                                      return '<button type="button" onclick="modalVentas('+data.id+')" id="btn_view_compras" value='+data.id+' class="btn btn-info" data-bs-toggle="tooltip" data-container="body" data-bs-original-title="Ver Compra"><i class="mdi mdi-eye"></i></button>'+btn_delete;
-                                  
+                     return '<div class="d-block text-dark flexbox"><button type="button" onclick="modalVentas('+data.id+')" id="btn_view_compras" value='+data.id+' class="btn btn-info" data-bs-toggle="tooltip"  data-bs-original-title="Ver Compra"><i class="mdi mdi-eye"></i></button>'+btn_delete;   
+						    }
+                        },
+                        { "mData": null , 
+                    orderable: false,
+                        searchable: false,
+                        className: 'text-center',
+                     "mRender": function(data, type, row) {
+                                                         
+                     return `<a href="ventas/${data.id}/print" target="_blank"  id="btn_print_ventas" class="btn btn-warning" data-bs-toggle="tooltip" title="Imprimir Recibo" ><i class="fa fa-file-pdf-o" ></i></a> `;   
 						    }
                         }
                     
@@ -273,7 +290,13 @@
 
 
             });
-
+             table_ventas.on('draw', function() {
+                const tooltipTriggerList = [].slice.call(document.querySelectorAll(
+                    '[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function(tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            });
             $('#dt_ventas tfoot th').each(function() {
                 var title = $(this).text();
 
@@ -329,26 +352,31 @@ function modalVentas(id){
                     url: "{{ route('ventas.show', ':id') }}".replace(':id', id),
                     success: function(response) {
                         if(response.status === 200){
-                            console.log(response.data.ventas);
-                             var fecha = moment(response.data.ventas.venta_fecha)
+                           // console.log(response.data.ventas);
+                          // console.log(response.data.ventas[0].venta_fecha);
+                             var fecha = moment(response.data.ventas[0].venta_fecha)
                 .format('DD-MM-YYYY');
-                var metodo_pago=response.data.ventas.metodo_pago;
-                if(metodo_pago=='E')
-                metodo_pago='EFECTIVO';
-                if(metodo_pago=='Q')
-                metodo_pago='QR';
-                if(metodo_pago=='M')
-                metodo_pago='EFECTIVO Y QR';
-                if(metodo_pago=='N')
-                metodo_pago='NINGUNO';
+                 
+                  $( "#display_observacion" ).hide();
+                var metodo_pago=response.data.ventas[0].metodo_pago;
+                // if(metodo_pago=='E')
+                // metodo_pago='EFECTIVO';
+                // if(metodo_pago=='Q')
+                // metodo_pago='QR';
+                // if(metodo_pago=='M')
+                // metodo_pago='EFECTIVO Y QR';
+                // if(metodo_pago=='N')
+                // metodo_pago='NINGUNO';
                           
-                             $('#cliente').text(response.data.ventas.cliente);
+                             $('#cliente').text(response.data.ventas[0].cliente);
                             $('#metodo_pago').text(metodo_pago);
-                            $('#numero_venta').text(response.data.ventas.numero_venta);
-                             $('#total').text(response.data.ventas.total+" BS");
+                            $('#numero_venta').text(response.data.ventas[0].numero_venta);
+                             $('#total').text(response.data.ventas[0].total+" BS");
                               $('#fecha').text(fecha);
-                              $('#total_subtotal').text(" BS. "+response.data.ventas.total);
-                              
+                              $('#total_subtotal').text(" BS. "+response.data.ventas[0].total);
+                              if(response.data.ventas[0].observacion){
+                               $( "#display_observacion" ).show();
+                               $('#observacion').text(response.data.ventas[0].observacion);}
                             // $('#purchase_date').text(response.data.purchase.purchase_date);
                             // $('#supplier').text(response.data.purchase.supplier);
                             // $('#purchase').text(response.data.purchase.purchase);
@@ -358,7 +386,7 @@ function modalVentas(id){
                              var ventaDetalles = response.data.ventaDetalles;
 
                             ventaDetalles.forEach(function(detail) {
-                                var vencimiento = moment(detail.vencimiento).format('DD-MM-YYYY');
+                                var vencimiento = !detail.vencimiento?'' : moment(detail.vencimiento).format('DD-MM-YYYY');
                                 var row = `
                                     <tr>
                                         <td style="width: 55%;" >${detail.producto}</td>

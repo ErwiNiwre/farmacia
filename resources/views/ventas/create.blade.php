@@ -256,8 +256,9 @@
              
            
                    
-                   
-               if(productos!=="" ){
+                  // alert(productos.cantidad-1+'>'+0)
+               if(productos ){
+                if(parseFloat(productos.cantidad-1)>=0){
                  if(verificarProductoDt(productos.id)==false){
                         
                        
@@ -280,6 +281,9 @@
                  $( "#barras" ).val( "" );
                  }else{
  alert("El producto ya fue ingresado ");
+                 }
+                 }else{
+ alert("No hay sufucientes existencias del producto ");
                  }
             }
             else{
@@ -530,15 +534,21 @@
                         "_token": "{{ csrf_token() }}"
                     },
                     success: function(response) {
+
                         if (response.status === 200) {
+
+                       window.open(response.pdf_url, '_blank');
+
                             location
                                 .reload(); // Recargar o actualizar la vista según sea necesario
                         } else {
                             alert('Ocurrió un error al guardar los cambios.');
+                             toggleSaveButton();
                         }
                     },
                     error: function(xhr, status, error) {
-                        alert('Ocurrió un error asegurese de llenar todos los campos: ' + error);
+                        alert('Ocurrió un error inesperado: ' + error);
+                         toggleSaveButton();
                     }
                 });
            
@@ -547,15 +557,20 @@
                 var total_cantidad=0;
                 var ind=0;
                  var estado=false;
+                 var stock;
                   var table = $('#venta_details_table').DataTable();
+                   //alert();
                 if (table.rows().count() != 0) {
                 $('#venta_details_table').DataTable().rows().nodes().each(function(row, index) {
                      //var producto_id = this.data()[ind][0];
                    // alert(id_producto);
                    // alert(this.data()[ind][0]+'=='+id_producto);
+                  // stock =busquedaProductosList(this.data()[ind][0],"id");
+                //    console.log(stock);
+                 //alert (stock.cantidad+'<='+0);
                      if(this.data()[ind][0]==id_producto)
                     estado= true;
-                   
+               
                ind++;
 
                 })
@@ -726,7 +741,7 @@ else
 return false;
 }*/
 function validarStock(productos) {
-    console.log(productos);
+  //  console.log(productos);
     
   const resumen = {};
 

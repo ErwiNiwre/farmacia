@@ -10,7 +10,8 @@
 
 @section('content')
     <div class="row">
-        <div class="col-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12">
+           
             <div class="box">
                 <div class="box-header with-border">
                     <div class="row">
@@ -23,11 +24,10 @@
 
                         </div>
                         <div class="col-4">
-                            @can('compras-Crear')
+                           
                                 <a class="btn btn-success pull-right" href="{{ route('compras.create') }}">
                                     <i class="fa fa-user-plus"></i> Nuevo</a>
-                            @endcan
-
+                           
                         </div>
                         <div class="col-6">
                         </div>
@@ -40,20 +40,22 @@
                             <thead class="bg-success">
                                 <tr>
                                     <th>Id</th>
-                                    <th>Fecha</th>
-                                    <th>Tipo</th>
-                                    <th>Número de Compra</th>
-                                    <th>Proveedor</th>
-                                    <th>Total</th>
-                                    <th>Acciones</th>
+                                    <th style="width: 10%;">Número de Compra</th>
+                                    <th style="width: 15%;">Fecha</th>
+                                    <th style="width: 20%;">Tipo de Movimiento</th>
+                                    
+                                    <th style="width: 25%;">Proveedor</th>
+                                    <th style="width: 15%;" class=" text-end">Total</th>
+                                    <th style="width: 15%;" class=" text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tfoot>
                                 <tr>
                                     <th>Id</th>
-                                    <th>Fecha</th>
-                                    <th>Tipo</th>
                                     <th>Número de Compra</th>
+                                    <th>Fecha</th>
+                                    <th>Tipo de Movimiento</th>
+                                   
                                     <th>Proveedor</th>
                                     <th>Total</th>
                                     <th style="visibility:collapse; display:none;"></th>
@@ -167,10 +169,10 @@
     <script>
          
         $(document).ready(function() {
-
+             const detalle = @json($detalle);
            
             var table_compras= $('#dt_compras').DataTable({
-                "ajax": "{{ route('getListCompras') }}",
+                //"ajax": "{{ route('getListCompras') }}",
                 //bFilter: true,
                 //"bSort": false,
 
@@ -179,30 +181,45 @@
                         "data": "id"
                     },
                     {
+                        "data": "numero_compra"
+                    },
+                    {
                         "data": 'compra_fecha'
                     },
                     {
                         "data": 'tipo'
                     },
-                    {
-                        "data": "numero_compra"
-                    },
+                    
                     {
                         "data": "proveedor"
                     },
                      {
-                        "data": "total"
+                        "data": "total",
+                        "className": "text-end"
                     },
                     	
-                     {
-                        "data": "action",
-                        orderable: false,
-                        searchable: false
-                    },
+                    
+                    	
+                     
+                    { "mData": null , 
+                   // className: 'text-center',
+                    orderable: false,
+                        searchable: false,
+                     "mRender": function(data, type, row) {
+                      btn_delete="</div>";
+if(data.estado==1)
+                btn_delete = `<a onclick="return confirm(\'Esta seguro que desea eliminar el registo?\')" href="compras/${data.id}/destroy" class="btn btn-danger" data-bs-toggle="tooltip" title="Eliminar"><i class="fa fa-bitbucket"></i></a></div>`;
+             
+                return ' <div class="d-block text-dark flexbox"><button type="button" onclick="modalCompras('+data.id+')" id="btn_view_compras" value='+data.id+' class="btn btn-info" data-bs-toggle="tooltip" title="Ver Compra"><i class="mdi mdi-eye"></i></button>'+
+                     `<a href="compras/${data.id}/edit"  id="btn_edit_compras"   class="btn btn-secondary" data-bs-toggle="tooltip" title="Editar"><i class="fa fa-edit"></i></a>`+btn_delete;
+                 
+                		    }
+                        }
                     
  
     
                 ],
+                'data': detalle,
                 "columnDefs": [{
                     "targets": 0,
                     "type": "num",
@@ -229,7 +246,14 @@
 
 
             });
-
+  table_compras.on('draw', function() {
+            
+                const tooltipTriggerList = [].slice.call(document.querySelectorAll(
+                    '[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function(tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            });
             $('#dt_compras tfoot th').each(function() {
                 var title = $(this).text();
 
@@ -239,6 +263,7 @@
      
           
         });
+       
   
 function modalCompras(id){
                    
@@ -255,7 +280,9 @@ function modalCompras(id){
                             $('#tipo').text(response.data.compras.tipo);
                             $('#numero_compra').text(response.data.compras.numero_compra);
                              $('#total').text(response.data.compras.total+" BS");
-                              $('#fecha').text(fecha);
+                             $('#fecha').text(fecha);
+                            // alert(fecha.isValid );
+                              
                               $('#total_subtotal').text(" BS. "+response.data.compras.total);
                               
                             // $('#purchase_date').text(response.data.purchase.purchase_date);
@@ -267,7 +294,8 @@ function modalCompras(id){
                              var compraDetalles = response.data.compraDetalles;
 
                             compraDetalles.forEach(function(detail) {
-                                var vencimiento = moment(detail.vencimiento).format('DD-MM-YYYY');
+                                var vencimiento = !detail.vencimiento?'' : moment(detail.vencimiento).format('DD-MM-YYYY');
+                               
                                 var row = `
                                     <tr>
                                         <td style="width: 55%;" >${detail.producto}</td>

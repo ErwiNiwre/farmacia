@@ -11,7 +11,7 @@ use App\Models\CompraDetalle;
 use App\Models\Producto;
 use App\Models\kardex;
 use DataTables;
-
+use Carbon\Carbon;
 class CompraController extends Controller
 {
     /**
@@ -33,13 +33,19 @@ class CompraController extends Controller
 
 
         $compras = Compra::all();
+        $detalle = Compra::query()
+    ->select('compras.id','compras.compra_fecha','compras.numero_compra','compras.proveedor','compras.tipo','compras.total')
+    ->addSelect(DB::raw('(SELECT cantidad=cantidad_total as estado FROM public.compra_detalles  where compra_id=compras.id 
+ORDER BY estado ASC limit 1) as estado'))
+    ->get();
       
         return view(
             'compras.index',
             compact(
                 'session_auth',
                 'session_name',
-                'compras'
+                'compras',
+                'detalle'
             )
         );
     }
@@ -72,19 +78,7 @@ class CompraController extends Controller
         );
     }
 
-    function kardex($compra,$detalles,$tipo_movimiento,$user_id){
-         $kardex = new Kardex();
-        foreach ($detalles as $detalle) {
-            
-         $kardex->producto_id = $detalle['producto_id'];
-         $kardex->tipo_movimiento = $tipo_movimiento;
-         $kardex->cantidad = $detalle['cantidad'];
-         $kardex->precio_unitario = $detalle['unidad_precio'];
-         $kardex->subtotal = $detalle['subtotal'];
-         $compra->user_id =  $compra->user_id;
-         $kardex->save();
-    }
-    }
+    
     
     /**
      * Store a newly created resource in storage.
@@ -99,9 +93,7 @@ class CompraController extends Controller
         } else {
             $session_name = $session_auth->nombre;
         }
-        //$detalle_compras = json_decode($request->input('productos'), true);
-        // print_r($detalle_compras);
-        // exit;
+       
           DB::beginTransaction();
        try {
             $compra = new Compra();
@@ -110,8 +102,7 @@ class CompraController extends Controller
             $compra->user_id =  $session_auth->id;
             $compra->proveedor = Str::upper(preg_replace('/\s+/', ' ', trim($request->proveedor)));
             $compra->tipo = $request->tipo;
-            // print_r(count(Compra::withTrashed()->get())+1);
-            // exit;
+            
 
             $compra->numero_compra = count(Compra::withTrashed()->get())+1;
             if( $compra->tipo=='Compra')
@@ -128,8 +119,7 @@ class CompraController extends Controller
             foreach ($compra_detalles as $detalle) {
                 $producto = Producto::find($detalle['producto_id']);
                 $compraDetalle = new CompraDetalle();
-                // print_r($detalle);
-                // exit;
+                
                 $compraDetalle->created_by = $session_auth->id;
                 $compraDetalle->compra_id = $compra->id; 
                 $compraDetalle->producto_id = $detalle['producto_id'];
@@ -152,9 +142,9 @@ class CompraController extends Controller
                 }
                 
                 $compraDetalle->save();
+                  $this->kardex($compra,$compraDetalle,'A');
                 $producto->cantidad=$producto->cantidad+$detalle['cantidad'];
-                // echo $detalle['estado'];
-                // exit;
+              
                
                 if($detalle['estado']==1&&$compra->tipo=='Compra'){
                    
@@ -162,27 +152,21 @@ class CompraController extends Controller
                        $precio=($producto->porcentaje/100)*$detalle['unidad_precio'];
                        $producto->precio_venta=$precio+$detalle['unidad_precio'];
                     
-                //       echo $producto->precio_venta.'=='.$producto->precio_unitario;
-                // exit;
+               
                 }
                 $producto->save();
-                //$this->kardex($compra,$compra_detalles,$compra->tipo);
+              
            
             }
              DB::commit();
-            // Confirmar la transacción
-            // print_r($compraDetalle);
-            //  exit;
-            // flash('Compra creada correctamente.', 'alert alert-success alert-dismissible');
-            // return redirect()->route('purchases.index');
+           
             return response()->json([
                 'status' => 200,
                 'message' => 'Datos de la Compra Creada.',
             ]);
          } catch (\Exception $e) {
             DB::rollBack();
-            // flash('Error al crear la compra. Por favor, intente nuevamente.', 'alert alert-danger alert-dismissible');
-            // return redirect()->back()->withInput();
+           
             return response()->json([
                 'status' => 500,
                 'message' => 'Error al guardar la atención: ' . $e->getMessage()
@@ -207,37 +191,7 @@ class CompraController extends Controller
 
         $compras = Compra::find($id);
         
-       /* $permissions = Compra::get();
-
-        $listCompraDetalles= DB::table('compra_detalles')
-            ->select(
-                'compra_detalles.id as id',
-                'productos.producto',
-                'compra_detalles.precio_unitario',
-                'compra_detalles.cantidad',
-                'compra_detalles.subtotal'
-            )
-           
-           ->join('productos', 'productos.id', '=', 'compra_detalles.producto_id')
-           ->where('compra_detalles.compra_id',"=",$id)
-            ->whereNull('compra_detalles.deleted_at')
-            ->orderBy('compra_detalles.id', 'desc')
-            ->get();
-
-                
-                
-        $compraDetalle= $listCompraDetalles;
-        // return $especialidad;
-        return view(
-            'compras.show',
-            compact(
-               'session_auth',
-                'session_name',
-                'permissions',
-                'compras',
-                'compraDetalle'
-            )
-        );*/
+       
 
         if (!$compras) {
             return response()->json([
@@ -262,16 +216,7 @@ class CompraController extends Controller
             ->whereNull('compra_detalles.deleted_at')
             ->orderBy('compra_detalles.id', 'desc')
             ->get();
-       //$compraDetalle ="";
-        // print_r( $compraDetalle->all());
-        // exit;
-        /*if ($compraDetalle->isEmpty()) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'No hay detalles de la Compra.'
-            ], 404);
-        }
-*/
+   
         return response()->json([
             'status' => 200,
             'data' => [
@@ -344,8 +289,7 @@ class CompraController extends Controller
             $session_staff = Staff::where('user_id', '=', $session_auth->id)->first();
             $session_name = $session_staff->paternal_surname . ' ' . $session_staff->maternal_surname . ' ' . $session_staff->names;
         }
-// print_r($request->All());
-// exit;
+
         $compras = Compra::find($id);
         if (!$compras) {
             return response()->json([
@@ -390,25 +334,36 @@ class CompraController extends Controller
             $compraDetalles = CompraDetalle::where('compra_id', '=', $compras->id)->get();
             
            
-           // $price = DB::table('orders')->max('price');
-            // print_r($compraDetalles);
-            // exit;
             foreach ($compraDetalles as $compraDetalle) {
                  $precio_maximo = CompraDetalle::where('producto_id', '=', $compraDetalle->producto_id)->
                  where('compra_id', '<>', $compras->id)->max('precio_unitario');
-                //  print_r($precio_maximo);
-                //  exit;
+                 $kardex = Kardex::where('producto_id', '=', $compraDetalle->producto_id)->
+                 where('tipo_movimiento', 'Producto')->orderBy('id', 'desc')->first();
+                 if(empty($kardex))
+                        $precio_maximo_kardex=0;
+                    else
+                 $precio_maximo_kardex = $kardex->precio_unitario;
+              
                 if ($compraDetalle) {
                      $productos = Producto::find($compraDetalle->producto_id);
                      $productos->cantidad=$productos->cantidad-$compraDetalle->cantidad;
-                         if($precio_maximo>$productos->precio_unitario){
-                     $productos->precio_unitario=$precio_maximo;
-                     $productos->precio_venta=(($productos->porcentaje/100)*$precio_maximo)+$precio_maximo;
-                      }
-                     $productos->save();
-
                     
+                  
+
+                         if($precio_maximo>$precio_maximo_kardex&&Carbon::parse($kardex->fecha)->gt(Carbon::parse($compraDetalle->updated_at))){
+                     $productos->precio_unitario=$precio_maximo;
+                     $productos->precio_venta=(($productos->porcentaje/100)*$precio_maximo_kardex)+$precio_maximo_kardex;
+                      }else{
+                      
+                     $productos->precio_unitario=$precio_maximo_kardex;
+                     $productos->precio_venta=(($productos->porcentaje/100)*$precio_maximo_kardex)+$precio_maximo_kardex;  
+                      }
+                 
+                       $this->kardex($compras,$compraDetalle,'B');
+                     $productos->save();
                 }
+                    
+              
             }
             CompraDetalle::where('compra_id', '=', $compras->id)->delete();
             $compras->delete();
@@ -419,34 +374,16 @@ class CompraController extends Controller
     }
     
 
-     public function getListCompras()
+    /* public function getListCompras()
     {
-       /* $listCompras= DB::table('compras')
-            ->select(DB::raw('sum(compra_detalles.cantidad) AS total_sales'),
-              //   'compras.id as id',
-            //     'compras.compra_fecha',
-            //     'compras.tipo',
-            //     'compras.proveedor',
-            //     'compras.numero_compra',
-            //     'compras.total',
-            //    'compra_detalles.cantidad',
-            //     'compra_detalles.cantidad_total',
-                //'compra_detalles.cantidad=compra_detalles.cantidad_total as estado'
-            )
-             
-           ->join('compra_detalles', 'compra_detalles.compra_id', '=', 'compras.id')
-          
-            ->whereNull('compras.deleted_at')
-            ->orderBy('compras.id', 'desc')
-            ->get();*/
+      
 
            $listCompras= Compra::query()
     ->select('compras.id','compras.compra_fecha','compras.numero_compra','compras.proveedor','compras.tipo','compras.total')
     ->addSelect(DB::raw('(SELECT cantidad=cantidad_total as estado FROM public.compra_detalles  where compra_id=compras.id 
 ORDER BY estado ASC limit 1) as estado'))
     ->get();
-                // print_r($listCompras);
-                // exit;
+               
 
         return DataTables::of($listCompras)
             ->addColumn('action', function ($listCompras) {
@@ -460,112 +397,29 @@ ORDER BY estado ASC limit 1) as estado'))
                 return implode(' ', $buttons);    
         })
             ->toJson();
-    }
+    }*/
 
-    //    public function getListCompraDetalles(Request $request)
-    // {
-    //    print_r($_GET);
-    //    exit;
-    //     $listCompraDetalles= DB::table('compra_detalles')
-    //         ->select(
-    //             'compra_detalles.id as id',
-    //             'productos.producto',
-    //             'compra_detalles.precio_unitario',
-    //             'compra_detalles.cantidad',
-    //             'compra_detalles.subtotal'
-    //         )
-           
-    //        ->join('productos', 'productos.id', '=', 'compra_detalles.producto_id')
-    //        ->where('compra_detalles.compra_id',"=",$request->compra_id)
-    //         ->whereNull('compra_detalles.deleted_at')
-    //         ->orderBy('compra_detalles.id', 'desc')
-    //         ->get();
+   
 
-                
-                
-    //     return DataTables::of($listCompraDetalles)->toJson();
-    // }
+    function kardex($compra,$detalles,$accion){
+     
+             $kardex = new Kardex();
+         $kardex->fecha = date("Y-m-d H:i:s");
+         $kardex->producto_id = $detalles->producto_id;
+         $kardex->tipo_movimiento = $compra->tipo;
+         $kardex->accion=$accion;
+         $kardex->cantidad = $detalles->cantidad;
+         $kardex->precio_unitario = $detalles->precio_unitario;
+         $kardex->subtotal = $detalles->subtotal;
+         
+         if($accion=='A')
+          $kardex->created_by =$compra->user_id;
+        if($accion=='M')
+        $kardex->updated_by =$compra->user_id;
+    if($accion=='B')
+        $kardex->deleted_by =$compra->user_id;
 
-
-           public function destroyDetalle($id)
-    {
-        $session_auth = auth()->user();
-        $session_name = "";
-        // print_r($id);
-        // exit;
-        if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
-            $session_name = $session_auth->username;
-        } else {
-            $session_name = $session_auth->nombre;
-        }
-
-        try{
-        $comprasDetalle = CompraDetalle::find($id);
-        
-                       $comprasDetalle->deleted_by = $session_auth->id;
-             $comprasDetalle->save();
-// print_r($comprasDetalle);
-//             exit;
-        if ($comprasDetalle) {
-            
-
-            // CompraDetalle::where('compra_id', '=', $comprasDetalle->compra_id)
-            //     ->update(['deleted_by' => $session_auth->id]);
-
-            // $compraDetalles = CompraDetalle::where('compra_id', '=', $compras->id)->get();
-            
-           
-           // $price = DB::table('orders')->max('price');
-            // print_r($compraDetalles);
-            // exit;
-
-             $precio_maximo = CompraDetalle::where('producto_id', '=', $comprasDetalle->producto_id)->
-                 where('id', '<>', $comprasDetalle->id)->max('precio_unitario');
-                //  echo  $precio_maximo;
-                //  exit;
-            $productos = Producto::find($comprasDetalle->producto_id);
-                     $productos->cantidad=$productos->cantidad-$comprasDetalle->cantidad;
-                      if($precio_maximo){
-                     $productos->precio_unitario=$precio_maximo;
-                     $productos->precio_venta=(($productos->porcentaje/100)*$precio_maximo)+$precio_maximo;
-                      }
-                     $productos->save();
-                     $comprasDetalle->delete();
-           /* foreach ($compraDetalles as $compraDetalle) {
-                 $precio_maximo = CompraDetalle::where('producto_id', '=', $compraDetalle->producto_id)->
-                 where('compra_id', '<>', $compras->id)->max('precio_unitario');
-                //  print_r($precio_maximo);
-                //  exit;
-                if ($compraDetalle) {
-                     $productos = Producto::find($compraDetalle->producto_id);
-                     $productos->stock_minimo=$productos->stock_minimo-$compraDetalle->cantidad;
-                         if($precio_maximo){
-                     $productos->precio_unitario=$precio_maximo;
-                     $productos->precio_venta=(($productos->porcentaje/100)*$precio_maximo)+$precio_maximo;
-                      }
-                     $productos->save();
-
-                    
-                }
-            }*/
-            //CompraDetalle::where('compra_id', '=', $compras->id)->delete();
-            //$compras->delete();
-
-            // return redirect()->route('compras.index');
-        } 
-         return response()->json([
-                'status' => 200,
-                'message' => 'Datos de la Compra Creada.',
-            ]);
-         } catch (\Exception $e) {
-            DB::rollBack();
-            // flash('Error al crear la compra. Por favor, intente nuevamente.', 'alert alert-danger alert-dismissible');
-            // return redirect()->back()->withInput();
-            return response()->json([
-                'status' => 500,
-                'message' => 'Error al guardar la atención: ' . $e->getMessage()
-            ], 500);
-        }
+         $kardex->save();
     
     }
 }

@@ -125,11 +125,13 @@ return new class extends Migration
         Schema::create('kardex', function (Blueprint $table) {
             $table->id();
             $table->foreignId('producto_id')->constrained('productos');
-            $table->enum('tipo_movimiento', ['E', 'S', 'A']); // Entrada, Salida, Ajuste
-            $table->enum('origen', ['Compra', 'Venta', 'Ajuste'])->nullable();
-            $table->unsignedInteger('cantidad');
+            $table->dateTime('fecha');
+            $table->enum('tipo_movimiento', ['Compra', 'Ingreso Directo', 'Venta','Salida Directa','Producto']); // Entrada, Salida, Ajuste
+            $table->enum('accion', ['A', 'B', 'M'])->nullable();
+            $table->unsignedInteger('cantidad')->default(0);
             $table->decimal('precio_unitario', 13, 2)->nullable();
-            $table->decimal('subtotal', 13, 2)->nullable();
+            $table->decimal('subtotal', 13, 2)->nullable();            
+            $table->decimal('porcentaje', 13, 2)->nullable();
             $table->string('observacion')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
@@ -199,7 +201,7 @@ return new class extends Migration
             $table->integer('cantidad');
             $table->decimal('precio_unitario', 13, 2);
             $table->decimal('subtotal', 13, 2);            
-            $table->string('lote')->nullable();
+            $table->string('lote');
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();

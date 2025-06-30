@@ -20,6 +20,7 @@ use App\Http\Controllers\VentaController;
 
 Route::get('/', [InvitadosController::class, 'farmacia'])->name('invitados.farmacia');
 Route::get('/servicios', [InvitadosController::class, 'servicios'])->name('invitados.servicios');
+Route::get('/pdf', [InvitadosController::class, 'print'])->name('invitados.print');
 
 Route::middleware('auth', 'verified')->group(function () {
    // Pagina Inicial
@@ -74,6 +75,7 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::get('/ventas/{ventas}/show', [VentaController::class, 'show'])->name('ventas.show');    
     Route::get('getListVentas', [VentaController::class, 'getListVentas'])->name('getListVentas');    
     Route::get('/ventas/{ventas}/destroy', [VentaController::class, 'destroy'])->name('ventas.destroy');
+    Route::get('/ventas/{ventas}/print', [VentaController::class, 'print'])->name('ventas.print');
     
     // Rutas para Compra Detalle
 
