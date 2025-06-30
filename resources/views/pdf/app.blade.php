@@ -179,7 +179,7 @@
         <tbody>
             @foreach ($venta_detalles as $venta_detalle)
                 <tr>
-                    <td style="text-align: left;">{{ $venta_detalle->producto_id }}</td>
+                    <td style="text-align: left;">{{ $venta_detalle->producto }}</td>
                     <td>{{ $venta_detalle->cantidad }}</td>
                     <td>{{ $venta_detalle->precio_unitario }}</td>
                     <td>{{ $venta_detalle->subtotal }}</td>

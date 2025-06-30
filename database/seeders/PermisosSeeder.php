@@ -42,24 +42,24 @@ class PermisosSeeder extends Seeder
         Permission::create(['name' => 'producto.destroy']);
 
         // Operaciones de unidad_medidas
-        Permission::create(['name' => 'unidad_medidas.index']);
-        Permission::create(['name' => 'unidad_medidas.create']);
-        Permission::create(['name' => 'unidad_medidas.show']);
-        Permission::create(['name' => 'unidad_medidas.edit']);
-        Permission::create(['name' => 'unidad_medidas.destroy']);
+        Permission::create(['name' => 'unidadMedida.index']);
+        Permission::create(['name' => 'unidadMedida.create']);
+        Permission::create(['name' => 'unidadMedida.show']);
+        Permission::create(['name' => 'unidadMedida.edit']);
+        Permission::create(['name' => 'unidadMedida.destroy']);
 
         // Operaciones de clasificaciones
-        Permission::create(['name' => 'clasificaciones.index']);
-        Permission::create(['name' => 'clasificaciones.create']);
-        Permission::create(['name' => 'clasificaciones.show']);
-        Permission::create(['name' => 'clasificaciones.edit']);
-        Permission::create(['name' => 'clasificaciones.destroy']);
+        Permission::create(['name' => 'clasificacion.index']);
+        Permission::create(['name' => 'clasificacion.create']);
+        Permission::create(['name' => 'clasificacion.show']);
+        Permission::create(['name' => 'clasificacion.edit']);
+        Permission::create(['name' => 'clasificacion.destroy']);
 
         // Operaciones de laboratorio_servicios
-        Permission::create(['name' => 'laboratorioServicios.index']);
-        Permission::create(['name' => 'laboratorioServicios.create']);
-        Permission::create(['name' => 'laboratorio_servicios.show']);
-        Permission::create(['name' => 'laboratorio_servicios.edit']);
-        Permission::create(['name' => 'laboratorio_servicios.destroy']);  
+        Permission::create(['name' => 'laboratorioServicio.index']);
+        Permission::create(['name' => 'laboratorioServicio.create']);
+        Permission::create(['name' => 'laboratorioServicio.show']);
+        Permission::create(['name' => 'laboratorioServicio.edit']);
+        Permission::create(['name' => 'laboratorioServicio.destroy']);  
     }
 }

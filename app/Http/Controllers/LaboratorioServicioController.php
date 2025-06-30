@@ -49,14 +49,12 @@ class LaboratorioServicioController extends Controller
         }
 
         $clasificacion = Clasificacion::All();
-        $permissions = LaboratorioServicio::get();
-
+        
         return view(
             'laboratorioServicios.create',
             compact(
                 'session_auth',
                 'session_name',
-                'permissions',
                 'clasificacion'
             )
         );
@@ -119,15 +117,13 @@ class LaboratorioServicioController extends Controller
 
         $laboratorioServicio = LaboratorioServicio::find($id);
          $clasificaciones = Clasificacion::All();
-        $permissions = LaboratorioServicio::get();
 
         // return $especialidad;
         return view(
             'laboratorioServicios.edit',
             compact(
                'session_auth',
-                'session_name',
-                'permissions',
+                'session_name',                
                 'clasificaciones',
                 'laboratorioServicio'
             )
