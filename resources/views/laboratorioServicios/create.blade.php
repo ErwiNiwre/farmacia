@@ -43,7 +43,7 @@
                                  <div class="col-xs-2 col-sm-2 col-md-2">
                                 <div class="form-group">
                                     <label class="form-label">Clasificacion</label>
-                                    <select id="clasificacion_id" name="clasificacion_id" class="form-select">
+                                    <select id="clasificacion_id" name="clasificacion_id" class="form-select select2">
                                         @foreach ($clasificacion as $clasificacion)
                                             @if (old('clasificacion_id') == $clasificacion->id)
                                                 <option value="{{ $clasificacion->id }}" selected>
