@@ -123,6 +123,7 @@ class InvitadosController extends Controller
         $ventas->total = "301.00";
         $ventas->efectivo = null;
         $ventas->qr = "250.50";
+
         $ventas->venta_fecha = Carbon::parse($ventas->venta_fecha)->format('d-m-Y H:i:s');
         $ventas->user_id = str_pad($ventas->user_id, 4, '0', STR_PAD_LEFT);
         $ventas->numero_venta = str_pad($ventas->numero_venta, 6, '0', STR_PAD_LEFT);
