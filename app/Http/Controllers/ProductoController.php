@@ -251,7 +251,7 @@ class ProductoController extends Controller
 
         $producto->updated_by = auth()->id();
         $producto->updated_at = Carbon::now();
-        $this->kardex($producto,'M');
+        $this->kardex($producto, 'M');
         $producto->save();
 
         return redirect()->route('productos.index');
@@ -296,29 +296,29 @@ class ProductoController extends Controller
         }
     }
 
-    function kardex($producto,$accion){
-        
+    function kardex($producto, $accion)
+    {
+
         //  print_r($detalles);
         //  exit;
-      
-             $kardex = new Kardex();
-         $kardex->fecha = date("Y-m-d H:i:s");
-         $kardex->producto_id = $producto->id;
-         $kardex->tipo_movimiento = 'Producto';
-         $kardex->accion = $accion;      
-         $kardex->cantidad = $producto->cantidad;   
-         $kardex->precio_unitario = $producto->precio_unitario;
-         $kardex->porcentaje = $producto->porcentaje;
-         $kardex->subtotal = $producto->precio_venta;
-         
-         if($accion=='A')
-          $kardex->created_by = $producto->created_by;
-        if($accion=='M')
-        $kardex->updated_by = $producto->updated_by;
-    if($accion=='B')
-        $kardex->deleted_by = $producto->deleted_by;
 
-         $kardex->save();
-    
+        $kardex = new Kardex();
+        $kardex->fecha = date("Y-m-d H:i:s");
+        $kardex->producto_id = $producto->id;
+        $kardex->tipo_movimiento = 'Producto';
+        $kardex->accion = $accion;
+        $kardex->cantidad = $producto->cantidad;
+        $kardex->precio_unitario = $producto->precio_unitario;
+        $kardex->porcentaje = $producto->porcentaje;
+        $kardex->subtotal = $producto->precio_venta;
+
+        if ($accion == 'A')
+            $kardex->created_by = $producto->created_by;
+        if ($accion == 'M')
+            $kardex->updated_by = $producto->updated_by;
+        if ($accion == 'B')
+            $kardex->deleted_by = $producto->deleted_by;
+
+        $kardex->save();
     }
 }

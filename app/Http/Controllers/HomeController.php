@@ -18,8 +18,7 @@ class HomeController extends Controller
         if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
             $session_name = $session_auth->username;
         } else {
-            $session_staff = User::where('user_id', '=', $session_auth->id)->first();
-            $session_name = $session_staff->nombre;
+            $session_name = $session_auth->nombre;
         }
 
         // $patients = Patient::All();

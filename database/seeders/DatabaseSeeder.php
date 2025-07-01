@@ -1487,6 +1487,12 @@ class DatabaseSeeder extends Seeder
 
         ]);
 
+        DB::table('roles')->insert([
+            ['id' => 1, 'name' => 'Administración', 'guard_name' => 'web', 'created_at' => '2024-06-07 00:00:00', 'updated_at' => '2024-06-07 00:00:00'],
+            ['id' => 2, 'name' => 'Farmacia', 'guard_name' => 'web', 'created_at' => '2024-06-07 00:00:00', 'updated_at' => '2024-06-07 00:00:00'],
+            ['id' => 3, 'name' => 'Cajero', 'guard_name' => 'web', 'created_at' => '2024-06-07 00:00:00', 'updated_at' => '2024-06-07 00:00:00'],
+        ]);
+
         DB::table('users')->insert([
             ['id' =>  '1', 'username' => 'AdminCMF', 'nombre' => 'Centro Medico Fiori', 'email' => 'AdminCMF@admin.com', 'password' => bcrypt('AdminCMFiori')],
             ['id' =>  '2', 'username' =>  'SA7034241', 'nombre' => 'Jimena Suntura Apaza', 'email' => null, 'password' => bcrypt('7034241')],
@@ -1495,6 +1501,12 @@ class DatabaseSeeder extends Seeder
             ['id' =>  '5', 'username' =>  'MM4800651', 'nombre' => 'Toribia Mamani Maita', 'email' => null, 'password' => bcrypt('4800651')],
             ['id' =>  '6', 'username' =>  'BC8434641', 'nombre' => 'Cinthia Naguel Barrientos Cruz', 'email' => null, 'password' => bcrypt('8434641')],
         ]);
+
+        User::find(2)->assignRole('Administración');
+        User::find(3)->assignRole('Administración');
+        User::find(4)->assignRole('Farmacia');
+        User::find(5)->assignRole('Cajero');
+        User::find(6)->assignRole('Administración');
 
         DB::table('clasificaciones')->insert([
             ['id' =>  '1', 'clasificacion' =>  'HEMATOLOGIA', 'created_at' => '2025/06/02', 'updated_at' => '2025/06/02'],
