@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use DataTables;
+
 class VentaController extends Controller
 {
     /**
@@ -33,27 +34,27 @@ class VentaController extends Controller
 
 
         $ventas = DB::table('ventas')
-    ->select(
-        'id',
-        'numero_venta',
-        'venta_fecha',
-        'tipo',
-        'cliente',
-        'total',
-        'efectivo',
-        'qr',
-        'metodo_pago',
-        DB::raw("CASE 
+            ->select(
+                'id',
+                'numero_venta',
+                'venta_fecha',
+                'tipo',
+                'cliente',
+                'total',
+                'efectivo',
+                'qr',
+                'metodo_pago',
+                DB::raw("CASE 
                     WHEN metodo_pago = 'E' THEN 'Efectivo'
                     WHEN metodo_pago = 'Q' THEN 'QR'
                     WHEN metodo_pago = 'M' THEN 'Efectivo y QR'
                     WHEN metodo_pago = 'N' THEN 'Ninguno'
                     ELSE 'Ninguno'
                  END as metodo_pago")
-    )
-    ->whereNull('deleted_at')
-    ->get();
-      
+            )
+            ->whereNull('deleted_at')
+            ->get();
+
         return view(
             'ventas.index',
             compact(
@@ -69,7 +70,7 @@ class VentaController extends Controller
      */
     public function create()
     {
-       $session_auth = auth()->user();
+        $session_auth = auth()->user();
         $session_name = "";
 
         if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
@@ -97,7 +98,7 @@ class VentaController extends Controller
      */
     public function store(Request $request)
     {
-         $session_auth = auth()->user();
+        $session_auth = auth()->user();
         $session_name = "";
 
         if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
@@ -105,121 +106,115 @@ class VentaController extends Controller
         } else {
             $session_name = $session_auth->nombre;
         }
-       
-          DB::beginTransaction();
-       try {
+
+        DB::beginTransaction();
+        try {
             $venta = new Venta();
             $venta->venta_fecha = date("Y-m-d H:i:s");
             $venta->user_id =  $session_auth->id;
             $venta->cliente = Str::upper(preg_replace('/\s+/', ' ', trim($request->cliente)));
             $venta->tipo = $request->tipo;
-            
-            $venta->numero_venta = count(Venta::withTrashed()->get())+1;
-            if( $venta->tipo=='Salida Directa'){
-            $venta->total =0;  
-            $venta->efectivo =  0;
-            $venta->qr =  0;
-            $venta->observacion = $request->observacion;
-            $venta->metodo_pago = 'N'; 
-            }else{
-                $venta->total = $request->total;  
-            $venta->efectivo =  $request->efectivo;
-            $venta->qr =  $request->qr;
-            $venta->observacion = $request->observacion;
-            $venta->metodo_pago = $request->metodo_pago;  
+
+            $venta->numero_venta = count(Venta::withTrashed()->get()) + 1;
+            if ($venta->tipo == 'Salida Directa') {
+                $venta->total = 0;
+                $venta->efectivo =  0;
+                $venta->qr =  0;
+                $venta->observacion = $request->observacion;
+                $venta->metodo_pago = 'N';
+            } else {
+                $venta->total = $request->total;
+                $venta->efectivo =  $request->efectivo;
+                $venta->qr =  $request->qr;
+                $venta->observacion = $request->observacion;
+                $venta->metodo_pago = $request->metodo_pago;
             }
             $venta->created_by = $session_auth->id;
-           
+
             $venta->save();
-            
-       
+
+
             $venta_detalles = json_decode($request->input('productos'), true);
-            
-            
-            $cantidad_total=0;
+
+
+            $cantidad_total = 0;
             foreach ($venta_detalles as $detalle) {
-                    
 
-                 
-                 $producto = Producto::find($detalle['producto_id']);
-                 $compraDetalles = CompraDetalle::where('producto_id', '=', $detalle['producto_id'])->
-                 where('cantidad_total', '<>','0')
-                 ->orderBy('vencimiento', 'asc','id','asc')
-                 ->get();
-                $cantidad_total=$detalle['cantidad'];
-                $lote="";
-                $estado=0;
+
+
+                $producto = Producto::find($detalle['producto_id']);
+                $compraDetalles = CompraDetalle::where('producto_id', '=', $detalle['producto_id'])->where('cantidad_total', '<>', '0')
+                    ->orderBy('vencimiento', 'asc', 'id', 'asc')
+                    ->get();
+                $cantidad_total = $detalle['cantidad'];
+                $lote = "";
+                $estado = 0;
                 $cantidad;
-                 foreach ($compraDetalles as $compradetalle) {
-                   
-               
-           if($estado==0){
-        
-                    $cantidad_total=$compradetalle->cantidad_total-$cantidad_total;
-                    
+                foreach ($compraDetalles as $compradetalle) {
 
-                    if($cantidad_total<=0){
-                        $cantidad=$compradetalle->cantidad_total;
-                        $compradetalle->cantidad_total=0;
-                        $cantidad_total=abs($cantidad_total);
-            
-            if($cantidad_total==0){
-                $estado=1;
-            }
-                    }else{
-                         $cantidad= $compradetalle->cantidad_total-$cantidad_total; 
-                        $compradetalle->cantidad_total=$cantidad_total;
-                               
-                        $estado=1;
+
+                    if ($estado == 0) {
+
+                        $cantidad_total = $compradetalle->cantidad_total - $cantidad_total;
+
+
+                        if ($cantidad_total <= 0) {
+                            $cantidad = $compradetalle->cantidad_total;
+                            $compradetalle->cantidad_total = 0;
+                            $cantidad_total = abs($cantidad_total);
+
+                            if ($cantidad_total == 0) {
+                                $estado = 1;
+                            }
+                        } else {
+                            $cantidad = $compradetalle->cantidad_total - $cantidad_total;
+                            $compradetalle->cantidad_total = $cantidad_total;
+
+                            $estado = 1;
+                        }
+                        $lote = $lote . ' ' . $compradetalle->id . ';' . $cantidad;
+
+                        $compradetalle->save();
                     }
-                     $lote=$lote.' '.$compradetalle->id.';'.$cantidad;
-                   
-                     $compradetalle->save();
-                }
                 }
 
 
                 $venta_detalle = new VentaDetalle();
-              
-                $venta_detalle->venta_id = $venta->id; 
+
+                $venta_detalle->venta_id = $venta->id;
                 $venta_detalle->producto_id = $detalle['producto_id'];
-                if( $venta->tipo=='Salida Directa')
-                $venta_detalle->precio_unitario = 0;
+                if ($venta->tipo == 'Salida Directa')
+                    $venta_detalle->precio_unitario = 0;
                 else
-                $venta_detalle->precio_unitario = $detalle['unidad_precio'];
+                    $venta_detalle->precio_unitario = $detalle['unidad_precio'];
 
                 $venta_detalle->cantidad = $detalle['cantidad'];
                 $venta_detalle->lote = trim($lote);
-                
+
                 $venta_detalle->subtotal = $venta_detalle->precio_unitario * $venta_detalle->cantidad;
-             
+
                 $venta_detalle->created_by = $session_auth->id;
-                 $this->kardex($venta,$venta_detalle,'A');
+                $this->kardex($venta, $venta_detalle, 'A');
                 $venta_detalle->save();
-                
-                $producto->cantidad=$producto->cantidad-$detalle['cantidad'];
-                if(!empty($detalle['estado'])){
-                     $producto->precio_venta=(($producto->porcentaje/100)*$detalle['unidad_precio'])+$detalle['unidad_precio'];
-                     $producto->precio_unitario=$detalle['unidad_precio'];
+
+                $producto->cantidad = $producto->cantidad - $detalle['cantidad'];
+                if (!empty($detalle['estado'])) {
+                    $producto->precio_venta = (($producto->porcentaje / 100) * $detalle['unidad_precio']) + $detalle['unidad_precio'];
+                    $producto->precio_unitario = $detalle['unidad_precio'];
                 }
                 $producto->save();
-                
-                
-               
-                
-
             }
-           
+
             DB::commit(); // Confirmar la transacción
-            
+
             return response()->json([
                 'status' => 200,
                 'message' => 'Datos de la Compra Creada.',
-                'pdf_url' => route('ventas.print',$venta->id)
+                'pdf_url' => route('ventas.print', $venta->id)
             ]);
-         } catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
-           
+
             return response()->json([
                 'status' => 500,
                 'message' => 'Error al guardar la atención: ' . $e->getMessage()
@@ -230,10 +225,10 @@ class VentaController extends Controller
     /**
      * Display the specified resource.
      */
-  
-       public function show($id)
+
+    public function show($id)
     {
-         $session_auth = auth()->user();
+        $session_auth = auth()->user();
         $session_name = "";
 
         if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
@@ -242,54 +237,54 @@ class VentaController extends Controller
             $session_name = $session_auth->nombre;
         }
 
-       
-         $ventas = DB::table('ventas')
-    ->select(
-        'id',
-        'numero_venta',
-        'venta_fecha',
-        'tipo',
-        'cliente',
-        'total',
-        'efectivo',
-        'qr',
-        'metodo_pago',
-        DB::raw("CASE 
+
+        $ventas = DB::table('ventas')
+            ->select(
+                'id',
+                'numero_venta',
+                'venta_fecha',
+                'tipo',
+                'cliente',
+                'total',
+                'efectivo',
+                'qr',
+                'metodo_pago',
+                DB::raw("CASE 
                     WHEN metodo_pago = 'E' THEN 'Efectivo'
                     WHEN metodo_pago = 'Q' THEN 'QR'
                     WHEN metodo_pago = 'M' THEN 'Efectivo y QR'
                     WHEN metodo_pago = 'N' THEN 'Ninguno'
                     ELSE 'Ninguno'
                  END as metodo_pago")
-    )
-    ->where('id',$id)
-    ->whereNull('deleted_at')
-    ->get();
-     
+            )
+            ->where('id', $id)
+            ->whereNull('deleted_at')
+            ->get();
+
         if (!$ventas) {
             return response()->json([
                 'status' => 404,
                 'message' => 'No hay datos de la Compra'
             ], 404);
         }
-        
-    
-       $ventaDetalle= DB::table('venta_detalles')
+
+
+        $ventaDetalle = DB::table('venta_detalles')
             ->select(
                 'venta_detalles.id as id',
                 'productos.producto',
-                
+
                 'venta_detalles.precio_unitario',
                 'venta_detalles.cantidad',
                 'venta_detalles.subtotal'
             )
-           
-           ->join('productos', 'productos.id', '=', 'venta_detalles.producto_id')
-           ->where('venta_detalles.venta_id',"=",$id)
+
+            ->join('productos', 'productos.id', '=', 'venta_detalles.producto_id')
+            ->where('venta_detalles.venta_id', "=", $id)
             ->whereNull('venta_detalles.deleted_at')
             ->orderBy('venta_detalles.id', 'desc')
             ->get();
-      
+
         return response()->json([
             'status' => 200,
             'data' => [
@@ -298,7 +293,7 @@ class VentaController extends Controller
             ]
         ]);
     }
-    
+
 
     /**
      * Show the form for editing the specified resource.
@@ -330,95 +325,90 @@ class VentaController extends Controller
             $session_name = $session_auth->nombre;
         }
 
-try{
-        $ventas = Venta::find($id);
+        try {
+            $ventas = Venta::find($id);
 
-        if ($ventas) {
-             $ventas->deleted_by = $session_auth->id;
-             $ventas->save();
-$cantidad_total=0;
-            VentaDetalle::where('venta_id', '=', $ventas->id)
-                ->update(['deleted_by' => $session_auth->id]);
-            $ventaDetalles = VentaDetalle::where('venta_id', '=', $ventas->id)->get();
-            
-           
-          
-            foreach ($ventaDetalles as $ventaDetalle) {
-              
-                $lotes=explode(" ",$ventaDetalle->lote);
-               $cantidad_total=$ventaDetalle->cantidad;
-                foreach ($lotes as $lote_array) {
-              
-                    $lote=explode(";",$lote_array);
-                
-                    $detalleCompra=CompraDetalle::find($lote[0]);
-
-                   $detalleCompra->cantidad_total=$detalleCompra->cantidad_total+$lote[1];
-                      $this->kardex($ventas,$ventaDetalle,'B');
-                    $detalleCompra->save();
-                   
-               
-            }
-        
+            if ($ventas) {
+                $ventas->deleted_by = $session_auth->id;
+                $ventas->save();
+                $cantidad_total = 0;
+                VentaDetalle::where('venta_id', '=', $ventas->id)
+                    ->update(['deleted_by' => $session_auth->id]);
+                $ventaDetalles = VentaDetalle::where('venta_id', '=', $ventas->id)->get();
 
 
 
-                if ($ventaDetalle) {
-                     $productos = Producto::find($ventaDetalle->producto_id);
-                     $productos->cantidad=$productos->cantidad+$ventaDetalle->cantidad;
-                         
-                     $productos->save();
+                foreach ($ventaDetalles as $ventaDetalle) {
 
-                    
+                    $lotes = explode(" ", $ventaDetalle->lote);
+                    $cantidad_total = $ventaDetalle->cantidad;
+                    foreach ($lotes as $lote_array) {
+
+                        $lote = explode(";", $lote_array);
+
+                        $detalleCompra = CompraDetalle::find($lote[0]);
+
+                        $detalleCompra->cantidad_total = $detalleCompra->cantidad_total + $lote[1];
+                        $this->kardex($ventas, $ventaDetalle, 'B');
+                        $detalleCompra->save();
+                    }
+
+
+
+
+                    if ($ventaDetalle) {
+                        $productos = Producto::find($ventaDetalle->producto_id);
+                        $productos->cantidad = $productos->cantidad + $ventaDetalle->cantidad;
+
+                        $productos->save();
+                    }
                 }
-            }
-            VentaDetalle::where('venta_id', '=', $ventas->id)->delete();
-            $ventas->delete();
+                VentaDetalle::where('venta_id', '=', $ventas->id)->delete();
+                $ventas->delete();
 
-             return response()->json([
-                'status' => 200,
-                'message' => 'Datos de la Compra Creada.',
-            ]);
-        }
-         } catch (\Exception $e) {
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Datos de la Compra Creada.',
+                ]);
+            }
+        } catch (\Exception $e) {
             DB::rollBack();
-        
+
             return response()->json([
                 'status' => 500,
                 'message' => 'Error al guardar la atención: ' . $e->getMessage()
             ], 500);
-        } 
-
+        }
     }
-    function kardex($venta,$detalles,$accion){
-        
-       
-      
-             $kardex = new Kardex();
-         $kardex->fecha = date("Y-m-d H:i:s");
-         $kardex->producto_id = $detalles->producto_id;
-         $kardex->tipo_movimiento = $venta->tipo;
-         $kardex->accion=$accion;
-         $kardex->cantidad = $detalles->cantidad;
-         $kardex->precio_unitario = $detalles->precio_unitario;
-         $kardex->subtotal = $detalles->subtotal;
-         
-         if($accion=='A')
-          $kardex->created_by =$venta->user_id;
-        if($accion=='M')
-        $kardex->updated_by =$venta->user_id;
-    if($accion=='B')
-        $kardex->deleted_by =$venta->user_id;
-
-         $kardex->save();
-    
-    }
-
-     public function print($id)
+    function kardex($venta, $detalles, $accion)
     {
-        
-          $ventas = Venta::find($id);
-       
+
+
+
+        $kardex = new Kardex();
+        $kardex->fecha = date("Y-m-d H:i:s");
+        $kardex->producto_id = $detalles->producto_id;
+        $kardex->tipo_movimiento = $venta->tipo;
+        $kardex->accion = $accion;
+        $kardex->cantidad = $detalles->cantidad;
+        $kardex->precio_unitario = $detalles->precio_unitario;
+        $kardex->subtotal = $detalles->subtotal;
+
+        if ($accion == 'A')
+            $kardex->created_by = $venta->user_id;
+        if ($accion == 'M')
+            $kardex->updated_by = $venta->user_id;
+        if ($accion == 'B')
+            $kardex->deleted_by = $venta->user_id;
+
+        $kardex->save();
+    }
+
+    public function print($id)
+    {
+
+        $ventas = Venta::find($id);
+
 
         if (!$ventas) {
             return response()->json([
@@ -426,25 +416,25 @@ $cantidad_total=0;
                 'message' => 'No hay datos de la Compra'
             ], 404);
         }
-        
-     
-       $venta_detalles= DB::table('venta_detalles')
+
+
+        $venta_detalles = DB::table('venta_detalles')
             ->select(
                 'venta_detalles.id as id',
                 'productos.producto',
-                
+
                 'venta_detalles.precio_unitario',
                 'venta_detalles.cantidad',
                 'venta_detalles.subtotal'
             )
-           
-           ->join('productos', 'productos.id', '=', 'venta_detalles.producto_id')
-           ->where('venta_detalles.venta_id',"=",$id)
+
+            ->join('productos', 'productos.id', '=', 'venta_detalles.producto_id')
+            ->where('venta_detalles.venta_id', "=", $id)
             ->whereNull('venta_detalles.deleted_at')
             ->orderBy('venta_detalles.id', 'desc')
             ->get();
 
-        
+
         $ventas->venta_fecha = Carbon::parse($ventas->venta_fecha)->format('d-m-Y H:i:s');
         $ventas->user_id = str_pad($ventas->user_id, 4, '0', STR_PAD_LEFT);
         $ventas->numero_venta = str_pad($ventas->numero_venta, 10, '0', STR_PAD_LEFT);
@@ -456,7 +446,7 @@ $cantidad_total=0;
             default => 'NINGUNO',
         };
 
-        
+
         // return $venta_detalles;
         return \PDF::loadView(
             'pdf.app',
@@ -476,7 +466,4 @@ $cantidad_total=0;
             ->setOption('no-stop-slow-scripts', true)
             ->stream('recibo');
     }
-
-   
-       
 }
