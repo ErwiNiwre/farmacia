@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -49,7 +50,7 @@ class LaboratorioServicioController extends Controller
         }
 
         $clasificacion = Clasificacion::All();
-        
+
         return view(
             'laboratorioServicios.create',
             compact(
@@ -76,14 +77,14 @@ class LaboratorioServicioController extends Controller
 
     public function getListLaboratorioServicio()
     {
-        $listServicios= DB::table('laboratorio_servicios')
+        $listServicios = DB::table('laboratorio_servicios')
             ->select(
                 'laboratorio_servicios.id as id',
                 'laboratorio_servicios.servicio',
                 'laboratorio_servicios.precio',
                 'clasificaciones.clasificacion as clasificacion'
             )
-           ->join('clasificaciones', 'clasificaciones.id', '=', 'laboratorio_servicios.clasificacion_id')
+            ->join('clasificaciones', 'clasificaciones.id', '=', 'laboratorio_servicios.clasificacion_id')
             ->whereNull('laboratorio_servicios.deleted_at')
             ->orderBy('laboratorio_servicios.id', 'desc')
             ->get();
@@ -96,7 +97,7 @@ class LaboratorioServicioController extends Controller
 
                 $buttons[] = '<a href="' . route('laboratorioServicios.edit', $listServicios->id) . '" class="btn btn-secondary" title="Editar"><i class="fa fa-edit" aria-hidden="true"></i></a>';
                 $buttons[] = '<a onclick="return confirm(\'Esta seguro que desea eliminar el registo?\')" href="' . route('laboratorioServicios.destroy', $listServicios->id) . '" class="waves-effect waves-light btn btn-danger mb-5" title="Eliminar"><i class="fa fa-bitbucket" aria-hidden="true"></i></a>';
-                 return implode(' ', $buttons);
+                return implode(' ', $buttons);
             })
             ->toJson();
     }
@@ -116,14 +117,14 @@ class LaboratorioServicioController extends Controller
         }
 
         $laboratorioServicio = LaboratorioServicio::find($id);
-         $clasificaciones = Clasificacion::All();
+        $clasificaciones = Clasificacion::All();
 
         // return $especialidad;
         return view(
             'laboratorioServicios.edit',
             compact(
-               'session_auth',
-                'session_name',                
+                'session_auth',
+                'session_name',
                 'clasificaciones',
                 'laboratorioServicio'
             )
@@ -131,7 +132,7 @@ class LaboratorioServicioController extends Controller
     }
 
 
-      public function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
         // print_r($request->all());
         // exit;
@@ -140,10 +141,10 @@ class LaboratorioServicioController extends Controller
             'precio' => 'required',
 
         ]);
-             $session_auth = auth()->user();
+        $session_auth = auth()->user();
         $session_name = "";
         //Se referencia al usuario Logueado
-     if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
+        if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
             $session_name = $session_auth->username;
         } else {
             $session_name = $session_auth->nombre;
@@ -160,21 +161,19 @@ class LaboratorioServicioController extends Controller
         $laboratorioServicio->save();
 
         return redirect()->route('laboratorioServicios.index');
-
     }
 
-        public function destroy($id)
+    public function destroy($id)
     {
         //
-         
- 
+
+
         $laboratorioServicio = LaboratorioServicio::find($id);
         // $laboratorioServicio->eliminacion_usuario = $sesion_nombre;
         // $laboratorioServicio->save();
-       
+
         $laboratorioServicio->delete();
 
         return redirect()->route('laboratorioServicios.index');
     }
-
 }

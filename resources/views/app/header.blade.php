@@ -59,11 +59,6 @@
                                 <a class="dropdown-item" href="{{ route('home') }}">
                                     <i class="ti-home text-muted me-2"></i> Inicio
                                 </a>
-                                @if ($session_auth->id != 1 && $session_auth->username != 'AdminCMF')
-                                    <a class="dropdown-item" href="{{ route('users.show', $session_auth->id) }}">
-                                        <i class="ti-user text-muted me-2"></i> Perfil
-                                    </a>
-                                @endif
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item"
                                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
