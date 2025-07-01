@@ -1489,11 +1489,11 @@ class DatabaseSeeder extends Seeder
 
         DB::table('users')->insert([
             ['id' =>  '1', 'username' => 'AdminCMF', 'nombre' => 'Centro Medico Fiori', 'email' => 'AdminCMF@admin.com', 'password' => bcrypt('AdminCMFiori')],
-            ['id' =>  '2', 'username' =>  'SA7034241', 'nombre' => 'Jimena Suntura Apaza', 'password' => bcrypt('7034241')],
-            ['id' =>  '3', 'username' =>  'SA13022160', 'nombre' => 'Banesa Suntura Apaza', 'password' => bcrypt('13022160')],
-            ['id' =>  '4', 'username' =>  'EC6889395', 'nombre' => 'Guido Esquivel Cabrita', 'password' => bcrypt('6889395')],
-            ['id' =>  '5', 'username' =>  'MM4800651', 'nombre' => 'Toribia Mamani Maita', 'password' => bcrypt('4800651')],
-            ['id' =>  '6', 'username' =>  'BC8434641', 'nombre' => 'Cinthia Naguel Barrientos Cruz', 'password' => bcrypt('8434641')],
+            ['id' =>  '2', 'username' =>  'SA7034241', 'nombre' => 'Jimena Suntura Apaza', 'email' => null, 'password' => bcrypt('7034241')],
+            ['id' =>  '3', 'username' =>  'SA13022160', 'nombre' => 'Banesa Suntura Apaza', 'email' => null, 'password' => bcrypt('13022160')],
+            ['id' =>  '4', 'username' =>  'EC6889395', 'nombre' => 'Guido Esquivel Cabrita', 'email' => null, 'password' => bcrypt('6889395')],
+            ['id' =>  '5', 'username' =>  'MM4800651', 'nombre' => 'Toribia Mamani Maita', 'email' => null, 'password' => bcrypt('4800651')],
+            ['id' =>  '6', 'username' =>  'BC8434641', 'nombre' => 'Cinthia Naguel Barrientos Cruz', 'email' => null, 'password' => bcrypt('8434641')],
         ]);
 
         DB::table('clasificaciones')->insert([
