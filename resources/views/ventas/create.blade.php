@@ -63,29 +63,36 @@
                                     </div>
                                     <!-- /.form-group -->
                                 </div>
-                                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 col-xl-3 col-xxl-3 col-xxxl-3">
-                                    <div class="form-group">
+                                <div  class="col-xs-3 col-sm-3 col-md-3 col-lg-3 col-xl-3 col-xxl-3 col-xxxl-3">
+                                    <div id="display_efectivo" class="form-group">
                                         <label class="form-label">Efectivo</label>
-                                        <input type="number" id="efectivo" value=0 name="efectivo" class="form-control"  min="0" step="0.1"
-                                            value="{{ old('efectivo') }}" placeholder="Efectivo">
+                                        
+
+                                        <input id="efectivo" type="text"
+                                            value="{{ old('efectivo', 0) }}" name="efectivo"
+                                            data-bts-button-down-class="btn btn-secondary"
+                                            data-bts-button-up-class="btn btn-secondary">
+                                        {!! $errors->first('efectivo', '<small class="text-danger">:message</small>') !!}
                                            
                                     </div>
                                 </div>
                                 
 
-                                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 col-xl-3 col-xxl-3 col-xxxl-3">
-                                    <div class="form-group">
-                                        <label class="form-label">QR</label>
-                                        <input type="number" id="qr" value=0 name="efectivo" class="form-control"  min="0" step="0.1"
-                                            value="{{ old('qr') }}" placeholder="QR">
+                                <div  class="col-xs-3 col-sm-3 col-md-3 col-lg-3 col-xl-3 col-xxl-3 col-xxxl-3">
+                                    <div id="display_qr" style="display:none" class="form-group">
+                                        <label class="form-label">QR</label>                                       
+                                            <input id="qr" type="text"
+                                            value="{{ old('qr', 0) }}" name="qr"
+                                            data-bts-button-down-class="btn btn-secondary"
+                                            data-bts-button-up-class="btn btn-secondary">
+                                        {!! $errors->first('qr', '<small class="text-danger">:message</small>') !!}
+                                           
                                            
                                     </div>
                                 </div>
-                                {{-- <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 col-xl-2 col-xxl-2 col-xxxl-2">
-                                    
-                                </div> --}}
+                            
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 col-xxl-4 col-xxxl-4 badge badge-success text-center">
-                                {{-- <input type="hidden" id="amount" name="amount" class="form-control" value="{{ old('amount') }}"> --}}
+                               
                                <label  class="fs-40">Cambio Bs. </label> <label id="cambio_display" class="fs-40">0.00</div>
                             </div>
                                 <div class="row" id="observacion_section" style="display: none">
@@ -200,16 +207,21 @@
     <script>
         $(document).ready(function() {
            
-// const datos = [{"producto_id":"3","unidad_precio":13.2,"cantidad":19,"subtotal":250.8,"cantidad_total":"19"},{"producto_id":"3","unidad_precio":13.2,"cantidad":3,"subtotal":39.6,"cantidad_total":"19"}];
-
-//alert(validarStock(prod));
-
+               $("#efectivo, #qr").TouchSpin({
+                min: 0,
+                max: 1000000000,
+                step: 0.01,
+                decimals: 2,
+                boostat: 1,
+                stepinterval: 50,
+                maxboostedstep: 10,
+                prefix: 'BS.'
+            });
             const productosList = @json($producto);
             toggleSaveButton();
             $('#createventas').keydown(function(event){
              if(event.keyCode == 13&& !event.target.matches("textarea")) {
-              //alert('You pressed enter! Form submission will be disabled.')
-             // console.log(event);
+            
                event.preventDefault();
                return false;
                }
@@ -217,35 +229,18 @@
             function busquedaProductosList(indice,atributo){
                  result_producto="";   
                  productosList.forEach(function(result) {
-                //alert($( "#barras" ).val()+ "=="+ e.id);
-               
-                //alert(indice +"=="+ result[atributo]);
+         
                 if (indice == result[atributo])
                    result_producto=result;
                     
-                    // console.(result.id);
+                  
                     });
 
-                 //console.log(result_producto);
+               
                     return result_producto;   
 
             }
-        /*    $( "#barras" ).on( "blur", function() {
-             
-                var resul_producto_id="";
-            
-            var productos=busquedaProductosList($( "#barras" ).val(),"barras");
-               if(productos!==""){
-                $("#producto_id").val(productos.id).change();
-                
-            }
-            else
-                alert("código no encontrado");
-                 $("#barras").val("");
-            //console.log(busquedaProductosList($( "#barras" ).val(),"barras"));
- 
-  
-} );*/
+        
 
        $('#barras').keydown(function(event){
              
@@ -291,7 +286,6 @@
                  }
                  $("#barras").val("");
                  return false;
-            //console.log(busquedaProductosList($( "#barras" ).val(),"barras"));
  
         }
         
@@ -303,7 +297,7 @@
            $('#efectivo, #qr').on('input', (calculoCambio));
            
            $('#efectivo, #qr').on('input', (toggleSaveButton));
-           // $('#venta_details_table').on('input', 'input[name="cantidad[]"]', toggleSaveButton);
+           
 
             const table = $('#venta_details_table').DataTable({
                 "ordering": false,
@@ -381,7 +375,7 @@
                 efectivo=isNaN(efectivo) ? 0 : efectivo;
                 total = isNaN(total) ? 0 : total;
                 let cambio=efectivo-total+qr;
-                //alert(total+'+'+qr+'-'+efectivo)
+                
                 $('#cambio_display').text( cambio.toFixed(2));
 
             }
@@ -395,69 +389,20 @@
                      const $subtotalCell =   $(row).find('td:eq(4)').text();
                       const $stock =   $(row).find('td:eq(1)').text();
                     //console.log($subtotalCell);
-                   
-                    /*if ($subtotalCell.length > 0) {
-                        const subtotal = parseFloat($subtotalCell.text().replace('Bs. ', ''));
-                        total += isNaN($subtotalCell) ? 0 : $subtotalCell;
-                    }*/
+                 
                     total += parseFloat($subtotalCell);
                     stock -= parseFloat(stock)-$(row).find('input[name="unidad_precios[]"]').val();
-                    // alert(row[4]);
+                    
                 });
-                //alert(total);
+               
                  total = isNaN(total) ? 0 : parseFloat(total).toFixed(2);
                 $('#total_display').text('Total Bs. ' + total);
                 $('#price_table').text('Bs. ' + total);
                 $('#total').val(total);
               
-                
-                // // $('#amount').val(total.toFixed(2));
-                // //$('#price_display').text('Bs. ' + total.toFixed(2));
-                // $('#price_table').text('Bs. ' + total.toFixed(2));
                  
             }
-            //  function verificarStock(id) {
-            //     let total = 0;
-            //    alert(id);
-            //     $('#venta_details_table').DataTable().rows().nodes().each(function(row, index) {
-                    
-            //          var stock_row = "";
-            //          var resultado=0;
-            //          if(this.data()[index][0]==id){
-                        
-            //             stock_row =   $(row).find('td:eq(1)').text();
-            //             if(stock_row=='undefined')
-            //             stock_row=0;
-
-            //             cantidad_row=$(row).find('input[name="cantidades[]"]').val();
-            //          }
-            //         //console.log($subtotalCell);
-                   
-            //         /*if ($subtotalCell.length > 0) {
-            //             const subtotal = parseFloat($subtotalCell.text().replace('Bs. ', ''));
-            //             total += isNaN($subtotalCell) ? 0 : $subtotalCell;
-            //         }*/
-                    
-            //         // alert(row[4]);
-            //     });
-            //     resultado=parseFloat(stock_row)-parseFloat(cantidad_row);
-            //     alert(resultado+"entro");
-            //     return resultado;
-              
-                
-            //     // // $('#amount').val(total.toFixed(2));
-            //     // //$('#price_display').text('Bs. ' + total.toFixed(2));
-            //     // $('#price_table').text('Bs. ' + total.toFixed(2));
-                 
-            // }
-            /*$( "#efectivo" ).on( "blur", function() {
-                calculoCambio();
-                toggleSaveButton()
-            })
-            $( "#qr" ).on( "blur", function() {
-                calculoCambio();
-                toggleSaveButton()
-            })*/
+            
             $('#venta_details_table').on('input', 'input[name="unidad_precios[]"], input[name="cantidades[]"]',
                 function() {
                     const $row = $(this).closest('tr');
@@ -467,20 +412,9 @@
                      
                     const cantidad = $row.find('input[name="cantidades[]"]').val();
                     const subtotal = (cantidad * price).toFixed(2);
-                    //const stock = parseFloat($row.find('button[name="removeRow"]').val())-cantidad;
-//console.log(index);
-                   // $row.find('td:eq(1)').text(`${stock}`);
-                    //let stock=0;
-                    //console.log($row.find('button[value]').val());
+             
                     $row.find('td:eq(4)').text(`${subtotal}`);
-                    //alert($row.find('button[value]').val());
-                    //stock=verificarStock($row.find('button[value]').val(),0);
-                    //alert(stock);
-                    // if(stock==false){
-                    //      alert("cantidad supera al stock ");
-                    //      $row.find('input[name="cantidades[]"]').val('0');
-                    // }
-                   // alert(stock);
+                   
                    if(cantidad<=parseFloat($row.find('td:eq(1)').text()))
                     {calculateTotal();
                     toggleSaveButton();}
@@ -562,20 +496,14 @@
                    //alert();
                 if (table.rows().count() != 0) {
                 $('#venta_details_table').DataTable().rows().nodes().each(function(row, index) {
-                     //var producto_id = this.data()[ind][0];
-                   // alert(id_producto);
-                   // alert(this.data()[ind][0]+'=='+id_producto);
-                  // stock =busquedaProductosList(this.data()[ind][0],"id");
-                //    console.log(stock);
-                 //alert (stock.cantidad+'<='+0);
+                
                      if(this.data()[ind][0]==id_producto)
                     estado= true;
                
                ind++;
 
                 })
-                //console.log(stock)
-               // alert(stock.cantidad+'>='+parseFloat(total_cantidad)+parseFloat(evento));
+                
              
                 }
                  return estado;
@@ -587,8 +515,7 @@
                   var table = $('#venta_details_table').DataTable();
                 if (table.rows().count() != 0) {
                 $('#venta_details_table').DataTable().rows().nodes().each(function(row, index) {
-                     //var producto_id = this.data()[ind][0];
-                   // alert(id_producto);
+                 
                      stock =busquedaProductosList(this.data()[ind][0],"id");
                      alert(this.data()[ind][0]+'=='+id_producto);
                      if(this.data()[ind][0]==id_producto)
@@ -598,9 +525,7 @@
                ind++;
 
                 })
-                //console.log(stock)
-               // alert(stock.cantidad+'>='+parseFloat(total_cantidad)+parseFloat(evento));
-              // alert(stock.cantidad+'>='+parseFloat(total_cantidad)+parseFloat(evento));
+              
               total_cantidad= isNaN(total_cantidad) ? 0 : total_cantidad;
                  if(stock.cantidad>=parseFloat(total_cantidad)+parseFloat(evento)){
                             return true;
@@ -613,38 +538,16 @@
             function updateProductDetails() {
                 var comprasDetails = [];                
                 var ind = 0;
-                //console.log(productosList);
-                //const  result = productosList.find(({ barras }) => barras === $( "#barras" ).val());
-                // Iterar sobre las filas de la tabla para obtener los datos de los servicios
+              
                 $('#venta_details_table').DataTable().rows().nodes().each(function(row, index) {
 
                     var producto_id = this.data()[ind][0]; // Obtener el ID del servicio
-                    //var vencimiento = $(row).find('input[name="vencimiento[]"]').val();
-                    //var costo = $(row).find('input[name="costo[]"]').val();
-
+                   
                     var unidad_precio = $(row).find('input[name="unidad_precios[]"]').val();
                     var cantidad = $(row).find('input[name="cantidades[]"]').val();
                     var subtotal = $(row).find('td:eq(4)').text().replace('Bs. ',''); // Obtener el subtotal
                     var cantidad_total=$(row).find('td:eq(1)').text();
-                    //var estado = false;
-
-
-//alert(subtotal);
-                    //var datos_productos=busquedaProductosList(this.data()[ind][0],"id");
-                    // console.log(datos_productos);
-                    // alert(unit_price+">"+datos_productos.precio_unitario);
-                      // if(parseFloat(unidad_precio)>datos_productos.precio_unitario)
-                        //alert("entro");                        
-                       // estado = true;                       
-                   // else
-                       // estado = false;
-                    
-
-                    
-                   // alert("nuevo precio"+unit_price+" id "+datos_productos.id);
-
-                
-               // alert("");
+  
 
                     if (!producto_id || !unidad_precio || !cantidad || !subtotal) {
                         return; // Ignorar filas con datos incompletos
@@ -663,11 +566,34 @@
                     comprasDetails.push(producto_venta);
                     ind++;
                 });
-               //console.log(JSON.stringify(comprasDetails));
-                // Retornar el array de objetos en formato JSON
-               // console.log(JSON.stringify(comprasDetails));
+              
                 return JSON.stringify(comprasDetails);
             }
+
+            $('#metodo_pago').change(function() {
+            var valor = $(this).val();
+            
+            $('#display_efectivo, #display_qr').hide();
+
+            // Muestra según selección
+            if (valor === 'E') {
+            $('#display_efectivo').show();
+            $('#qr').val(0);
+            calculoCambio();
+            } else if (valor === 'Q') {
+            $('#display_qr').show();
+            $('#efectivo').val(0);
+            calculoCambio();
+            } else if (valor === 'M') {
+            $('#display_efectivo, #display_qr').show();
+            $('#qr').val(0);
+            calculoCambio();
+            }else if (valor === 'N') {
+            $('#display_efectivo, #display_qr').hide();
+            $('#efectivo,#qr').val(0);
+            calculoCambio();
+            }
+        });
         });
 
         function toggleSaveButton() {
@@ -679,7 +605,7 @@
             
             const clienteFilled = clienteValue.length > 0;
             const EfectivoFilled = (EfectivoValue+QrValue) > 0;
-            const CambioFilled = cambio > 0;
+            const CambioFilled = cambio >= 0;
        // alert(cambio +'>'+ 0);
             let allProductsFilled = true;
             $('#venta_details_table tbody tr').each(function() {
@@ -701,8 +627,9 @@
              saveButtonEnabled =  allProductsFilled;
             $('#btn_save').prop('disabled', !saveButtonEnabled);
         }
-
+        
         $("#tipo").change(function() {
+           
             if($("#tipo").val()=='Salida Directa'){
                 $('#observacion_section').show();
                 toggleSaveButton();
@@ -711,38 +638,15 @@
             $('#observacion_section').hide();
             toggleSaveButton();
         }
+
+           
+           
 });
+  
 
-/*function validarStock(arr,atributo) {
-    console.log(arr);
-  const conteoIds = {};
-  let sumaTotal = 0;
-  let cantidadTotal=0;
 
-  // Paso 1: contar cuántas veces aparece cada ID
-  arr.forEach(obj => {
-    const id = obj[atributo];
-   
-    conteoIds[id] = (conteoIds[id] || 0) + 1;
-  });
-
-  // Paso 2: sumar los 'uns' solo de los objetos con ID repetido
-  arr.forEach(obj => {
-    if (conteoIds[obj[atributo]] > 1) {
-        console.log(obj.cantidad_total);
-        cantidadTotal=obj.cantidad_total;
-      sumaTotal += parseInt(obj.cantidad, 10);
-    }
-  });
- // alert(cantidadTotal+'>'+sumaTotal);
-    if(cantidadTotal>=sumaTotal)
-  return true;
-else
-return false;
-}*/
 function validarStock(productos) {
-  //  console.log(productos);
-    
+ 
   const resumen = {};
 
   for (const item of productos) {
@@ -769,7 +673,7 @@ function validarStock(productos) {
       return false;
     }
   }
-//alert(true);
+  
   return true;
 }
          
