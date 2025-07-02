@@ -55,11 +55,10 @@ class ProductoController extends Controller
                 'productos.id',
                 'productos.producto',
                 'productos.generico',
-                DB::raw("CASE WHEN productos.tipo_producto = 'M' THEN 'Medicamento' ELSE 'Insumo' END as tipo_producto"),
+                'productos.tipo_producto',
                 'productos.precio_unitario',
-                DB::raw("ROUND(productos.porcentaje, 0) as porcentaje"),
+                'productos.porcentaje',
                 'productos.precio_venta',
-                'productos.cantidad',
                 'productos.estado',
                 'concentraciones.concentracion as concentracion',
                 'marcas.marca as marca',
@@ -67,7 +66,26 @@ class ProductoController extends Controller
                 'accion_terapeuticas.accion_terapeutica as accion_terapeutica',
                 'unidad_medidas.unidad_medida as unidad_medida'
             )
-            ->get();
+            ->get()->map(function ($producto) {
+                return [
+                    'id'              => $producto->id,
+                    'producto'        => $producto->producto,
+                    'generico'        => $producto->generico,
+                    'tipo_producto'   => $producto->tipo_producto == 'M' ? 'Medicamento' : 'Insumo',
+                    'precio_unitario' => $producto->precio_unitario,
+                    'porcentaje'      => number_format($producto->porcentaje, 0),
+                    'precio_venta'    => $producto->precio_venta,
+                    'estado'          => $producto->estado,
+
+                    'concentracion'          => $producto->concentracion,
+                    'marca'          => $producto->marca,
+                    'presentacion'          => $producto->presentacion,
+                    'accion_terapeutica'          => $producto->accion_terapeutica,
+                    'unidad_medida'          => $producto->unidad_medida,
+                    'edit_url'           => route('productos.edit', $producto->id),
+                ];
+            });
+
         // return $productos;
         return view(
             'productos.index',
