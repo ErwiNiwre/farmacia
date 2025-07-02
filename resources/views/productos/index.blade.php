@@ -27,11 +27,16 @@
                                         <th>Id</th>
                                         <th>Producto</th>
                                         <th>Generico</th>
+                                        <th>Conce</th>{{-- eliminar luego --}}
+                                        <th>Marca</th>{{-- eliminar luego --}}
+                                        <th>Prese</th>{{-- eliminar luego --}}
+                                        <th>Terap</th>{{-- eliminar luego --}}
+                                        <th>Unida</th>{{-- eliminar luego --}}
                                         <th>Tipo</th>
                                         <th class="text-end">P. Compra (Bs.)</th>
                                         <th class="text-end">Porcentaje (%)</th>
                                         <th class="text-end">P. Venta (Bs.)</th>
-                                        <th class="text-end">Cant.</th>
+                                        {{-- <th class="text-end">Cant.</th> volver a descomentar --}}
                                         <th>Estado</th>
                                         <th class="text-center">Acciones</th>
                                     </tr>
@@ -255,7 +260,7 @@
             let tbl_Producto = $('#tbl_Producto').DataTable({
                 data: @json($productos),
                 order: [
-                    [0, 'desc']
+                    [0, 'asc']
                 ],
                 columns: [{
                         data: 'id',
@@ -267,6 +272,25 @@
                     {
                         data: 'generico'
                     },
+
+                    // elieminar luego
+                    {
+                        data: 'concentracion'
+                    },
+                    {
+                        data: 'marca'
+                    },
+                    {
+                        data: 'presentacion'
+                    },
+                    {
+                        data: 'accion_terapeutica'
+                    },
+                    {
+                        data: 'unidad_medida'
+                    },
+                    // elieminar luego
+
                     {
                         data: 'tipo_producto'
                     },
@@ -282,10 +306,10 @@
                         data: 'precio_venta',
                         className: 'text-end'
                     },
-                    {
-                        data: 'cantidad',
-                        className: 'text-center'
-                    },
+                    // {
+                    //     data: 'cantidad',
+                    //     className: 'text-center'
+                    // },
                     {
                         data: 'estado',
                         className: 'text-center',
