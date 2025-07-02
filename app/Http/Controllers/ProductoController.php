@@ -30,21 +30,63 @@ class ProductoController extends Controller
             $session_name = $session_auth->nombre;
         }
 
-        $productos = Producto::all()->map(function ($producto) {
-            return [
-                'id'              => $producto->id,
-                'producto'        => $producto->producto,
-                'generico'        => $producto->generico,
-                'tipo_producto'   => $producto->tipo_producto == 'M' ? 'Medicamento' : 'Insumo',
-                'precio_unitario' => $producto->precio_unitario,
-                'porcentaje'      => number_format($producto->porcentaje, 0),
-                'precio_venta'    => $producto->precio_venta,
-                'cantidad'        => $producto->cantidad,
-                'estado'          => $producto->estado,
-                'edit_url'           => route('productos.edit', $producto->id),
-            ];
-        });
+        // $productos = Producto::all()->map(function ($producto) {
+        //     return [
+        //         'id'              => $producto->id,
+        //         'producto'        => $producto->producto,
+        //         'generico'        => $producto->generico,
+        //         'tipo_producto'   => $producto->tipo_producto == 'M' ? 'Medicamento' : 'Insumo',
+        //         'precio_unitario' => $producto->precio_unitario,
+        //         'porcentaje'      => number_format($producto->porcentaje, 0),
+        //         'precio_venta'    => $producto->precio_venta,
+        //         'cantidad'        => $producto->cantidad,
+        //         'estado'          => $producto->estado,
+        //         'edit_url'           => route('productos.edit', $producto->id),
+        //     ];
+        // });
 
+        $productos = DB::table('productos')
+            ->join('concentraciones', 'productos.concentracion_id', '=', 'concentraciones.id')
+            ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
+            ->join('presentaciones', 'productos.presentacion_id', '=', 'presentaciones.id')
+            ->join('accion_terapeuticas', 'productos.accion_terapeutica_id', '=', 'accion_terapeuticas.id')
+            ->join('unidad_medidas', 'productos.unidad_medida_id', '=', 'unidad_medidas.id')
+            ->select(
+                'productos.id',
+                'productos.producto',
+                'productos.generico',
+                'productos.tipo_producto',
+                'productos.precio_unitario',
+                'productos.porcentaje',
+                'productos.precio_venta',
+                'productos.estado',
+                'concentraciones.concentracion as concentracion',
+                'marcas.marca as marca',
+                'presentaciones.presentacion as presentacion',
+                'accion_terapeuticas.accion_terapeutica as accion_terapeutica',
+                'unidad_medidas.unidad_medida as unidad_medida'
+            )
+            ->get()->map(function ($producto) {
+                return [
+                    'id'              => $producto->id,
+                    'producto'        => $producto->producto,
+                    'generico'        => $producto->generico,
+                    'tipo_producto'   => $producto->tipo_producto == 'M' ? 'Medicamento' : 'Insumo',
+                    'precio_unitario' => $producto->precio_unitario,
+                    'porcentaje'      => number_format($producto->porcentaje, 0),
+                    'precio_venta'    => $producto->precio_venta,
+                    'estado'          => $producto->estado,
+
+                    'concentracion'          => $producto->concentracion,
+                    'marca'          => $producto->marca,
+                    'presentacion'          => $producto->presentacion,
+                    'accion_terapeutica'          => $producto->accion_terapeutica,
+                    'unidad_medida'          => $producto->unidad_medida,
+                    'edit_url'           => route('productos.edit', $producto->id),
+                ];
+            });
+
+        // return $productos;
         return view(
             'productos.index',
             compact(

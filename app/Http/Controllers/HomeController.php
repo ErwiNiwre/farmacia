@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Models\Producto;
 use Illuminate\Support\Facades\DB;
-use App\Models\CompraDetalle;
 use Carbon\Carbon;
 
 class HomeController extends Controller
@@ -25,7 +23,16 @@ class HomeController extends Controller
             $session_name = $session_auth->nombre;
         }
 
-      $medicamentos = DB::table('productos')
+        $cantidadMed = DB::table('productos')
+            ->where('tipo_producto', 'M')
+            ->whereNull('productos.deleted_at')
+            ->count();
+
+        $cantidadIns = DB::table('productos')
+            ->where('tipo_producto', 'I')
+            ->whereNull('productos.deleted_at')
+            ->count();
+        $medicamentos = DB::table('productos')
             ->select(
                 'productos.id',
                 'producto',
@@ -92,75 +99,13 @@ class HomeController extends Controller
             ->whereNull('compra_detalles.deleted_at')
             ->whereNull('productos.deleted_at')
             ->get();
-
         return view(
             'home.index',
             compact(
                 'session_auth',
                 'session_name',
-                'medicamentos',
-                'insumos'
-            )
-        );
-    }
-
-         public function farmacia()
-    {
-      
-        $medicamentos = DB::table('productos')
-            ->select(
-                'productos.id',
-                'producto',
-                'generico',
-                'concentracion',
-                'marca',
-                'presentacion',
-                'accion_terapeutica',
-                'unidad_medida',
-                'estado',
-                'cantidad',
-                'precio_venta',
-                'vencimiento',
-                'created_at as fecha_compra'
-            )
-            ->join('concentraciones', 'concentraciones.id', '=', 'productos.concentracion_id')
-            ->join('marcas', 'marcas.id', '=', 'productos.marca_id')
-            ->join('presentaciones', 'presentaciones.id', '=', 'productos.presentacion_id')
-            ->join('accion_terapeuticas', 'accion_terapeuticas.id', '=', 'productos.accion_terapeutica_id')
-            ->join('unidad_medidas', 'unidad_medidas.id', '=', 'productos.unidad_medida_id')
-            ->where('tipo_producto', 'M')
-            ->whereNull('productos.deleted_at')
-            ->get();
-print_r($medicamentos);
-exit;
-        $insumos = DB::table('productos')
-            ->select(
-                'productos.id',
-                'producto',
-                'generico',
-                'concentracion',
-                'marca',
-                'presentacion',
-                'accion_terapeutica',
-                'unidad_medida',
-                'estado',
-                'cantidad',
-                'precio_venta'
-            )
-            ->join('concentraciones', 'concentraciones.id', '=', 'productos.concentracion_id')
-            ->join('marcas', 'marcas.id', '=', 'productos.marca_id')
-            ->join('presentaciones', 'presentaciones.id', '=', 'productos.presentacion_id')
-            ->join('accion_terapeuticas', 'accion_terapeuticas.id', '=', 'productos.accion_terapeutica_id')
-            ->join('unidad_medidas', 'unidad_medidas.id', '=', 'productos.unidad_medida_id')
-            ->join('compra_detalles', 'compra_detalles.producto_id', '=', 'productos.id')
-            ->where('tipo_producto', 'I')
-            ->whereDate('compra_detalles.fecha_vencimiento', Carbon::now()->addDays(40)->toDateString())
-            ->whereNull('productos.deleted_at')
-            ->get();
-
-        return view(
-            'Homer.index',
-            compact(
+                'cantidadMed',
+                'cantidadIns',
                 'medicamentos',
                 'insumos'
             )

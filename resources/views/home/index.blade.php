@@ -9,59 +9,44 @@
 @endsection
 
 @section('content')
-<section class="content">
-   
-    
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 col-xxxl-6">
+                        <div class="box">
+                            <div class="box-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-15">
+                                        <img src="{{ asset('images/svg-icon/color-svg/custom-20.svg') }}" alt=""
+                                            class="w-120">
+                                    </div>
+                                    <div>
+                                        <h4 class="mb-0">Total Medicamentos</h4>
+                                        <h3 class="mb-0">{{ $cantidadMed }}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6 col-xxxl-6">
+                        <div class="box">
+                            <div class="box-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-15">
+                                        <img src="{{ asset('images/svg-icon/color-svg/custom-18.svg') }}" alt=""
+                                            class="w-120">
+                                    </div>
+                                    <div>
+                                        <h4 class="mb-0">Total Insumos</h4>
+                                        <h3 class="mb-0">{{ $cantidadIns }}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12">
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4 col-xxl-4 col-xxxl-4">
-                    <div class="box">
-                        <div class="box-body">
-                            <div class="d-flex align-items-center">
-                                <div class="me-15">
-                                    <img src="{{ asset('images/svg-icon/color-svg/custom-20.svg')}}" alt="" class="w-120">
-                                </div>
-                                <div>
-                                    <h4 class="mb-0">Total Pacientes</h4>
-                                    {{-- <h3 class="mb-0">{{ $patients->Count() }}</h3> --}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4 col-xxl-4 col-xxxl-4">
-                    <div class="box">
-                        <div class="box-body">
-                            <div class="d-flex align-items-center">
-                                <div class="me-15">
-                                    <img src="{{ asset('images/svg-icon/color-svg/custom-18.svg')}}" alt="" class="w-120">
-                                </div>
-                                <div>
-                                    <h4 class="mb-0">Total Personal</h4>
-                                    {{-- <h3 class="mb-0">{{ $employees->Count() }}</h3> --}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4 col-xxl-4 col-xxxl-4">
-                    <div class="box">
-                        <div class="box-body">
-                            <div class="d-flex align-items-center">
-                                <div class="me-15">
-                                    <img src="{{ asset('images/svg-icon/color-svg/custom-17.svg')}}" alt="" class="w-120">
-                                </div>
-                                <div>
-                                    <h4 class="mb-0">Total Atendidos</h4>
-                                    <h3 class="mb-0">245 modificar</h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <section class="content">
+                     <section class="content">
         <div class="row">
             <div class="col-12">
                 <div class="box">
@@ -128,10 +113,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
+              
             </div>
         </div>
     </section>
