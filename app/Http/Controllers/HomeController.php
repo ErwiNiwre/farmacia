@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -21,16 +22,23 @@ class HomeController extends Controller
             $session_name = $session_auth->nombre;
         }
 
-        // $patients = Patient::All();
-        // $employees = Staff::All()->slice(1);
+        $cantidadMed = DB::table('productos')
+            ->where('tipo_producto', 'M')
+            ->whereNull('productos.deleted_at')
+            ->count();
+
+        $cantidadIns = DB::table('productos')
+            ->where('tipo_producto', 'I')
+            ->whereNull('productos.deleted_at')
+            ->count();
 
         return view(
             'home.index',
             compact(
                 'session_auth',
-                'session_name'
-                // 'patients',
-                // 'employees'
+                'session_name',
+                'cantidadMed',
+                'cantidadIns'
             )
         );
     }
