@@ -51,6 +51,7 @@ class ProductoController extends Controller
             ->join('presentaciones', 'productos.presentacion_id', '=', 'presentaciones.id')
             ->join('accion_terapeuticas', 'productos.accion_terapeutica_id', '=', 'accion_terapeuticas.id')
             ->join('unidad_medidas', 'productos.unidad_medida_id', '=', 'unidad_medidas.id')
+            ->whereNull('productos.deleted_at')
             ->select(
                 'productos.id',
                 'productos.producto',
