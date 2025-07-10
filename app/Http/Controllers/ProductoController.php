@@ -139,7 +139,7 @@ class ProductoController extends Controller
     {
         $request->validate([
             'barras' => 'required|unique:productos,barras',
-            'producto' => 'required|regex:/^[a-zA-Z\s]+$/u',
+            'producto' => 'required|regex:/^[a-zA-Z0-9\s\/.,-]+$/u',
             'generico' => 'nullable|regex:/^[a-zA-Z\s]+$/u',
             'precio_unitario' => 'required|numeric|gt:0'
         ]);
