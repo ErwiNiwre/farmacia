@@ -27,16 +27,16 @@
                                         <th>Id</th>
                                         <th>Producto</th>
                                         <th>Generico</th>
-                                        <th>Conce</th>{{-- eliminar luego --}}
-                                        <th>Marca</th>{{-- eliminar luego --}}
-                                        <th>Prese</th>{{-- eliminar luego --}}
-                                        <th>Terap</th>{{-- eliminar luego --}}
-                                        <th>Unida</th>{{-- eliminar luego --}}
+                                        {{-- <th>Conce</th>eliminar luego --}}
+                                        {{-- <th>Marca</th>eliminar luego --}}
+                                        {{-- <th>Prese</th>eliminar luego --}}
+                                        {{-- <th>Terap</th>eliminar luego --}}
+                                        {{-- <th>Unida</th>eliminar luego --}}
                                         <th>Tipo</th>
                                         <th class="text-end">P. Compra (Bs.)</th>
                                         <th class="text-end">Porcentaje (%)</th>
                                         <th class="text-end">P. Venta (Bs.)</th>
-                                        {{-- <th class="text-end">Cant.</th> volver a descomentar --}}
+                                        <th class="text-end">Cant.</th> {{-- volver a descomentar --}}
                                         <th>Estado</th>
                                         <th class="text-center">Acciones</th>
                                     </tr>
@@ -274,21 +274,21 @@
                     },
 
                     // elieminar luego
-                    {
-                        data: 'concentracion'
-                    },
-                    {
-                        data: 'marca'
-                    },
-                    {
-                        data: 'presentacion'
-                    },
-                    {
-                        data: 'accion_terapeutica'
-                    },
-                    {
-                        data: 'unidad_medida'
-                    },
+                    // {
+                    //     data: 'concentracion'
+                    // },
+                    // {
+                    //     data: 'marca'
+                    // },
+                    // {
+                    //     data: 'presentacion'
+                    // },
+                    // {
+                    //     data: 'accion_terapeutica'
+                    // },
+                    // {
+                    //     data: 'unidad_medida'
+                    // },
                     // elieminar luego
 
                     {
@@ -306,10 +306,10 @@
                         data: 'precio_venta',
                         className: 'text-end'
                     },
-                    // {
-                    //     data: 'cantidad',
-                    //     className: 'text-center'
-                    // },
+                    {
+                        data: 'cantidad',
+                        className: 'text-center'
+                    },
                     {
                         data: 'estado',
                         className: 'text-center',
@@ -333,7 +333,7 @@
                         searchable: false,
                         render: function(data, type, row) {
                             return `
-                            <div class="d-block text-dark flexbox">
+                            <div class="text-dark flexbox">
                                 <button type="button" id="btn_read" value="${row.id}" class="btn btn-info" data-bs-toggle="tooltip" title="Ver Producto">
                                     <i class="mdi mdi-eye"></i>
                                 </button>
