@@ -18,6 +18,10 @@ class InvitadosController extends Controller
     public function index()
     {
         //
+        if (auth()->check()) {
+            return redirect()->route('home');
+        }
+
         $medicamentos = Producto::where('tipo_producto', 'M')->get();
         $insumos = Producto::where('tipo_producto', 'I')->get();
 
@@ -34,6 +38,9 @@ class InvitadosController extends Controller
     public function farmacia()
     {
         //
+        if (auth()->check()) {
+            return redirect()->route('home');
+        }
         $medicamentos = DB::table('productos')
             ->select(
                 'productos.id',
@@ -91,6 +98,9 @@ class InvitadosController extends Controller
 
     public function servicios()
     {
+        if (auth()->check()) {
+            return redirect()->route('home');
+        }
         $laboratorio_servicios = DB::table('laboratorio_servicios')
             ->select(
                 'laboratorio_servicios.id',
