@@ -68,14 +68,14 @@ class CompraDetalleController extends Controller
             $this->kardex($compras, $compraDetalle, 'A');
             $compraDetalle->save();
             $producto = Producto::find($request->create_producto_id);
-            $producto->cantidad = $producto->cantidad + $request->edit_cantidad;
+            $producto->ajustarStock($request->edit_cantidad);
             if ($request->create_estado == "1") {
-
                 $producto->precio_unitario = $request->edit_precio_unitario;
                 $precio = ($producto->porcentaje / 100) * $request->edit_precio_unitario;
                 $producto->precio_venta = $precio + $request->edit_precio_unitario;
+                $producto->save();
             }
-            $producto->save();
+
 
             DB::commit();
             return response()->json([
@@ -143,20 +143,16 @@ class CompraDetalleController extends Controller
 
             if ($comprasDetalle) {
 
-
                 $precio_maximo = CompraDetalle::where('producto_id', '=', $comprasDetalle->producto_id)->where('id', '<>', $comprasDetalle->id)->max('precio_unitario');
 
                 $kardex = Kardex::where('producto_id', '=', $comprasDetalle->producto_id)->where('tipo_movimiento', 'Producto')->orderBy('id', 'desc')->first();
 
-                if (empty($kardex))
-                    $precio_maximo_kardex = 0;
-                else
-                    $precio_maximo_kardex = $kardex->precio_unitario;
+                $precio_maximo_kardex = empty($kardex) ? 0 : $kardex->precio_unitario;
+
                 $productos = Producto::find($comprasDetalle->producto_id);
-                $productos->cantidad = $productos->cantidad - $comprasDetalle->cantidad;
+                $productos->ajustarStock(-$comprasDetalle->cantidad);
 
-
-                if ($precio_maximo > $precio_maximo_kardex && Carbon::parse($kardex->fecha)->gt(Carbon::parse($compraDetalle->updated_at))) {
+                if ($precio_maximo > $precio_maximo_kardex && Carbon::parse($kardex->fecha)->gt(Carbon::parse($comprasDetalle->updated_at))) {
                     $productos->precio_unitario = $precio_maximo;
                     $productos->precio_venta = (($productos->porcentaje / 100) * $precio_maximo_kardex) + $precio_maximo_kardex;
                 } else {
@@ -179,11 +175,9 @@ class CompraDetalleController extends Controller
             ], 500);
         }
     }
+
     function kardex($compra, $detalles, $accion)
     {
-
-
-
         $kardex = new Kardex();
         $kardex->fecha = date("Y-m-d H:i:s");
         $kardex->producto_id = $detalles->producto_id;

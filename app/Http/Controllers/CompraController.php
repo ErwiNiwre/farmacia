@@ -143,16 +143,15 @@ ORDER BY estado ASC limit 1) as estado'))
 
                 $compraDetalle->save();
                 $this->kardex($compra, $compraDetalle, 'A');
-                $producto->cantidad = $producto->cantidad + $detalle['cantidad'];
 
+                $producto->ajustarStock($detalle['cantidad']);
 
                 if ($detalle['estado'] == 1 && $compra->tipo == 'Compra') {
-
                     $producto->precio_unitario = $detalle['unidad_precio'];
                     $precio = ($producto->porcentaje / 100) * $detalle['unidad_precio'];
                     $producto->precio_venta = $precio + $detalle['unidad_precio'];
+                    $producto->save();
                 }
-                $producto->save();
             }
             DB::commit();
 
@@ -338,9 +337,7 @@ ORDER BY estado ASC limit 1) as estado'))
 
                 if ($compraDetalle) {
                     $productos = Producto::find($compraDetalle->producto_id);
-                    $productos->cantidad = $productos->cantidad - $compraDetalle->cantidad;
-
-
+                    $productos->ajustarStock(-$compraDetalle->cantidad);
 
                     if ($precio_maximo > $precio_maximo_kardex && Carbon::parse($kardex->fecha)->gt(Carbon::parse($compraDetalle->updated_at))) {
                         $productos->precio_unitario = $precio_maximo;
