@@ -36,7 +36,7 @@ class CompraDetalleController extends Controller
      */
     public function store(Request $request)
     {
-         $session_auth = auth()->user();
+        $session_auth = auth()->user();
         $session_name = "";
 
         if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
@@ -44,55 +44,48 @@ class CompraDetalleController extends Controller
         } else {
             $session_name = $session_auth->nombre;
         }
- 
-           DB::beginTransaction();
-          
-        try{
+
+        DB::beginTransaction();
+
+        try {
             $compraDetalle = new CompraDetalle();
             $compras = Compra::find($request->create_compra_id);
-            $compras->total=$compras->total+$request->create_subtotal;
+            $compras->total = $compras->total + $request->create_subtotal;
             $compras->save();
-            
+
             $compraDetalle->created_by = $session_auth->id;
-            $compraDetalle->compra_id = $request->create_compra_id ;
+            $compraDetalle->compra_id = $request->create_compra_id;
             $compraDetalle->cantidad =  $request->edit_cantidad;
             $compraDetalle->precio_unitario = $request->edit_precio_unitario;
             $compraDetalle->producto_id = $request->create_producto_id;
             $compraDetalle->subtotal = $request->create_subtotal;
-            if($request->edit_vencimiento){
-                $compraDetalle->vencimiento= $request->edit_vencimiento;
-                }
-            
-            $compraDetalle->cantidad_total= $request->edit_cantidad;
-            // print_r($compraDetalle);
-            // exit;
-            $this->kardex($compras,$compraDetalle,'A');
+            if ($request->edit_vencimiento) {
+                $compraDetalle->vencimiento = $request->edit_vencimiento;
+            }
+
+            $compraDetalle->cantidad_total = $request->edit_cantidad;
+
+            $this->kardex($compras, $compraDetalle, 'A');
             $compraDetalle->save();
             $producto = Producto::find($request->create_producto_id);
+            $producto->cantidad = $producto->cantidad + $request->edit_cantidad;
             $producto->ajustarStock($request->edit_cantidad);
-            $producto->cantidad=$producto->cantidad+$request->edit_cantidad;
+            if ($request->create_estado == "1") {
 
-            if( $request->create_estado=="1"){
-        //             print_r($request->create_estado);
-        //    exit;
-                       $producto->precio_unitario=$request->edit_precio_unitario;
-                       $precio=($producto->porcentaje/100)*$request->edit_precio_unitario;
-                       $producto->precio_venta=$precio+$request->edit_precio_unitario;
-                    
-                }
+                $producto->precio_unitario = $request->edit_precio_unitario;
+                $precio = ($producto->porcentaje / 100) * $request->edit_precio_unitario;
+                $producto->precio_venta = $precio + $request->edit_precio_unitario;
+            }
             $producto->save();
 
-             DB::commit();
-                return response()->json([
+            DB::commit();
+            return response()->json([
                 'status' => 200,
                 'message' => 'Datos de la Compra Creada.',
             ]);
-
-
-            } catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
-            // flash('Error al crear la compra. Por favor, intente nuevamente.', 'alert alert-danger alert-dismissible');
-            // return redirect()->back()->withInput();
+
             return response()->json([
                 'status' => 500,
                 'message' => 'Error al guardar la atención: ' . $e->getMessage()
@@ -129,127 +122,91 @@ class CompraDetalleController extends Controller
      */
     public function destroy($id)
     {
-         $session_auth = auth()->user();
+        $session_auth = auth()->user();
         $session_name = "";
-        // print_r($id);
-        // exit;
+
         if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
             $session_name = $session_auth->username;
         } else {
             $session_name = $session_auth->nombre;
         }
-        
-        try{
-        $comprasDetalle = CompraDetalle::find($id);
-        // print_r($comprasDetalle);
-        // exit;
-        $compras = Compra::find($comprasDetalle->compra_id);
-        $compras->total = $compras->total-($comprasDetalle->cantidad*$comprasDetalle->precio_unitario);
-        $compras->save();
-          $this->kardex($compras,$comprasDetalle,'B');
-                       $comprasDetalle->deleted_by = $session_auth->id;
-                        
-             $comprasDetalle->save();
-          
-// print_r($comprasDetalle);
-//             exit;
-        if ($comprasDetalle) {
+
+        try {
+            $comprasDetalle = CompraDetalle::find($id);
+            $precio_maximo=0;
+            $compras = Compra::find($comprasDetalle->compra_id);
             
-
-            // CompraDetalle::where('compra_id', '=', $comprasDetalle->compra_id)
-            //     ->update(['deleted_by' => $session_auth->id]);
-
-            // $compraDetalles = CompraDetalle::where('compra_id', '=', $compras->id)->get();
+            $compras->total = $compras->total - ($comprasDetalle->cantidad * $comprasDetalle->precio_unitario);
             
-           
-           // $price = DB::table('orders')->max('price');
-            // print_r($compraDetalles);
-            // exit;
+            $compras->save();
+            $this->kardex($compras, $comprasDetalle, 'B');
+            $comprasDetalle->deleted_by = $session_auth->id;
 
-             $precio_maximo = CompraDetalle::where('producto_id', '=', $comprasDetalle->producto_id)->
-                 where('id', '<>', $comprasDetalle->id)->max('precio_unitario');
-                 
-            $kardex = Kardex::where('producto_id', '=', $comprasDetalle->producto_id)->
-                 where('tipo_movimiento', 'Producto')->orderBy('id', 'desc')->first();
-                 //$precio_maximo_kardex = $precio_maximo_kardex->precio_unitario;
-                  if(empty($kardex))
-                        $precio_maximo_kardex=0;
-                      else
-                 $precio_maximo_kardex = $kardex->precio_unitario;
-            $productos = Producto::find($comprasDetalle->producto_id);
-                     $productos->cantidad=$productos->cantidad-$comprasDetalle->cantidad;
-                //      print_r ($precio_maximo.'>'.$precio_maximo_kardex);
-                //  exit;
-                
-                    if($precio_maximo>$precio_maximo_kardex&&Carbon::parse($kardex->fecha)->gt(Carbon::parse($compraDetalle->updated_at))){
-                     $productos->precio_unitario=$precio_maximo;
-                      $productos->precio_venta=(($productos->porcentaje/100)*$precio_maximo_kardex)+$precio_maximo_kardex;
-                     
-                      }else{
-                     $productos->precio_unitario=$precio_maximo_kardex;
-                     $productos->precio_venta=(($productos->porcentaje/100)*$precio_maximo_kardex)+$precio_maximo_kardex;    
-                      }
-                     $productos->save();
-                     $comprasDetalle->delete();
-           /* foreach ($compraDetalles as $compraDetalle) {
-                 $precio_maximo = CompraDetalle::where('producto_id', '=', $compraDetalle->producto_id)->
-                 where('compra_id', '<>', $compras->id)->max('precio_unitario');
-                //  print_r($precio_maximo);
-                //  exit;
-                if ($compraDetalle) {
-                     $productos = Producto::find($compraDetalle->producto_id);
-                     $productos->stock_minimo=$productos->stock_minimo-$compraDetalle->cantidad;
-                         if($precio_maximo){
-                     $productos->precio_unitario=$precio_maximo;
-                     $productos->precio_venta=(($productos->porcentaje/100)*$precio_maximo)+$precio_maximo;
-                      }
-                     $productos->save();
+            $comprasDetalle->save();
 
-                    
-                }
-            }*/
-            //CompraDetalle::where('compra_id', '=', $compras->id)->delete();
-            //$compras->delete();
+            if ($comprasDetalle) {
 
-            // return redirect()->route('compras.index');
-        } 
-         return response()->json([
+                $detalle_max = CompraDetalle::where('producto_id', $comprasDetalle->producto_id)
+                ->where('id', '!=', $comprasDetalle->id)
+                ->orderByDesc('precio_unitario')
+                ->first();
+                if ($detalle_max) 
+                $precio_maximo=$detalle_max->precio_unitario;
+
+                $kardex = Kardex::where('producto_id', '=', $comprasDetalle->producto_id)->where('tipo_movimiento', 'Producto')->orderBy('id', 'desc')->first();
+
+                if (empty($kardex))
+                    $precio_maximo_kardex = 0;
+                else
+                    $precio_maximo_kardex = $kardex->precio_unitario;
+                $productos = Producto::find($comprasDetalle->producto_id);
+                $productos->cantidad = $productos->cantidad - $comprasDetalle->cantidad;
+
+                if ($precio_maximo > $precio_maximo_kardex && Carbon::parse($detalle_max->created_at)->gt(Carbon::parse($kardex->fecha))) {
+                    $productos->precio_unitario = $precio_maximo;
+                    $productos->precio_venta = (($productos->porcentaje / 100) * $precio_maximo) + $precio_maximo;
+                } else {
+
+                    $productos->precio_unitario = $precio_maximo_kardex;
+                    $productos->precio_venta = (($productos->porcentaje / 100) * $precio_maximo_kardex) + $precio_maximo_kardex;
+                    }
+                $productos->save();
+                $comprasDetalle->delete();
+            }
+            return response()->json([
                 'status' => 200,
                 'message' => 'Datos de la Compra Creada.',
             ]);
-         } catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
-            // flash('Error al crear la compra. Por favor, intente nuevamente.', 'alert alert-danger alert-dismissible');
-            // return redirect()->back()->withInput();
+
             return response()->json([
                 'status' => 500,
                 'message' => 'Error al guardar la atención: ' . $e->getMessage()
             ], 500);
         }
-    
     }
-       function kardex($compra,$detalles,$accion){
-        
-        //  print_r($detalles->precio_unitario);
-        //  exit;
-      
-             $kardex = new Kardex();
-         $kardex->fecha = date("Y-m-d H:i:s");
-         $kardex->producto_id = $detalles->producto_id;
-         $kardex->tipo_movimiento = $compra->tipo;
-         $kardex->accion=$accion;
-         $kardex->cantidad = $detalles->cantidad;
-         $kardex->precio_unitario = $detalles->precio_unitario;
-         $kardex->subtotal = $detalles->subtotal;
-         
-         if($accion=='A')
-          $kardex->created_by =$compra->user_id;
-        if($accion=='M')
-        $kardex->updated_by =$compra->user_id;
-    if($accion=='B')
-        $kardex->deleted_by =$compra->user_id;
+    function kardex($compra, $detalles, $accion)
+    {
 
-         $kardex->save();
-    
+
+
+        $kardex = new Kardex();
+        $kardex->fecha = date("Y-m-d H:i:s");
+        $kardex->producto_id = $detalles->producto_id;
+        $kardex->tipo_movimiento = $compra->tipo;
+        $kardex->accion = $accion;
+        $kardex->cantidad = $detalles->cantidad;
+        $kardex->precio_unitario = $detalles->precio_unitario;
+        $kardex->subtotal = $detalles->subtotal;
+
+        if ($accion == 'A')
+            $kardex->created_by = $compra->user_id;
+        if ($accion == 'M')
+            $kardex->updated_by = $compra->user_id;
+        if ($accion == 'B')
+            $kardex->deleted_by = $compra->user_id;
+
+        $kardex->save();
     }
 }
