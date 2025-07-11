@@ -56,18 +56,18 @@ class HomeController extends Controller
             ->join('unidad_medidas', 'unidad_medidas.id', '=', 'productos.unidad_medida_id')
             ->join('compra_detalles', 'compra_detalles.producto_id', '=', 'productos.id')
             ->where('tipo_producto', 'M')
-			->where('compra_detalles.cantidad', '<>', 0)
+            ->where('compra_detalles.cantidad', '<>', 0)
             //->whereDate('compra_detalles.vencimiento', Carbon::now()->addDays(40)->toDateString())
             ->whereBetween('compra_detalles.vencimiento', [
-            Carbon::now()->toDateString(),
-            Carbon::now()->addDays(40)->toDateString()
+                Carbon::now()->toDateString(),
+                Carbon::now()->addDays(40)->toDateString()
             ])
             // ->whereDate('compra_detalles.vencimiento', '=', Carbon::now()->addDays(60)->toDateString())
             ->whereNull('compra_detalles.deleted_at')
             ->whereNull('productos.deleted_at')
             ->get();
-// print_r($medicamentos);
-// exit;
+        // print_r($medicamentos);
+        // exit;
         $insumos = DB::table('productos')
             ->select(
                 'productos.id',
@@ -90,14 +90,13 @@ class HomeController extends Controller
             ->join('presentaciones', 'presentaciones.id', '=', 'productos.presentacion_id')
             ->join('accion_terapeuticas', 'accion_terapeuticas.id', '=', 'productos.accion_terapeutica_id')
             ->join('unidad_medidas', 'unidad_medidas.id', '=', 'productos.unidad_medida_id')
-            ->join('compra_detalles', 'compra_detalles.producto_id', '=', 'productos.id')           
+            ->join('compra_detalles', 'compra_detalles.producto_id', '=', 'productos.id')
             ->where('tipo_producto', 'I')
-			->where('compra_detalles.cantidad', '<>', 0)
             ->whereBetween('compra_detalles.vencimiento', [
-            Carbon::now()->toDateString(),
-            Carbon::now()->addDays(40)->toDateString()
+                Carbon::now()->toDateString(),
+                Carbon::now()->addDays(40)->toDateString()
             ])
-            
+
             ->whereNull('compra_detalles.deleted_at')
             ->whereNull('productos.deleted_at')
             ->get();

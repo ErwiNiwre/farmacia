@@ -35,7 +35,6 @@
         @guest
             @include('app.headerInvitado')
         @endguest
-
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <div class="container-full">
@@ -65,32 +64,6 @@
     </div>
     <!-- ./wrapper -->
 
-    <!-- Modal -->
-    <!-- Modal-View-PDF -->
-    <div class="modal center-modal fade" id="modal-view-pdf" data-bs-backdrop="static" tabindex="-1">
-        <div class="modal-dialog" style="max-width: 900px">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Vista de la Orden - PDF</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row row-cols-1">
-                        <div class="col">
-                            <div class="text-center">
-                                {{-- <embed id="pdfViewer" width="100%" height="500px"> --}}
-                                <iframe id="pdfViewer" width="100%" height="500px"></iframe>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer modal-footer-uniform">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Vendor JS -->
 
     <script src="{{ asset('js/vendors.min.js') }}"></script>
@@ -117,23 +90,10 @@
     <script src="{{ asset('js/jquery.smartmenus.js') }}"></script>
     <script src="{{ asset('js/menus.js') }}"></script>
     <script src="{{ asset('js/template.js') }}"></script>
-{{-- librerias necesarias para el dropdownlist search --}}
+    {{-- librerias necesarias para el dropdownlist search --}}
     <script src="{{ asset('js/pages/advanced-form-element.js') }}"></script>
 
     @yield('page-script')
-    {{-- <script>
-        $('#list_patients').DataTable();
-        
-        $(document).on('click', '#btn-PDF', function(e){
-            e.preventDefault();
-            // var pdfUrl = window.location.origin +  $(this).val();
-            // var pdfUrl = $(this).val()+'?v={{ uniqid() }}';
-            var pdfUrl = $(this).val();
-            console.log(pdfUrl);
-            $("#pdfViewer").attr("src", pdfUrl);
-            $('#modal-view-pdf').modal('show');
-        });
-    </script> --}}
 </body>
 
 </html>

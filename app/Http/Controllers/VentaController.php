@@ -133,14 +133,10 @@ class VentaController extends Controller
 
             $venta->save();
 
-
             $venta_detalles = json_decode($request->input('productos'), true);
-
 
             $cantidad_total = 0;
             foreach ($venta_detalles as $detalle) {
-
-
 
                 $producto = Producto::find($detalle['producto_id']);
                 $compraDetalles = CompraDetalle::where('producto_id', '=', $detalle['producto_id'])->where('cantidad_total', '<>', '0')
@@ -178,7 +174,6 @@ class VentaController extends Controller
                     }
                 }
 
-
                 $venta_detalle = new VentaDetalle();
 
                 $venta_detalle->venta_id = $venta->id;
@@ -201,8 +196,8 @@ class VentaController extends Controller
                 if (!empty($detalle['estado'])) {
                     $producto->precio_venta = (($producto->porcentaje / 100) * $detalle['unidad_precio']) + $detalle['unidad_precio'];
                     $producto->precio_unitario = $detalle['unidad_precio'];
+                    $producto->save();
                 }
-                $producto->save();
             }
 
             DB::commit(); // Confirmar la transacción
@@ -353,14 +348,9 @@ class VentaController extends Controller
                         $detalleCompra->save();
                     }
 
-
-
-
                     if ($ventaDetalle) {
                         $productos = Producto::find($ventaDetalle->producto_id);
-                        $productos->cantidad = $productos->cantidad + $ventaDetalle->cantidad;
-
-                        $productos->save();
+                        $productos->ajustarStock($ventaDetalle->cantidad);
                     }
                 }
                 VentaDetalle::where('venta_id', '=', $ventas->id)->delete();
@@ -380,11 +370,10 @@ class VentaController extends Controller
             ], 500);
         }
     }
+
+
     function kardex($venta, $detalles, $accion)
     {
-
-
-
         $kardex = new Kardex();
         $kardex->fecha = date("Y-m-d H:i:s");
         $kardex->producto_id = $detalles->producto_id;
