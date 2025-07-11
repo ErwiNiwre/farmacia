@@ -92,7 +92,6 @@ class HomeController extends Controller
             ->join('unidad_medidas', 'unidad_medidas.id', '=', 'productos.unidad_medida_id')
             ->join('compra_detalles', 'compra_detalles.producto_id', '=', 'productos.id')
             ->where('tipo_producto', 'I')
-            ->where('compra_detalles.cantidad', '<>', 0)
             ->whereBetween('compra_detalles.vencimiento', [
                 Carbon::now()->toDateString(),
                 Carbon::now()->addDays(40)->toDateString()
