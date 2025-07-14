@@ -77,8 +77,7 @@
 							<div class="col-md-4">
 								  <div class="form-group">
                                         <label class="form-label">Producto</label>
-                                        <select id="producto_id" class="form-control select2" name="producto_id"
-                                            class="form-select">
+                                        <select id="producto_id" class="form-control select2" name="producto_id">
                                             @foreach ($producto as $productos)
                                                 @if (old('producto_id') == $productos->id)
                                                     <option value="{{ $productos->id }}" selected>
@@ -215,7 +214,7 @@
                     $('#producto_id').find('option:selected').val(),
                     $.trim($('#producto_id').find('option:selected').text()),
                     `<div class="form-group"><input type="date" class="form-control" name="vencimiento[]" ></div>`,
-                    `<div class="form-group"><input type="number" class="form-control" name="unidad_precios[]" value="1" min="0" step="0.1"></div>`,
+                    `<div class="form-group"><input type="number" class="form-control" name="unidad_precios[]" value="1" min="0" step="any"></div>`,
                     `<div class="form-group"><input type="number" class="form-control" name="cantidades[]" value="1" min="1"></div>`,
                     `1.00`,
                     '<button type="button" name="removeRow" class="btn btn-danger" data-bs-toggle="tooltip" data-container="body" data-bs-original-title="Eliminar"><i class="mdi mdi-delete"></i></button>'
@@ -291,7 +290,7 @@
                     $('#producto_id').find('option:selected').val(),
                     $.trim($('#producto_id').find('option:selected').text()),
                     `<div class="form-group"><input type="date" class="form-control" name="vencimiento[]" ></div>`,
-                    `<div class="form-group"><input type="number" class="form-control" name="unidad_precios[]" value="1" min="0" step="0.1"></div>`,
+                    `<div class="form-group"><input type="number" class="form-control" name="unidad_precios[]" value="1" min="0" step="any"></div>`,
                     `<div class="form-group"><input type="number" class="form-control" name="cantidades[]" value="1" min="1"></div>`,
                     `1.00`,
                     '<button type="button" name="removeRow" class="btn btn-danger" data-bs-toggle="tooltip" data-container="body" data-bs-original-title="Eliminar"><i class="mdi mdi-delete"></i></button>'
