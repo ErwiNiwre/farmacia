@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\DB;
 
 class RolController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:rol.index|rol.create|rol.show', ['only' => ['index']]);
+        $this->middleware('permission:rol.create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:rol.show', ['only' => ['show']]);
+        $this->middleware('permission:rol.destroy', ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      */

@@ -87,31 +87,41 @@
 
     <!-- Sample menu definition -->
     <ul id="main-menu" class="sm sm-blue">
-        <li>
-            <a href="{{ route('roles.index') }}">
-                <i data-feather="settings"></i>Roles
-            </a>
-        </li>
-        <li>
-            <a href="{{ route('productos.index') }}">
-                <i class="fa fa-fw fa-shopping-basket"></i>Productos
-            </a>
-        </li>
-        <li>
-            <a href="{{ route('compras.index') }}">
-                <i class="fa fa-fw fa-shopping-bag"></i>Compras
-            </a>
-        </li>
-        <li>
-            <a href="{{ route('ventas.index') }}">
-                <i class="fa fa-fw fa-shopping-cart"></i>Ventas
-            </a>
-        </li>
-        <li>
-            <a href="{{ route('laboratorioServicios.index') }}">
-                <i class="fa fa-fw fa-stethoscope"></i>Laboratorio
-            </a>
-        </li>
+        @can('rol.index')
+            <li>
+                <a href="{{ route('roles.index') }}">
+                    <i data-feather="settings"></i>Roles
+                </a>
+            </li>
+        @endcan
+        @can('producto.index')
+            <li>
+                <a href="{{ route('productos.index') }}">
+                    <i class="fa fa-fw fa-shopping-basket"></i>Productos
+                </a>
+            </li>
+        @endcan
+        @can('compra.index')
+            <li>
+                <a href="{{ route('compras.index') }}">
+                    <i class="fa fa-fw fa-shopping-bag"></i>Compras
+                </a>
+            </li>
+        @endcan
+        @can('venta.index')
+            <li>
+                <a href="{{ route('ventas.index') }}">
+                    <i class="fa fa-fw fa-shopping-cart"></i>Ventas
+                </a>
+            </li>
+        @endcan
+        @can('laboratorioServicio.index')
+            <li>
+                <a href="{{ route('laboratorioServicios.index') }}">
+                    <i class="fa fa-fw fa-stethoscope"></i>Laboratorio
+                </a>
+            </li>
+        @endcan
         {{-- 
         <li>
             <a href="{{ route('patients.index') }}">
