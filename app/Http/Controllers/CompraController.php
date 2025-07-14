@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Compra;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use App\Models\CompraDetalle;
 use App\Models\Producto;
@@ -36,14 +35,13 @@ class CompraController extends Controller
             $session_name = $session_auth->nombre;
         }
 
-
-
-
         $compras = Compra::all();
         $detalle = Compra::query()
             ->select('compras.id', 'compras.compra_fecha', 'compras.numero_compra', 'compras.proveedor', 'compras.tipo', 'compras.total')
-            ->addSelect(DB::raw('(SELECT cantidad=cantidad_total as estado FROM public.compra_detalles  where compra_id=compras.id 
-ORDER BY estado ASC limit 1) as estado'))
+            ->addSelect(DB::raw('(SELECT cantidad=cantidad_total as estado 
+                                  FROM public.compra_detalles  
+                                  WHERE compra_id=compras.id 
+                                  ORDER BY estado ASC limit 1) as estado'))
             ->get();
 
         return view(
@@ -157,8 +155,17 @@ ORDER BY estado ASC limit 1) as estado'))
                 }
 
                 $compraDetalle->save();
-                $this->kardex($compra, $compraDetalle, 'A');
-               // $producto->cantidad = $producto->cantidad + $detalle['cantidad'];
+                // $this->kardex($compra, $compraDetalle, 'A');
+                Kardex::registrarKardex([
+                    'producto_id'     => $compraDetalle->producto_id,
+                    'tipo_movimiento' => $compra->tipo,
+                    'accion'          => 'A',
+                    'cantidad'        => $compraDetalle->cantidad,
+                    'precio_unitario' => $compraDetalle->precio_unitario,
+                    'subtotal'        => $compraDetalle->subtotal,
+                    'user_id'         => $compra->user_id
+                ]);
+                // $producto->cantidad = $producto->cantidad + $detalle['cantidad'];
                 $producto->ajustarStock($detalle['cantidad']);
 
 
@@ -170,13 +177,9 @@ ORDER BY estado ASC limit 1) as estado'))
 
                         $precio = ($producto->porcentaje / 100) * $detalle['unidad_precio'];
                         $producto->precio_venta = $precio + $detalle['unidad_precio'];
-
                     }
                     $producto->save();
                 }
-
-
-                
             }
             DB::commit();
 
@@ -337,8 +340,8 @@ ORDER BY estado ASC limit 1) as estado'))
 
         $compras->save();
 
-          CompraDetalle::where('compra_id', '=', $compras->id)
-                ->update(['deleted_by' => $session_auth->id]);
+        CompraDetalle::where('compra_id', '=', $compras->id)
+            ->update(['deleted_by' => $session_auth->id]);
 
 
 
@@ -391,7 +394,7 @@ ORDER BY estado ASC limit 1) as estado'))
 
                 if ($compraDetalle) {
                     $productos = Producto::find($compraDetalle->producto_id);
-                   // $productos->cantidad = $productos->cantidad - $compraDetalle->cantidad;
+                    // $productos->cantidad = $productos->cantidad - $compraDetalle->cantidad;
 
 
 
@@ -404,10 +407,18 @@ ORDER BY estado ASC limit 1) as estado'))
                         $productos->precio_venta = (($productos->porcentaje / 100) * $precio_maximo_kardex) + $precio_maximo_kardex;
                     }
 
-                    $this->kardex($compras, $compraDetalle, 'B');
-                     $productos->save();
+                    // $this->kardex($compras, $compraDetalle, 'B');
+                    Kardex::registrarKardex([
+                        'producto_id'     => $compraDetalle->producto_id,
+                        'tipo_movimiento' => $compras->tipo,
+                        'accion'          => 'B',
+                        'cantidad'        => $compraDetalle->cantidad,
+                        'precio_unitario' => $compraDetalle->precio_unitario,
+                        'subtotal'        => $compraDetalle->subtotal,
+                        'user_id'         => $compras->user_id
+                    ]);
+                    $productos->save();
                     $productos->ajustarStock(-$compraDetalle->cantidad);
-                   
                 }
             }
             CompraDetalle::where('compra_id', '=', $compras->id)->delete();
@@ -415,55 +426,5 @@ ORDER BY estado ASC limit 1) as estado'))
 
             return redirect()->route('compras.index');
         }
-    }
-
-
-    /* public function getListCompras()
-    {
-      
-
-           $listCompras= Compra::query()
-    ->select('compras.id','compras.compra_fecha','compras.numero_compra','compras.proveedor','compras.tipo','compras.total')
-    ->addSelect(DB::raw('(SELECT cantidad=cantidad_total as estado FROM public.compra_detalles  where compra_id=compras.id 
-ORDER BY estado ASC limit 1) as estado'))
-    ->get();
-               
-
-        return DataTables::of($listCompras)
-            ->addColumn('action', function ($listCompras) {
-                $buttons = [];
-
-                $buttons[] = '<button type="button" onclick="modalCompras('.$listCompras ->id.')" id="btn_view_compras" value='.$listCompras ->id.' class="btn btn-info" data-bs-toggle="tooltip" data-container="body" data-bs-original-title="Ver Compra"><i class="mdi mdi-eye"></i></button>';
-                $buttons[] = '<a href="' . route('compras.edit', $listCompras->id) . '"  id="btn_edit_compras" value='.$listCompras ->id.'  class="btn btn-secondary" data-bs-toggle="tooltip" data-container="body" data-bs-original-title="Editar"><i class="fa fa-edit" aria-hidden="true"></i></button>';
-                
-                 if($listCompras->estado==1)
-                $buttons[] = '<a onclick="return confirm(\'Esta seguro que desea eliminar el registo?\')" href="' . route('compras.destroy', $listCompras->id) . '" class="waves-effect waves-light btn btn-danger mb-5" title="Eliminar"><i class="fa fa-bitbucket" aria-hidden="true"></i></a>';
-                return implode(' ', $buttons);    
-        })
-            ->toJson();
-    }*/
-
-
-
-    function kardex($compra, $detalles, $accion)
-    {
-
-        $kardex = new Kardex();
-        $kardex->fecha = date("Y-m-d H:i:s");
-        $kardex->producto_id = $detalles->producto_id;
-        $kardex->tipo_movimiento = $compra->tipo;
-        $kardex->accion = $accion;
-        $kardex->cantidad = $detalles->cantidad;
-        $kardex->precio_unitario = $detalles->precio_unitario;
-        $kardex->subtotal = $detalles->subtotal;
-
-        if ($accion == 'A')
-            $kardex->created_by = $compra->user_id;
-        if ($accion == 'M')
-            $kardex->updated_by = $compra->user_id;
-        if ($accion == 'B')
-            $kardex->deleted_by = $compra->user_id;
-
-        $kardex->save();
     }
 }
