@@ -11,7 +11,14 @@ use DataTables;
 
 class LaboratorioServicioController extends Controller
 {
-    use SoftDeletes;
+    public function __construct()
+    {
+        $this->middleware('permission:laboratorioServicio.index|laboratorioServicio.create|laboratorioServicio.show', ['only' => ['index']]);
+        $this->middleware('permission:laboratorioServicio.create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:laboratorioServicio.show', ['only' => ['show']]);
+        $this->middleware('permission:laboratorioServicio.destroy', ['only' => ['destroy']]);
+    }
+
     public function index()
     {
         $session_auth = auth()->user();

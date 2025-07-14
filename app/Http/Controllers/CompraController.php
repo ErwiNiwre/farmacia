@@ -15,10 +15,16 @@ use Carbon\Carbon;
 
 class CompraController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:compra.index|compra.create|compra.show', ['only' => ['index']]);
+        $this->middleware('permission:compra.create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:compra.show', ['only' => ['show']]);
+        $this->middleware('permission:compra.destroy', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      */
-    use SoftDeletes;
     public function index()
     {
         $session_auth = auth()->user();
@@ -118,11 +124,11 @@ ORDER BY estado ASC limit 1) as estado'))
 
             $compra_detalles = json_decode($request->input('productos'), true);
             $mayoresPrecioUnidad = collect($compra_detalles)
-            ->groupBy('producto_id')
-            ->map(function ($items) {
-                return collect($items)->max('unidad_precio');
-            })
-            ->toArray();
+                ->groupBy('producto_id')
+                ->map(function ($items) {
+                    return collect($items)->max('unidad_precio');
+                })
+                ->toArray();
 
             // print_r($compra_detalles);
             // exit;
@@ -151,21 +157,21 @@ ORDER BY estado ASC limit 1) as estado'))
                 }
 
                 $compraDetalle->save();
-                 $producto->ajustarStock($detalle['cantidad']);
+                $producto->ajustarStock($detalle['cantidad']);
                 $this->kardex($compra, $compraDetalle, 'A');
                 $producto->cantidad = $producto->cantidad + $detalle['cantidad'];
 
 
-                    if ($detalle['estado'] == 1 && $compra->tipo == 'Compra') {
-        $precioMayor = $mayoresPrecioUnidad[$detalle['producto_id']] ?? null;
+                if ($detalle['estado'] == 1 && $compra->tipo == 'Compra') {
+                    $precioMayor = $mayoresPrecioUnidad[$detalle['producto_id']] ?? null;
 
-        if ($detalle['unidad_precio'] == $precioMayor) {
-            $producto->precio_unitario = $detalle['unidad_precio'];
+                    if ($detalle['unidad_precio'] == $precioMayor) {
+                        $producto->precio_unitario = $detalle['unidad_precio'];
 
-            $precio = ($producto->porcentaje / 100) * $detalle['unidad_precio'];
-            $producto->precio_venta = $precio + $detalle['unidad_precio'];
-        }
-    }
+                        $precio = ($producto->porcentaje / 100) * $detalle['unidad_precio'];
+                        $producto->precio_venta = $precio + $detalle['unidad_precio'];
+                    }
+                }
 
 
                 $producto->save();
@@ -334,7 +340,7 @@ ORDER BY estado ASC limit 1) as estado'))
 
 
         $compras = Compra::find($id);
-        $precio_maximo=0;
+        $precio_maximo = 0;
         if ($compras) {
             $compras->deleted_by = $session_auth->id;
             $compras->save();
@@ -345,13 +351,13 @@ ORDER BY estado ASC limit 1) as estado'))
 
 
             foreach ($compraDetalles as $compraDetalle) {
-              
+
                 $detalle_max = CompraDetalle::where('producto_id', $compraDetalle->producto_id)
-                ->where('compra_id', '!=', $compras->id)
-                ->orderByDesc('precio_unitario')
-                ->first();
-                if ($detalle_max) 
-                $precio_maximo=$detalle_max->precio_unitario;
+                    ->where('compra_id', '!=', $compras->id)
+                    ->orderByDesc('precio_unitario')
+                    ->first();
+                if ($detalle_max)
+                    $precio_maximo = $detalle_max->precio_unitario;
                 $kardex = Kardex::where('producto_id', '=', $compraDetalle->producto_id)->where('tipo_movimiento', 'Producto')->orderBy('id', 'desc')->first();
                 if (empty($kardex))
                     $precio_maximo_kardex = 0;
@@ -361,7 +367,7 @@ ORDER BY estado ASC limit 1) as estado'))
                 if ($compraDetalle) {
                     $productos = Producto::find($compraDetalle->producto_id);
                     $productos->cantidad = $productos->cantidad - $compraDetalle->cantidad;
-                   
+
 
 
                     if ($precio_maximo > $precio_maximo_kardex && Carbon::parse($detalle_max->created_at)->gt(Carbon::parse($kardex->fecha))) {

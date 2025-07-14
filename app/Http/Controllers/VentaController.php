@@ -16,6 +16,13 @@ use DataTables;
 
 class VentaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:venta.index|venta.create|venta.show', ['only' => ['index']]);
+        $this->middleware('permission:venta.create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:venta.show', ['only' => ['show']]);
+        $this->middleware('permission:venta.destroy', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      */
