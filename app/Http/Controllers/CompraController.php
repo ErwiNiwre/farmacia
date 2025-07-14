@@ -157,9 +157,8 @@ ORDER BY estado ASC limit 1) as estado'))
                 }
 
                 $compraDetalle->save();
-                $producto->ajustarStock($detalle['cantidad']);
                 $this->kardex($compra, $compraDetalle, 'A');
-                $producto->cantidad = $producto->cantidad + $detalle['cantidad'];
+               // $producto->cantidad = $producto->cantidad + $detalle['cantidad'];
                 $producto->ajustarStock($detalle['cantidad']);
 
 
@@ -171,11 +170,13 @@ ORDER BY estado ASC limit 1) as estado'))
 
                         $precio = ($producto->porcentaje / 100) * $detalle['unidad_precio'];
                         $producto->precio_venta = $precio + $detalle['unidad_precio'];
+
                     }
+                    $producto->save();
                 }
 
 
-                $producto->save();
+                
             }
             DB::commit();
 
@@ -390,7 +391,7 @@ ORDER BY estado ASC limit 1) as estado'))
 
                 if ($compraDetalle) {
                     $productos = Producto::find($compraDetalle->producto_id);
-                    $productos->cantidad = $productos->cantidad - $compraDetalle->cantidad;
+                   // $productos->cantidad = $productos->cantidad - $compraDetalle->cantidad;
 
 
 
@@ -404,8 +405,9 @@ ORDER BY estado ASC limit 1) as estado'))
                     }
 
                     $this->kardex($compras, $compraDetalle, 'B');
+                     $productos->save();
                     $productos->ajustarStock(-$compraDetalle->cantidad);
-                    $productos->save();
+                   
                 }
             }
             CompraDetalle::where('compra_id', '=', $compras->id)->delete();

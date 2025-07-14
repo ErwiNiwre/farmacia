@@ -68,15 +68,16 @@ class CompraDetalleController extends Controller
             $this->kardex($compras, $compraDetalle, 'A');
             $compraDetalle->save();
             $producto = Producto::find($request->create_producto_id);
-            $producto->cantidad = $producto->cantidad + $request->edit_cantidad;
+            //$producto->cantidad = $producto->cantidad + $request->edit_cantidad;
             $producto->ajustarStock($request->edit_cantidad);
             if ($request->create_estado == "1") {
 
                 $producto->precio_unitario = $request->edit_precio_unitario;
                 $precio = ($producto->porcentaje / 100) * $request->edit_precio_unitario;
                 $producto->precio_venta = $precio + $request->edit_precio_unitario;
+                 $producto->save();
             }
-            $producto->save();
+           
 
             DB::commit();
             return response()->json([
@@ -160,7 +161,7 @@ class CompraDetalleController extends Controller
                 else
                     $precio_maximo_kardex = $kardex->precio_unitario;
                 $productos = Producto::find($comprasDetalle->producto_id);
-                $productos->cantidad = $productos->cantidad - $comprasDetalle->cantidad;
+               // $productos->cantidad = $productos->cantidad - $comprasDetalle->cantidad;
 
                 if ($precio_maximo > $precio_maximo_kardex && Carbon::parse($detalle_max->created_at)->gt(Carbon::parse($kardex->fecha))) {
                     $productos->precio_unitario = $precio_maximo;
@@ -170,8 +171,9 @@ class CompraDetalleController extends Controller
                     $productos->precio_unitario = $precio_maximo_kardex;
                     $productos->precio_venta = (($productos->porcentaje / 100) * $precio_maximo_kardex) + $precio_maximo_kardex;
                     }
-                $productos->ajustarStock(-$comprasDetalle->cantidad);
-                $productos->save();
+                    $productos->save();
+                    $productos->ajustarStock(-$comprasDetalle->cantidad);
+                
                 $comprasDetalle->delete();
             }
             return response()->json([
