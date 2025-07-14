@@ -199,7 +199,7 @@ class VentaController extends Controller
                 $this->kardex($venta, $venta_detalle, 'A');
                 $venta_detalle->save();
                 $producto->ajustarStock(-$detalle['cantidad']);
-                $producto->cantidad = $producto->cantidad - $detalle['cantidad'];
+                //$producto->cantidad = $producto->cantidad - $detalle['cantidad'];
                 if (!empty($detalle['estado'])) {
                     $producto->precio_venta = (($producto->porcentaje / 100) * $detalle['unidad_precio']) + $detalle['unidad_precio'];
                     $producto->precio_unitario = $detalle['unidad_precio'];
