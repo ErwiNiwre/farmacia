@@ -170,6 +170,7 @@ class CompraDetalleController extends Controller
                     $productos->precio_unitario = $precio_maximo_kardex;
                     $productos->precio_venta = (($productos->porcentaje / 100) * $precio_maximo_kardex) + $precio_maximo_kardex;
                     }
+                $productos->ajustarStock(-$comprasDetalle->cantidad);
                 $productos->save();
                 $comprasDetalle->delete();
             }

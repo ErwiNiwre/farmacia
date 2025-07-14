@@ -27,7 +27,7 @@
                                
                                 <dt>Tipo:</dt>
                                 <dd>{{ $compras->tipo }}</dd>
-                            </dl>
+                                
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-3 col-xxl-3 col-xxxl-3">
                             <div class="d-flex justify-content-between mt-15 pull-right">
@@ -148,10 +148,11 @@
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12">
                             <div class="form-group">
                                         <label class="form-label">Tipo</label>
-                                        <select id="tipo" name="tipo" class="form-control" style="width: 100%;">
-                                            <option>Compra</option>
-                                            <option>Ingreso Directo</option>
-                                        </select>
+                                        <br>
+                                         <label id="tipo" class="form-label">{{ $compras->tipo }}</label>
+                                       
+                            
+                                        
                                     </div>
                         </div>
                         
@@ -189,7 +190,7 @@
                         <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6 col-xxxl-6">
                             <div class="form-group">
                                 <label class="form-label">Producto</label>
-                                <select id="create_producto_id"  name="create_producto_id" class="form-select">
+                                <select id="create_producto_id"  name="create_producto_id" class="form-control select2">
                                             @foreach ($producto as $productos)
                                                 @if (old('producto_id') == $productos->id)
                                                     <option value="{{ $productos->id }}" selected>
@@ -341,6 +342,16 @@
             
              const compraDetalles = @json($compraDetalles);
              const productosList = @json($producto);
+
+            $('#modal-create-compra-detail').on('shown.bs.modal', function () {
+    $('#create_producto_id').select2({
+        dropdownParent: $('#modal-create-compra-detail'), 
+        width: '100%', 
+    });
+});
+
+
+
              $('#price_table').text({{$compras->total}});
              function busquedaProductosList(indice,atributo){
                  result_producto="";   
