@@ -14,6 +14,27 @@ class DatosSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('roles')->insert([
+            ['id' => 1, 'name' => 'Administración', 'guard_name' => 'web', 'created_at' => '2024-06-07 00:00:00', 'updated_at' => '2024-06-07 00:00:00'],
+            ['id' => 2, 'name' => 'Farmacia', 'guard_name' => 'web', 'created_at' => '2024-06-07 00:00:00', 'updated_at' => '2024-06-07 00:00:00'],
+            ['id' => 3, 'name' => 'Cajero', 'guard_name' => 'web', 'created_at' => '2024-06-07 00:00:00', 'updated_at' => '2024-06-07 00:00:00'],
+        ]);
+
+        DB::table('users')->insert([
+            ['id' =>  '1', 'username' => 'AdminCMF', 'nombre' => 'Centro Medico Fiori', 'email' => 'AdminCMF@admin.com', 'password' => bcrypt('AdminCMFiori')],
+            ['id' =>  '2', 'username' =>  'SA7034241', 'nombre' => 'Jimena Suntura Apaza', 'email' => null, 'password' => bcrypt('7034241')],
+            ['id' =>  '3', 'username' =>  'SA13022160', 'nombre' => 'Banesa Suntura Apaza', 'email' => null, 'password' => bcrypt('13022160')],
+            ['id' =>  '4', 'username' =>  'BC8434641', 'nombre' => 'Cinthia Naguel Barrientos Cruz', 'email' => null, 'password' => bcrypt('8434641')],
+            ['id' =>  '5', 'username' =>  'EC6889395', 'nombre' => 'Guido Esquivel Cabrita', 'email' => null, 'password' => bcrypt('6889395')],
+            ['id' =>  '6', 'username' =>  'MM4800651', 'nombre' => 'Toribia Mamani Maita', 'email' => null, 'password' => bcrypt('4800651')]
+        ]);
+
+        User::find(2)->assignRole('Administración');
+        User::find(3)->assignRole('Administración');
+        User::find(4)->assignRole('Administración');
+        User::find(5)->assignRole('Farmacia');
+        User::find(6)->assignRole('Cajero');
+
         DB::table('accion_terapeuticas')->insert([
             ['id' =>  '1', 'accion_terapeutica' => 'NINGUNO', 'created_at' => '2024/06/07', 'updated_at' => '2024/06/07'],
             ['id' =>  '2', 'accion_terapeutica' => 'ACCION VASOCONSTRICTORA', 'created_at' => '2024/06/07', 'updated_at' => '2024/06/07'],
@@ -1481,27 +1502,6 @@ class DatosSeeder extends Seeder
             ['id' =>  '608', 'tipo_producto' => 'M', 'codigo' => 'FAR-608', 'barras' => '7800007747211', 'codigo_generado' => 'N', 'producto' => 'ZOPINOM 3', 'generico' => 'ESZOPICLONA ', 'concentracion_id' => '161', 'marca_id' => '95', 'presentacion_id' => '33', 'accion_terapeutica_id' => '144', 'unidad_medida_id' => '78', 'stock_minimo' => '5', 'precio_unitario' => '0.00', 'porcentaje' => '0.00', 'precio_venta' => '0.00', 'created_at' => '2024/06/07', 'updated_at' => '2024/06/07'],
 
         ]);
-
-        DB::table('roles')->insert([
-            ['id' => 1, 'name' => 'Administración', 'guard_name' => 'web', 'created_at' => '2024-06-07 00:00:00', 'updated_at' => '2024-06-07 00:00:00'],
-            ['id' => 2, 'name' => 'Farmacia', 'guard_name' => 'web', 'created_at' => '2024-06-07 00:00:00', 'updated_at' => '2024-06-07 00:00:00'],
-            ['id' => 3, 'name' => 'Cajero', 'guard_name' => 'web', 'created_at' => '2024-06-07 00:00:00', 'updated_at' => '2024-06-07 00:00:00'],
-        ]);
-
-        DB::table('users')->insert([
-            ['id' =>  '1', 'username' => 'AdminCMF', 'nombre' => 'Centro Medico Fiori', 'email' => 'AdminCMF@admin.com', 'password' => bcrypt('AdminCMFiori')],
-            ['id' =>  '2', 'username' =>  'SA7034241', 'nombre' => 'Jimena Suntura Apaza', 'email' => null, 'password' => bcrypt('7034241')],
-            ['id' =>  '3', 'username' =>  'SA13022160', 'nombre' => 'Banesa Suntura Apaza', 'email' => null, 'password' => bcrypt('13022160')],
-            ['id' =>  '4', 'username' =>  'BC8434641', 'nombre' => 'Cinthia Naguel Barrientos Cruz', 'email' => null, 'password' => bcrypt('8434641')],
-            ['id' =>  '5', 'username' =>  'EC6889395', 'nombre' => 'Guido Esquivel Cabrita', 'email' => null, 'password' => bcrypt('6889395')],
-            ['id' =>  '6', 'username' =>  'MM4800651', 'nombre' => 'Toribia Mamani Maita', 'email' => null, 'password' => bcrypt('4800651')]
-        ]);
-
-        User::find(2)->assignRole('Administración');
-        User::find(3)->assignRole('Administración');
-        User::find(4)->assignRole('Administración');
-        User::find(5)->assignRole('Farmacia');
-        User::find(6)->assignRole('Cajero');
 
         DB::table('clasificaciones')->insert([
             ['id' =>  '1', 'clasificacion' =>  'HEMATOLOGIA', 'created_at' => '2025/06/02', 'updated_at' => '2025/06/02'],
