@@ -295,7 +295,7 @@
    
            $('#cliente').on('input', toggleSaveButton);
            $('#efectivo, #qr').on('input', (calculoCambio));
-           
+           $('#observacion').on('input', toggleSaveButton);
            $('#efectivo, #qr').on('input', (toggleSaveButton));
            
 
@@ -610,8 +610,6 @@
             const EfectivoFilled = (EfectivoValue+QrValue) > 0;
             const CambioFilled = cambio >= 0;
             const ObservacionFilled = observacionValue.length > 0;
-       // alert(cambio +'>'+ 0);
-       alert(ObservacionFilled);
             let allProductsFilled = true;
             $('#venta_details_table tbody tr').each(function() {
                 const productInput = $(this).find('input[name="cantidades[]"]');
