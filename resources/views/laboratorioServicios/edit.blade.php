@@ -12,14 +12,14 @@
     <div class="row">
         <div class="col-12">
             <div class="box">
-                <form method="post" action="{{ route('laboratorioServicios.update', $laboratorioServicio->id) }}" autocomplete="off">
+                <form method="post" action="{{ route('laboratorioServicios.update', $laboratorioServicio->id) }}"
+                    autocomplete="off">
                     @csrf
                     @method('PUT')
-
                     <div class="box-header with-border">
                         <div class="row">
                             <div class="col-12">
-                                <h3 class="box-title">Datos del Paciente</h3>
+                                <h3 class="box-title">Datos del Servicios</h3>
                             </div>
                         </div>
                     </div>
@@ -48,7 +48,6 @@
                                     <label class="form-label">Clasificación</label>
                                     <select id="clasificacion_id" name="clasificacion_id" class="form-select select2">
                                         @foreach ($clasificaciones as $clasificacion)
-                                            
                                             @if ($laboratorioServicio->clasificacion_id == $clasificacion->id)
                                                 <option value="{{ $clasificacion->id }}" selected>
                                                     {{ $clasificacion->clasificacion }}</option>
@@ -67,8 +66,9 @@
                     <div class="box-footer">
                         <button type="submit" class="btn btn-file btn-primary pull-right float-right"
                             style="margin-right: 5px;"><i class="fa fa-save"></i> GUARDAR CAMBIOS</button>
-                        <a type="button" class=" btn btn-danger  float-right" href="{{ route('laboratorioServicios.index') }}"
-                            style="margin-right: 5px;"><i class="fa fa-times-circle"></i> CANCELAR</a>
+                        <a type="button" class=" btn btn-danger  float-right"
+                            href="{{ route('laboratorioServicios.index') }}" style="margin-right: 5px;"><i
+                                class="fa fa-times-circle"></i> CANCELAR</a>
                     </div>
                 </form>
             </div>
