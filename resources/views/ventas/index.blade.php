@@ -374,7 +374,7 @@ function modalVentas(id){
                              $('#total').text(response.data.ventas[0].total+" BS");
                               $('#fecha').text(fecha);
                               $('#total_subtotal').text(" BS. "+response.data.ventas[0].total);
-                              if(response.data.ventas[0].observacion){
+                              if(response.data.ventas[0].tipo=='Salida Directa'){
                                $( "#display_observacion" ).show();
                                $('#observacion').text(response.data.ventas[0].observacion);}
                             // $('#purchase_date').text(response.data.purchase.purchase_date);

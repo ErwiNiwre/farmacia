@@ -251,6 +251,7 @@ class VentaController extends Controller
                 'efectivo',
                 'qr',
                 'metodo_pago',
+                'observacion',
                 DB::raw("CASE 
                     WHEN metodo_pago = 'E' THEN 'Efectivo'
                     WHEN metodo_pago = 'Q' THEN 'QR'
