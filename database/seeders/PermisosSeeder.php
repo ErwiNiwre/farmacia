@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class PermisosSeeder extends Seeder
 {
@@ -13,53 +15,123 @@ class PermisosSeeder extends Seeder
      */
     public function run(): void
     {
-        // Operaciones de Usuario
-        Permission::create(['name' => 'user.index']);
-        Permission::create(['name' => 'user.create']);
-        Permission::create(['name' => 'user.show']);
-        Permission::create(['name' => 'user.edit']);
-        Permission::create(['name' => 'user.destroy']);
+        /*
+        |--------------------------------------------------------------------------
+        | 1. Crear todos los permisos
+        |--------------------------------------------------------------------------
+        */
+        foreach (
+            [
+                // Roles
+                'rol.index',
+                'rol.create',
+                'rol.show',
+                'rol.edit',
+                'rol.destroy',
+                // Usuarios
+                'user.index',
+                'user.create',
+                'user.show',
+                'user.edit',
+                'user.destroy',
+                // Compras
+                'compra.index',
+                'compra.create',
+                'compra.show',
+                'compra.edit',
+                'compra.destroy',
+                // Ventas
+                'venta.index',
+                'venta.create',
+                'venta.show',
+                'venta.edit',
+                'venta.destroy',
+                // Productos
+                'producto.index',
+                'producto.create',
+                'producto.show',
+                'producto.edit',
+                'producto.destroy',
+                // Unidad Medidas
+                'unidadMedida.index',
+                'unidadMedida.create',
+                'unidadMedida.show',
+                'unidadMedida.edit',
+                'unidadMedida.destroy',
+                // Clasificaciones
+                'clasificacion.index',
+                'clasificacion.create',
+                'clasificacion.show',
+                'clasificacion.edit',
+                'clasificacion.destroy',
+                // laboratorio_servicios
+                'laboratorioServicio.index',
+                'laboratorioServicio.create',
+                'laboratorioServicio.show',
+                'laboratorioServicio.edit',
+                'laboratorioServicio.destroy',
+            ] as $perm
+        ) {
+            Permission::firstOrCreate(['name' => $perm, 'guard_name' => 'web']);
+        }
 
-        // Operaciones de Compras
-        Permission::create(['name' => 'compra.index']);
-        Permission::create(['name' => 'compra.create']);
-        Permission::create(['name' => 'compra.show']);
-        Permission::create(['name' => 'compra.edit']);
-        Permission::create(['name' => 'compra.destroy']);
+        /*
+        |--------------------------------------------------------------------------
+        | 2. Limpiar la caché de Spatie
+        |--------------------------------------------------------------------------
+        */
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Operaciones de Ventas
-        Permission::create(['name' => 'venta.index']);
-        Permission::create(['name' => 'venta.create']);
-        Permission::create(['name' => 'venta.show']);
-        Permission::create(['name' => 'venta.edit']);
-        Permission::create(['name' => 'venta.destroy']);
+        /*
+        |--------------------------------------------------------------------------
+        | 3. Obtener los roles creados previamente
+        |--------------------------------------------------------------------------
+        */
+        $administrador = Role::where('name', 'Administración')->first();
+        $farmacia = Role::where('name', 'Farmacia')->first();
+        $cajero = Role::where('name', 'Cajero')->first();
 
-        // Operaciones de Productos
-        Permission::create(['name' => 'producto.index']);
-        Permission::create(['name' => 'producto.create']);
-        Permission::create(['name' => 'producto.show']);
-        Permission::create(['name' => 'producto.edit']);
-        Permission::create(['name' => 'producto.destroy']);
+        /*
+        |--------------------------------------------------------------------------
+        | 4. Asignar permisos a cada rol
+        |--------------------------------------------------------------------------
+        */
+        $permisosSinRoles = Permission::all()->reject(function ($permiso) {
+            return str_starts_with($permiso->name, 'rol.');
+        });
+        $administrador->syncPermissions($permisosSinRoles);
 
-        // Operaciones de unidad_medidas
-        Permission::create(['name' => 'unidadMedida.index']);
-        Permission::create(['name' => 'unidadMedida.create']);
-        Permission::create(['name' => 'unidadMedida.show']);
-        Permission::create(['name' => 'unidadMedida.edit']);
-        Permission::create(['name' => 'unidadMedida.destroy']);
+        $farmacia->syncPermissions([
+            // Compras
+            'compra.index',
+            'compra.create',
+            'compra.show',
+            'compra.edit',
+            'compra.destroy',
+            // Ventas
+            'venta.index',
+            'venta.create',
+            'venta.show',
+            'venta.edit',
+            'venta.destroy',
+            // Productos
+            'producto.index',
+            'producto.create',
+            'producto.show',
+            'producto.edit',
+            'producto.destroy',
+        ]);
 
-        // Operaciones de clasificaciones
-        Permission::create(['name' => 'clasificacion.index']);
-        Permission::create(['name' => 'clasificacion.create']);
-        Permission::create(['name' => 'clasificacion.show']);
-        Permission::create(['name' => 'clasificacion.edit']);
-        Permission::create(['name' => 'clasificacion.destroy']);
-
-        // Operaciones de laboratorio_servicios
-        Permission::create(['name' => 'laboratorioServicio.index']);
-        Permission::create(['name' => 'laboratorioServicio.create']);
-        Permission::create(['name' => 'laboratorioServicio.show']);
-        Permission::create(['name' => 'laboratorioServicio.edit']);
-        Permission::create(['name' => 'laboratorioServicio.destroy']);  
+        $cajero->syncPermissions([
+            // Productos
+            'producto.index',
+            'producto.show',
+            // Venta
+            'venta.index',
+            'venta.create',
+            'venta.show',
+            'venta.edit',
+            'venta.destroy',
+        ]);
     }
 }

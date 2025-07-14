@@ -15,9 +15,11 @@
                 <div class="box">
                     <div class="box-header middle">
                         <h3 class="box-title">Lista de Productos</h3>
-                        <a class="btn btn-success pull-right" data-bs-toggle="tooltip" data-container="body" title=""
-                            data-bs-original-title="Nuevo Rol" href="{{ route('productos.create') }}"><i
-                                class="fa fa-plus"></i></a>
+                        @can('producto.create')
+                            <a class="btn btn-success pull-right" data-bs-toggle="tooltip" data-container="body" title=""
+                                data-bs-original-title="Nuevo Rol" href="{{ route('productos.create') }}"><i
+                                    class="fa fa-plus"></i></a>
+                        @endcan
                     </div>
                     <div class="box-body">
                         <div class="table-responsive">
@@ -257,6 +259,12 @@
 @section('page-script')
     <script>
         $(document).ready(function() {
+            const permisos = {
+                edit: @json(auth()->user()->can('producto.edit')),
+                destroy: @json(auth()->user()->can('producto.destroy')),
+                show: @json(auth()->user()->can('producto.show'))
+            };
+
             let tbl_Producto = $('#tbl_Producto').DataTable({
                 data: @json($productos),
                 order: [
@@ -272,25 +280,6 @@
                     {
                         data: 'generico'
                     },
-
-                    // elieminar luego
-                    // {
-                    //     data: 'concentracion'
-                    // },
-                    // {
-                    //     data: 'marca'
-                    // },
-                    // {
-                    //     data: 'presentacion'
-                    // },
-                    // {
-                    //     data: 'accion_terapeutica'
-                    // },
-                    // {
-                    //     data: 'unidad_medida'
-                    // },
-                    // elieminar luego
-
                     {
                         data: 'tipo_producto'
                     },
@@ -332,19 +321,34 @@
                         orderable: false,
                         searchable: false,
                         render: function(data, type, row) {
-                            return `
-                            <div class="text-dark flexbox">
-                                <button type="button" id="btn_read" value="${row.id}" class="btn btn-info" data-bs-toggle="tooltip" title="Ver Producto">
-                                    <i class="mdi mdi-eye"></i>
-                                </button>
-                                <a class="btn btn-secondary" href="${row.edit_url}" data-bs-toggle="tooltip" title="Editar Producto">
-                                    <i class="fa fa-edit"></i>
-                                </a>
-                                <button type="button" id="btn_delete" value="${row.id}" class="btn btn-danger" data-bs-toggle="tooltip" title="Eliminar Producto">
-                                    <i class="mdi mdi-delete"></i>
-                                </button>
-                            </div>
-                        `;
+                            let botones = '<div class="text-dark flexbox">';
+
+                            if (permisos.show) {
+                                botones += `
+                                    <button type="button" id="btn_read" value="${row.id}" class="btn btn-info" data-bs-toggle="tooltip" title="Ver Producto">
+                                        <i class="mdi mdi-eye"></i>
+                                    </button>
+                                `;
+                            }
+
+                            if (permisos.edit) {
+                                botones += `
+                                    <a class="btn btn-secondary" href="${row.edit_url}" data-bs-toggle="tooltip" title="Editar Producto">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                `;
+                            }
+
+                            if (permisos.destroy) {
+                                botones += `
+                                    <button type="button" id="btn_delete" value="${row.id}" class="btn btn-danger" data-bs-toggle="tooltip" title="Eliminar Producto">
+                                        <i class="mdi mdi-delete"></i>
+                                    </button>
+                                `;
+                            }
+
+                            botones += '</div>';
+                            return botones;
                         }
                     }
                 ],

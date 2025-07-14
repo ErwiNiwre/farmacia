@@ -16,6 +16,13 @@ use Carbon\Carbon;
 
 class ProductoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:producto.index|producto.create|producto.show', ['only' => ['index']]);
+        $this->middleware('permission:producto.create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:producto.show', ['only' => ['show']]);
+        $this->middleware('permission:producto.destroy', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      */
