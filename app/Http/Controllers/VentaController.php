@@ -352,7 +352,16 @@ class VentaController extends Controller
                         $detalleCompra = CompraDetalle::find($lote[0]);
 
                         $detalleCompra->cantidad_total = $detalleCompra->cantidad_total + $lote[1];
-                        $this->kardex($ventas, $ventaDetalle, 'B');
+                        // $this->kardex($ventas, $ventaDetalle, 'B');
+                        Kardex::registrarKardex([
+                            'producto_id'     => $ventaDetalle->producto_id,
+                            'tipo_movimiento' => $ventas->tipo,
+                            'accion'          => 'B',
+                            'cantidad'        => $ventaDetalle->cantidad,
+                            'precio_unitario' => $ventaDetalle->precio_unitario,
+                            'subtotal'        => $ventaDetalle->subtotal,
+                            'user_id'         => $ventas->user_id
+                        ]);
                         $detalleCompra->save();
                     }
 
@@ -380,26 +389,26 @@ class VentaController extends Controller
     }
 
 
-    function kardex($venta, $detalles, $accion)
-    {
-        $kardex = new Kardex();
-        $kardex->fecha = date("Y-m-d H:i:s");
-        $kardex->producto_id = $detalles->producto_id;
-        $kardex->tipo_movimiento = $venta->tipo;
-        $kardex->accion = $accion;
-        $kardex->cantidad = $detalles->cantidad;
-        $kardex->precio_unitario = $detalles->precio_unitario;
-        $kardex->subtotal = $detalles->subtotal;
+    // function kardex($venta, $detalles, $accion)
+    // {
+    //     $kardex = new Kardex();
+    //     $kardex->fecha = date("Y-m-d H:i:s");
+    //     $kardex->producto_id = $detalles->producto_id;
+    //     $kardex->tipo_movimiento = $venta->tipo;
+    //     $kardex->accion = $accion;
+    //     $kardex->cantidad = $detalles->cantidad;
+    //     $kardex->precio_unitario = $detalles->precio_unitario;
+    //     $kardex->subtotal = $detalles->subtotal;
 
-        if ($accion == 'A')
-            $kardex->created_by = $venta->user_id;
-        if ($accion == 'M')
-            $kardex->updated_by = $venta->user_id;
-        if ($accion == 'B')
-            $kardex->deleted_by = $venta->user_id;
+    //     if ($accion == 'A')
+    //         $kardex->created_by = $venta->user_id;
+    //     if ($accion == 'M')
+    //         $kardex->updated_by = $venta->user_id;
+    //     if ($accion == 'B')
+    //         $kardex->deleted_by = $venta->user_id;
 
-        $kardex->save();
-    }
+    //     $kardex->save();
+    // }
 
     public function print($id)
     {
