@@ -37,20 +37,35 @@ class ProductoController extends Controller
             $session_name = $session_auth->nombre;
         }
 
-        $productos = Producto::all()->map(function ($producto) {
-            return [
-                'id'              => $producto->id,
-                'producto'        => $producto->producto,
-                'generico'        => $producto->generico,
-                'tipo_producto'   => $producto->tipo_producto == 'M' ? 'Medicamento' : 'Insumo',
-                'precio_unitario' => $producto->precio_unitario,
-                'porcentaje'      => number_format($producto->porcentaje, 0),
-                'precio_venta'    => $producto->precio_venta,
-                'cantidad'        => $producto->cantidad,
-                'estado'          => $producto->estado,
-                'edit_url'           => route('productos.edit', $producto->id),
-            ];
-        });
+        $productos = Producto::query()
+            ->select([
+                'productos.*',
+                'concentraciones.concentracion  as concentracion',
+                'marcas.marca           as marca',
+                'presentaciones.presentacion   as presentacion',
+            ])
+            ->join('concentraciones', 'concentraciones.id', '=', 'productos.concentracion_id')
+            ->join('marcas',          'marcas.id',          '=', 'productos.marca_id')
+            ->join('presentaciones',  'presentaciones.id',  '=', 'productos.presentacion_id')
+            ->get()
+            ->map(function ($producto) {
+                return [
+                    'id'              => $producto->id,
+                    'producto'        => $producto->producto,
+                    'generico'        => $producto->generico,
+                    'tipo_producto'   => $producto->tipo_producto === 'M' ? 'Medicamento' : 'Insumo',
+                    'concentracion'   => $producto->concentracion,
+                    'marca'           => $producto->marca,
+                    'presentacion'    => $producto->presentacion,
+                    'precio_unitario' => $producto->precio_unitario,
+                    'porcentaje'      => number_format($producto->porcentaje, 0),
+                    'precio_venta'    => $producto->precio_venta,
+                    'cantidad'        => $producto->cantidad,
+                    'estado'          => $producto->estado,
+                    'edit_url'        => route('productos.edit', $producto->id),
+                ];
+            });
+
         return view(
             'productos.index',
             compact(
@@ -124,7 +139,7 @@ class ProductoController extends Controller
 
         $producto->created_by = auth()->id();
         $producto->created_at = Carbon::now();
-         Kardex::registrarKardex([
+        Kardex::registrarKardex([
             'producto_id'     => $producto->id,
             'tipo_movimiento' => 'Producto',
             'accion'          => 'A',
@@ -302,15 +317,15 @@ class ProductoController extends Controller
 
             $producto->deleted_by = auth()->id();
             Kardex::registrarKardex([
-            'producto_id'     => $producto->id,
-            'tipo_movimiento' => 'Producto',
-            'accion'          => 'B',
-            'cantidad'        => $producto->cantidad,
-            'precio_unitario' => $producto->precio_unitario,
-            'porcentaje'      => $producto->porcentaje,
-            'subtotal'        => $producto->precio_venta,
-            'user_id'         => $producto->user_id
-        ]);
+                'producto_id'     => $producto->id,
+                'tipo_movimiento' => 'Producto',
+                'accion'          => 'B',
+                'cantidad'        => $producto->cantidad,
+                'precio_unitario' => $producto->precio_unitario,
+                'porcentaje'      => $producto->porcentaje,
+                'subtotal'        => $producto->precio_venta,
+                'user_id'         => $producto->user_id
+            ]);
             $producto->save();
 
             $producto->delete();

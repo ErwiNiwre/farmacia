@@ -29,16 +29,14 @@
                                         <th>Id</th>
                                         <th>Producto</th>
                                         <th>Generico</th>
-                                        {{-- <th>Conce</th>eliminar luego --}}
-                                        {{-- <th>Marca</th>eliminar luego --}}
-                                        {{-- <th>Prese</th>eliminar luego --}}
-                                        {{-- <th>Terap</th>eliminar luego --}}
-                                        {{-- <th>Unida</th>eliminar luego --}}
+                                        <th>Concentración</th>
+                                        <th>Marca</th>
+                                        <th>Presentación</th>
                                         <th>Tipo</th>
                                         <th class="text-end">P. Compra (Bs.)</th>
                                         <th class="text-end">Porcentaje (%)</th>
                                         <th class="text-end">P. Venta (Bs.)</th>
-                                        <th class="text-end">Cant.</th> {{-- volver a descomentar --}}
+                                        <th class="text-end">Cant.</th>
                                         <th>Estado</th>
                                         <th class="text-center">Acciones</th>
                                     </tr>
@@ -279,6 +277,15 @@
                     },
                     {
                         data: 'generico'
+                    },
+                    {
+                        data: 'concentracion'
+                    },
+                    {
+                        data: 'marca'
+                    },
+                    {
+                        data: 'presentacion'
                     },
                     {
                         data: 'tipo_producto'
