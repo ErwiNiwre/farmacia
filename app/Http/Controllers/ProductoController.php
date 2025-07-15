@@ -124,6 +124,16 @@ class ProductoController extends Controller
 
         $producto->created_by = auth()->id();
         $producto->created_at = Carbon::now();
+         Kardex::registrarKardex([
+            'producto_id'     => $producto->id,
+            'tipo_movimiento' => 'Producto',
+            'accion'          => 'A',
+            'cantidad'        => $producto->cantidad,
+            'precio_unitario' => $producto->precio_unitario,
+            'porcentaje'      => $producto->porcentaje,
+            'subtotal'        => $producto->precio_venta,
+            'user_id'         => $producto->user_id
+        ]);
         $producto->save();
 
         $producto->codigo = 'FAR-' . $producto->id;
@@ -291,6 +301,16 @@ class ProductoController extends Controller
             }
 
             $producto->deleted_by = auth()->id();
+            Kardex::registrarKardex([
+            'producto_id'     => $producto->id,
+            'tipo_movimiento' => 'Producto',
+            'accion'          => 'B',
+            'cantidad'        => $producto->cantidad,
+            'precio_unitario' => $producto->precio_unitario,
+            'porcentaje'      => $producto->porcentaje,
+            'subtotal'        => $producto->precio_venta,
+            'user_id'         => $producto->user_id
+        ]);
             $producto->save();
 
             $producto->delete();

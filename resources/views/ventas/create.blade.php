@@ -295,7 +295,7 @@
    
            $('#cliente').on('input', toggleSaveButton);
            $('#efectivo, #qr').on('input', (calculoCambio));
-           
+           $('#observacion').on('input', toggleSaveButton);
            $('#efectivo, #qr').on('input', (toggleSaveButton));
            
 
@@ -350,7 +350,7 @@
             $('#addRow').on('click', function() {
                $( "#barras" ).val("");
                 var productos=busquedaProductosList($( "#producto_id" ).val(),"id");
-                
+                if(parseFloat(productos.cantidad-1)>=0){
                  if(verificarProductoDt(productos.id)==false){
                 table.row.add([
                     $('#producto_id').find('option:selected').val(),
@@ -365,6 +365,9 @@
                 toggleSaveButton();
                  }else{
                     alert("El porducto ya fue ingresado")
+                 }
+                 }else{
+ alert("No hay sufucientes existencias del producto ");
                  }
             });
             function calculoCambio(){
@@ -602,11 +605,11 @@
             const EfectivoValue = parseFloat($('#efectivo').val());
             const QrValue = parseFloat($('#qr').val());
             const cambio= parseFloat($('#cambio_display').text());
-            
+            const observacionValue= $('#observacion').val().trim();
             const clienteFilled = clienteValue.length > 0;
             const EfectivoFilled = (EfectivoValue+QrValue) > 0;
             const CambioFilled = cambio >= 0;
-       // alert(cambio +'>'+ 0);
+            const ObservacionFilled = observacionValue.length > 0;
             let allProductsFilled = true;
             $('#venta_details_table tbody tr').each(function() {
                 const productInput = $(this).find('input[name="cantidades[]"]');
@@ -622,9 +625,9 @@
             
            let saveButtonEnabled;
             if($('#tipo').val()=='Venta')
-             saveButtonEnabled = clienteValue && EfectivoFilled&& allProductsFilled&&CambioFilled;
+             saveButtonEnabled = clienteFilled && EfectivoFilled&& allProductsFilled&&CambioFilled;
             else
-             saveButtonEnabled =  allProductsFilled;
+             saveButtonEnabled =  allProductsFilled&&clienteFilled&&ObservacionFilled;
             $('#btn_save').prop('disabled', !saveButtonEnabled);
         }
         

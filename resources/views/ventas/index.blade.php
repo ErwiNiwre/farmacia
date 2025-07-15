@@ -333,46 +333,45 @@
 
 
         });
-
-        function modalVentas(id) {
-
-
-            $.ajax({
-                type: "GET",
-                url: "{{ route('ventas.show', ':id') }}".replace(':id', id),
-                success: function(response) {
-                    if (response.status === 200) {
-                        // console.log(response.data.ventas);
-                        // console.log(response.data.ventas[0].venta_fecha);
-                        var fecha = moment(response.data.ventas[0].venta_fecha)
-                            .format('DD-MM-YYYY');
-
-                        $("#display_observacion").hide();
-                        var metodo_pago = response.data.ventas[0].metodo_pago;
-                        // if(metodo_pago=='E')
-                        // metodo_pago='EFECTIVO';
-                        // if(metodo_pago=='Q')
-                        // metodo_pago='QR';
-                        // if(metodo_pago=='M')
-                        // metodo_pago='EFECTIVO Y QR';
-                        // if(metodo_pago=='N')
-                        // metodo_pago='NINGUNO';
-
-                        $('#cliente').text(response.data.ventas[0].cliente);
-                        $('#metodo_pago').text(metodo_pago);
-                        $('#numero_venta').text(response.data.ventas[0].numero_venta);
-                        $('#total').text(response.data.ventas[0].total + " BS");
-                        $('#fecha').text(fecha);
-                        $('#total_subtotal').text(" BS. " + response.data.ventas[0].total);
-                        if (response.data.ventas[0].observacion) {
-                            $("#display_observacion").show();
-                            $('#observacion').text(response.data.ventas[0].observacion);
-                        }
-                        // $('#purchase_date').text(response.data.purchase.purchase_date);
-                        // $('#supplier').text(response.data.purchase.supplier);
-                        // $('#purchase').text(response.data.purchase.purchase);
-                        var tbody = $('#tbl_venta_detalles tbody');
-                        tbody.empty();
+  
+function modalVentas(id){
+                   
+                
+    $.ajax({
+                    type: "GET",
+                    url: "{{ route('ventas.show', ':id') }}".replace(':id', id),
+                    success: function(response) {
+                        if(response.status === 200){
+                           // console.log(response.data.ventas);
+                          // console.log(response.data.ventas[0].venta_fecha);
+                             var fecha = moment(response.data.ventas[0].venta_fecha)
+                .format('DD-MM-YYYY');
+                 
+                  $( "#display_observacion" ).hide();
+                var metodo_pago=response.data.ventas[0].metodo_pago;
+                // if(metodo_pago=='E')
+                // metodo_pago='EFECTIVO';
+                // if(metodo_pago=='Q')
+                // metodo_pago='QR';
+                // if(metodo_pago=='M')
+                // metodo_pago='EFECTIVO Y QR';
+                // if(metodo_pago=='N')
+                // metodo_pago='NINGUNO';
+                          
+                             $('#cliente').text(response.data.ventas[0].cliente);
+                            $('#metodo_pago').text(metodo_pago);
+                            $('#numero_venta').text(response.data.ventas[0].numero_venta);
+                             $('#total').text(response.data.ventas[0].total+" BS");
+                              $('#fecha').text(fecha);
+                              $('#total_subtotal').text(" BS. "+response.data.ventas[0].total);
+                              if(response.data.ventas[0].tipo=='Salida Directa'){
+                               $( "#display_observacion" ).show();
+                               $('#observacion').text(response.data.ventas[0].observacion);}
+                            // $('#purchase_date').text(response.data.purchase.purchase_date);
+                            // $('#supplier').text(response.data.purchase.supplier);
+                            // $('#purchase').text(response.data.purchase.purchase);
+                             var tbody = $('#tbl_venta_detalles tbody');
+                             tbody.empty();
 
                         var ventaDetalles = response.data.ventaDetalles;
 

@@ -196,7 +196,16 @@ class VentaController extends Controller
                 $venta_detalle->subtotal = $venta_detalle->precio_unitario * $venta_detalle->cantidad;
 
                 $venta_detalle->created_by = $session_auth->id;
-                $this->kardex($venta, $venta_detalle, 'A');
+                //$this->kardex($venta, $venta_detalle, 'A');
+                 Kardex::registrarKardex([
+                            'producto_id'     => $venta_detalle->producto_id,
+                            'tipo_movimiento' => $venta->tipo,
+                            'accion'          => 'A',
+                            'cantidad'        => $venta_detalle->cantidad,
+                            'precio_unitario' => $venta_detalle->precio_unitario,
+                            'subtotal'        => $venta_detalle->subtotal,
+                            'user_id'         => $venta->user_id
+                        ]);
                 $venta_detalle->save();
                 $producto->ajustarStock(-$detalle['cantidad']);
                 //$producto->cantidad = $producto->cantidad - $detalle['cantidad'];
@@ -251,6 +260,7 @@ class VentaController extends Controller
                 'efectivo',
                 'qr',
                 'metodo_pago',
+                'observacion',
                 DB::raw("CASE 
                     WHEN metodo_pago = 'E' THEN 'Efectivo'
                     WHEN metodo_pago = 'Q' THEN 'QR'
