@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Exports\ProductosExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductoController extends Controller
 {
@@ -40,13 +42,14 @@ class ProductoController extends Controller
         $productos = Producto::query()
             ->select([
                 'productos.*',
-                'concentraciones.concentracion  as concentracion',
-                'marcas.marca           as marca',
-                'presentaciones.presentacion   as presentacion',
+                'concentraciones.concentracion as concentracion',
+                'marcas.marca as marca',
+                'presentaciones.presentacion as presentacion',
             ])
             ->join('concentraciones', 'concentraciones.id', '=', 'productos.concentracion_id')
             ->join('marcas',          'marcas.id',          '=', 'productos.marca_id')
             ->join('presentaciones',  'presentaciones.id',  '=', 'productos.presentacion_id')
+            ->whereNull('productos.deleted_at')
             ->get()
             ->map(function ($producto) {
                 return [
@@ -345,5 +348,11 @@ class ProductoController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function exportarExcel()
+    {
+        $nombre = Carbon::now()->format('Y-m-d_H-i') . '_Productos.xlsx';
+        return Excel::download(new ProductosExport, $nombre);
     }
 }

@@ -42,6 +42,7 @@ Route::middleware('auth', 'verified')->group(function () {
    Route::get('/productos/{producto}/edit', [ProductoController::class, 'edit'])->name('productos.edit');
    Route::put('/productos/{producto}', [ProductoController::class, 'update'])->name('productos.update');
    Route::delete('/productos/{producto}', [ProductoController::class, 'destroy'])->name('productos.destroy');
+   Route::get('/productos/exportarExcel', [ProductoController::class, 'exportarExcel'])->name('productos.exportarExcel');
 
    // Rutas para LaboratorioServicio
    Route::get('/laboratorioServicios', [LaboratorioServicioController::class, 'index'])->name('laboratorioServicios.index');

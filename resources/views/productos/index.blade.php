@@ -20,6 +20,9 @@
                                 data-bs-original-title="Nuevo Rol" href="{{ route('productos.create') }}"><i
                                     class="fa fa-plus"></i></a>
                         @endcan
+                        <a class="btn btn-light pull-right me-10" data-bs-toggle="tooltip" data-container="body"
+                            title="" data-bs-original-title="Exportar Excel"
+                            href="{{ route('productos.exportarExcel') }}"><i class="fa  fa-file-excel-o"></i></a>
                     </div>
                     <div class="box-body">
                         <div class="table-responsive">
