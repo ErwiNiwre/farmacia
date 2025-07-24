@@ -73,10 +73,10 @@
                                                 @foreach ($producto as $productos)
                                                     @if (old('producto_id') == $productos->id)
                                                         <option value="{{ $productos->id }}" selected>
-                                                            {{ $productos->productos }}</option>
+                                                            {{ $productos->descripcion }}</option>
                                                     @else
                                                         <option value="{{ $productos->id }}">
-                                                            {{ $productos->producto }}
+                                                            {{ $productos->descripcion }}
                                                         </option>
                                                     @endif
                                                 @endforeach

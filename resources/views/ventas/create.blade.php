@@ -13,6 +13,7 @@
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12">
                 <form id="createventas" autocomplete="off" onkeydown="event.keyCode === 13">
+                    @csrf
                     <div class="box">
                         <div class="box-body">
                             <h5 class="box-title text-info mb-0"><i class="fa fa-id-card-o me-15"></i>Datos de la Venta</h5>
@@ -38,6 +39,7 @@
 
                                             <option selected="selected" value="Venta">Venta</option>
                                             <option value="Salida Directa">Salida Directa</option>
+                                            <option value="Cuentas por Cobrar">Cuentas por Cobrar</option>
                                         </select>
                                     </div>
                                     <!-- /.form-group -->
@@ -141,10 +143,10 @@
                                         @foreach ($producto as $productos)
                                             @if (old('producto_id') == $productos->id)
                                                 <option value="{{ $productos->id }}" selected>
-                                                    {{ $productos->productos }}</option>
+                                                    {{ $productos->descripcion }}</option>
                                             @else
                                                 <option value="{{ $productos->id }}">
-                                                    {{ $productos->producto }}
+                                                    {{ $productos->descripcion }}
                                                 </option>
                                             @endif
                                         @endforeach
@@ -356,7 +358,7 @@
             $('#addRow').on('click', function() {
                 $("#barras").val("");
                 var productos = busquedaProductosList($("#producto_id").val(), "id");
-                console.log(productos);
+               // console.log(productos);
                 if (parseFloat(productos.cantidad - 1) >= 0) {
                     if (verificarProductoDt(productos.id) == false) {
                         table.row.add([
@@ -433,6 +435,7 @@
                     } else {
                         alert("la cantidad excede las existencias del producto");
                         $row.find('input[name="cantidades[]"]').val($row.find('td:eq(1)').text());
+                        calculateTotal();
                     }
 
                 });
@@ -591,7 +594,7 @@
 
                 $('#display_efectivo, #display_qr').hide();
 
-                // Muestra según selección
+               
                 if (valor === 'E') {
                     $('#display_efectivo').show();
                     $('#qr').val(0);
@@ -619,6 +622,8 @@
             const QrValue = parseFloat($('#qr').val());
             const cambio = parseFloat($('#cambio_display').text());
             const observacionValue = $('#observacion').val().trim();
+            const totalValue=$('#total').val()>0;
+            //alert($('#total').val());
             const clienteFilled = clienteValue.length > 0;
             const EfectivoFilled = (EfectivoValue + QrValue) > 0;
             const CambioFilled = cambio >= 0;
@@ -638,15 +643,17 @@
 
             let saveButtonEnabled;
             if ($('#tipo').val() == 'Venta')
-                saveButtonEnabled = clienteFilled && EfectivoFilled && allProductsFilled && CambioFilled;
-            else
+                saveButtonEnabled = clienteFilled && EfectivoFilled && allProductsFilled && CambioFilled && totalValue;
+            else if($('#tipo').val() == 'Salida Directa')
                 saveButtonEnabled = allProductsFilled && clienteFilled && ObservacionFilled;
+            else if($('#tipo').val() == 'Cuentas por Cobrar')
+                saveButtonEnabled = allProductsFilled && clienteFilled && ObservacionFilled && totalValue;
             $('#btn_save').prop('disabled', !saveButtonEnabled);
         }
 
         $("#tipo").change(function() {
 
-            if ($("#tipo").val() == 'Salida Directa') {
+            if ($("#tipo").val() == 'Salida Directa' || $("#tipo").val() =='Cuentas por Cobrar') {
                 $('#observacion_section').show();
                 toggleSaveButton();
             } else {

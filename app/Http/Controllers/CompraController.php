@@ -69,7 +69,23 @@ class CompraController extends Controller
             $session_name = $session_auth->nombre;
         }
 
-        $producto = Producto::All();
+        //$producto = Producto::All();
+        $producto = DB::table('productos')
+    ->join('concentraciones', 'productos.concentracion_id', '=', 'concentraciones.id')
+    ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
+    ->join('presentaciones', 'productos.presentacion_id', '=', 'presentaciones.id')
+    ->select(
+        'productos.id',
+        'barras',
+        'producto',
+        'tipo_producto',
+        'codigo',
+        'cantidad',
+        'precio_unitario',
+        DB::raw("CONCAT(productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
+    )
+    ->get();
+
         $permissions = Compra::get();
 
         return view(
@@ -163,7 +179,7 @@ class CompraController extends Controller
                     'cantidad'        => $compraDetalle->cantidad,
                     'precio_unitario' => $compraDetalle->precio_unitario,
                     'subtotal'        => $compraDetalle->subtotal,
-                    'user_id'         => $compra->user_id
+                    'user_id'         => $session_auth->id
                 ]);
                 // $producto->cantidad = $producto->cantidad + $detalle['cantidad'];
                 $producto->ajustarStock($detalle['cantidad']);

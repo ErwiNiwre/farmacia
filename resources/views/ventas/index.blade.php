@@ -72,7 +72,7 @@
                     <div class="box-header with-border">
                         <div class="col-12">
                             <div class="page-header">
-                                <h2 class="d-inline"><span class="fs-30">Compra</span></h2>
+                                <h2 class="d-inline"><span class="fs-30">Venta</span></h2>
                                 <div class="pull-right text-end">
                                     <h3 class="text-danger" id="fecha"> </h3>
                                 </div>
@@ -226,16 +226,19 @@
                         "mRender": function(data, type, row) {
                             var fecha = moment(data.venta_fecha).format('YYYY-MM-DD');
                             var btn_delete = "</div>";
+                            var btn_cuenta_cobrar="";
                             // alert(data.id);
                             // alert(fecha+'=='+moment().format('YYYY-MM-DD'));
                             if (fecha == moment().format('YYYY-MM-DD'))
                                 btn_delete = '<button type="button" id="btn_delete_ventas" value=' +
                                 data.id +
                                 ' class="btn btn-danger" data-bs-toggle="tooltip" title="Eliminar" ><i class="mdi mdi-delete" ></i></button></div>';
+                            if(data.tipo=='Cuentas por Cobrar')
+                                btn_cuenta_cobrar=`<a  href="ventas/${data.id}/cuentaCobrar"     class="btn btn-google" data-bs-toggle="tooltip" title="Cuentas por Cobrar"><i class="fa fa-money"></i></a>`;
 
                             return '<div class="d-block text-dark flexbox"><button type="button" onclick="modalVentas(' +
                                 data.id + ')" id="btn_view_compras" value=' + data.id +
-                                ' class="btn btn-info" data-bs-toggle="tooltip"  data-bs-original-title="Ver Compra"><i class="mdi mdi-eye"></i></button>' +
+                                ' class="btn btn-info" data-bs-toggle="tooltip"  data-bs-original-title="Ver Compra"><i class="mdi mdi-eye"></i></button>' +btn_cuenta_cobrar+
                                 btn_delete;
                         }
                     },

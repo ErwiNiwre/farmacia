@@ -1,7 +1,7 @@
 @extends('app.app')
 
 @section('title')
-    Laboratorio
+    Compra
 @endsection
 
 @section('caption')

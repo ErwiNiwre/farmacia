@@ -72,7 +72,7 @@ class CompraDetalleController extends Controller
                 'cantidad'        => $compraDetalle->cantidad,
                 'precio_unitario' => $compraDetalle->precio_unitario,
                 'subtotal'        => $compraDetalle->subtotal,
-                'user_id'         => $compras->user_id
+                'user_id'         => $session_auth->id
             ]);
 
             $compraDetalle->save();
@@ -157,7 +157,7 @@ class CompraDetalleController extends Controller
                 'cantidad'        => $comprasDetalle->cantidad,
                 'precio_unitario' => $comprasDetalle->precio_unitario,
                 'subtotal'        => $comprasDetalle->subtotal,
-                'user_id'         => $compras->user_id
+                'user_id'         => $session_auth->id
             ]);
             $comprasDetalle->deleted_by = $session_auth->id;
 
