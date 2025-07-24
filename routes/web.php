@@ -12,6 +12,7 @@ use App\Http\Controllers\CompraController;
 use App\Http\Controllers\CompraDetalleController;
 use App\Http\Controllers\InvitadosController;
 use App\Http\Controllers\VentaController;
+use App\Http\Controllers\VentaDetalleController;
 
 // Route::get('/', function () {
 //    return view('extranet.welcome');
@@ -76,11 +77,19 @@ Route::middleware('auth', 'verified')->group(function () {
    Route::post('/ventas/store', [VentaController::class, 'store'])->name('ventas.store');
    Route::get('/ventas/{ventas}/show', [VentaController::class, 'show'])->name('ventas.show');
    Route::get('getListVentas', [VentaController::class, 'getListVentas'])->name('getListVentas');
+   Route::get('/ventas/{ventas}/cuentaCobrar', [VentaController::class, 'cuentaCobrar'])->name('ventas.cuentaCobrar');
    Route::get('/ventas/{ventas}/destroy', [VentaController::class, 'destroy'])->name('ventas.destroy');
    Route::get('/ventas/{ventas}/print', [VentaController::class, 'print'])->name('ventas.print');
+   Route::put('/ventas/{ventas}', [VentaController::class, 'update'])->name('ventas.update');
 
    // Rutas para Compra Detalle
 
    Route::get('/compraDetalles/{compras}/destroy', [CompraDetalleController::class, 'destroy'])->name('compraDetalles.destroy');
    Route::put('/compraDetalles/store', [CompraDetalleController::class, 'store'])->name('compraDetalles.store');
+   
+   //ruta para Venta Detalle
+   Route::put('/ventaDetalle/store', [VentaDetalleController::class, 'store'])->name('ventaDetalle.store');
+   Route::put('/ventaDetalle/{ventaDetalle}', [VentaDetalleController::class, 'update'])->name('ventaDetalle.update');
+   Route::get('/ventaDetalle/{ventaDetalle}/destroy', [VentaDetalleController::class, 'destroy'])->name('ventaDetalle.destroy');
+   
 });

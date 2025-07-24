@@ -126,7 +126,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('producto_id')->constrained('productos');
             $table->dateTime('fecha');
-            $table->enum('tipo_movimiento', ['Compra', 'Ingreso Directo', 'Venta','Salida Directa','Producto']); // Entrada, Salida, Ajuste
+            $table->enum('tipo_movimiento', ['Compra', 'Ingreso Directo', 'Venta','Salida Directa','Producto','Cuentas por Cobrar']); 
             $table->enum('accion', ['A', 'B', 'M'])->nullable();
             $table->unsignedInteger('cantidad')->default(0);
             $table->decimal('precio_unitario', 13, 2)->nullable();

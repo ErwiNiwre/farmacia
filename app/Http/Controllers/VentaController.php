@@ -86,7 +86,24 @@ class VentaController extends Controller
             $session_name = $session_auth->nombre;
         }
 
-        $producto = Producto::All();
+        //$producto = Producto::All();
+        $producto = DB::table('productos')
+    ->join('concentraciones', 'productos.concentracion_id', '=', 'concentraciones.id')
+    ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
+    ->join('presentaciones', 'productos.presentacion_id', '=', 'presentaciones.id')
+    ->select(
+        'productos.id',
+        'barras',
+        'producto',
+        'tipo_producto',
+        'codigo',
+        'cantidad',
+        'precio_unitario',
+        'precio_venta',
+        DB::raw("CONCAT(productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
+    )
+    ->get();
+
         $permissions = Venta::get();
 
         return view(
@@ -123,7 +140,10 @@ class VentaController extends Controller
             $venta->tipo = $request->tipo;
 
             $venta->numero_venta = count(Venta::withTrashed()->get()) + 1;
-            if ($venta->tipo == 'Salida Directa') {
+            if ($venta->tipo == 'Salida Directa'|| $venta->tipo == 'Cuentas por Cobrar' ) {
+                if($venta->tipo == 'Cuentas por Cobrar')
+                $venta->total = $request->total;
+            else
                 $venta->total = 0;
                 $venta->efectivo =  0;
                 $venta->qr =  0;
@@ -136,6 +156,8 @@ class VentaController extends Controller
                 $venta->observacion = $request->observacion;
                 $venta->metodo_pago = $request->metodo_pago;
             }
+            //if($venta->tipo == 'Cuentas por Cobrar')
+
             $venta->created_by = $session_auth->id;
 
             $venta->save();
@@ -204,7 +226,7 @@ class VentaController extends Controller
                             'cantidad'        => $venta_detalle->cantidad,
                             'precio_unitario' => $venta_detalle->precio_unitario,
                             'subtotal'        => $venta_detalle->subtotal,
-                            'user_id'         => $venta->user_id
+                            'user_id'         => $session_auth->id
                         ]);
                 $venta_detalle->save();
                 $producto->ajustarStock(-$detalle['cantidad']);
@@ -315,12 +337,158 @@ class VentaController extends Controller
         //
     }
 
+    public function cuentaCobrar($id){
+                $session_auth = auth()->user();
+        $session_name = "";
+
+        if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
+            $session_name = $session_auth->username;
+        } else {
+            $session_name = $session_auth->nombre;
+        }
+        //$ventas = Venta::find($id);
+        $ventas = DB::table('ventas')
+            ->select(
+                'id',
+                'numero_venta',
+                'venta_fecha',
+                'tipo',
+                'cliente',
+                'total',
+                'efectivo',
+                'qr',
+                'metodo_pago',
+                'observacion',
+                
+            )
+            ->where('id', $id)
+            ->whereNull('deleted_at')
+            ->first();
+            
+        $ventaDetalles = DB::table('venta_detalles')
+            ->select(
+                'venta_detalles.id as id',
+                'productos.id as producto_id',
+                'productos.producto',
+                'productos.cantidad as stock',
+                'venta_detalles.precio_unitario',
+                'venta_detalles.cantidad',
+                'venta_detalles.subtotal',
+               // 'ventas.venta_fecha',
+                DB::raw("TO_CHAR(venta_detalles.created_at, 'YYYY-MM-DD') as fecha"),
+                 DB::raw("CONCAT(productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
+                //'venta_detalles.cantidad_total'
+                
+            )
+            ->join('productos', 'productos.id', '=', 'venta_detalles.producto_id')
+            ->join('concentraciones', 'productos.concentracion_id', '=', 'concentraciones.id')
+            ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
+            ->join('presentaciones', 'productos.presentacion_id', '=', 'presentaciones.id')
+            ->where('venta_detalles.venta_id', "=", $id)
+            ->whereNull('venta_detalles.deleted_at')
+            ->orderBy('venta_detalles.id', 'desc')
+            ->get();
+        //$producto = Producto::All();
+        $producto = DB::table('productos')
+            ->join('concentraciones', 'productos.concentracion_id', '=', 'concentraciones.id')
+            ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
+            ->join('presentaciones', 'productos.presentacion_id', '=', 'presentaciones.id')
+            ->select(
+        'productos.id',
+        'barras',
+        'producto',
+        'tipo_producto',
+        'codigo',
+        'cantidad',
+        'precio_unitario',
+        'precio_venta',
+        DB::raw("CONCAT(productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
+    )
+    ->get();
+
+        $permissions = Venta::get();
+
+        return view(
+            'ventas.cuentaCobrar',
+            compact(
+                'session_auth',
+                'session_name',
+                'permissions',
+                'producto',
+                'ventas',
+                'ventaDetalles'
+            )
+        );
+    }
+
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Venta $venta)
+    public function update(Request $request, $id)
     {
-        //
+       $session_auth = auth()->user();
+       $session_name = "";
+
+        if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
+            $session_name = $session_auth->username;
+        } else {
+            $session_name = $session_auth->nombre;
+        }
+        //dd($request);
+        $ventas = Venta::find($id);
+        if (!$ventas) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Venta no encontrada'
+            ]);
+        }
+        $ventas->cliente = $request->cliente;
+        $ventas->tipo = $request->tipo;
+        $ventas->total = $request->total;
+        $ventas->metodo_pago = $request->metodo_pago;
+        $ventas->efectivo = $request->efectivo;
+        $ventas->qr = $request->qr;
+        $ventas->observacion = $request->observacion;
+        $ventas->updated_by = $session_auth->id;
+        $ventas->updated_at = Carbon::now();
+       
+
+        if($request->tipo=='Salida Directa'){
+            $ventas->total = 0;
+            $ventas->efectivo =  0;
+            $ventas->qr =  0;
+            $ventas->observacion = $request->observacion;
+            $ventas->metodo_pago = 'N';
+
+             $ventaDetalles = VentaDetalle::where('venta_id', '=', $id)->get();
+
+             foreach($ventaDetalles as $ventaDetalle){
+                $ventaDetalle->precio_unitario=0;
+                $ventaDetalle->subtotal=0;
+                $ventaDetalle->save();
+
+                Kardex::registrarKardex([
+                            'producto_id'     => $ventaDetalle->producto_id,
+                            'tipo_movimiento' => $ventas->tipo,
+                            'accion'          => 'M',
+                            'cantidad'        => $ventaDetalle->cantidad,
+                            'precio_unitario' => $ventaDetalle->precio_unitario,
+                            'subtotal'        => $ventaDetalle->subtotal,
+                            'user_id'         => $session_auth->id
+                        ]);
+                
+
+             }
+
+        }
+         $ventas->save();
+       
+        return response()->json([
+            'status' => 200,
+            'message' => 'Datos Actualizados'
+        ]);
+    
+
     }
 
     /**
@@ -369,7 +537,7 @@ class VentaController extends Controller
                             'cantidad'        => $ventaDetalle->cantidad,
                             'precio_unitario' => $ventaDetalle->precio_unitario,
                             'subtotal'        => $ventaDetalle->subtotal,
-                            'user_id'         => $ventas->user_id
+                            'user_id'         => $session_auth->id
                         ]);
                         $detalleCompra->save();
                     }
