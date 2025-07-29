@@ -121,7 +121,7 @@ class ProductoController extends Controller
         $request->validate([
             'barras' => 'required|unique:productos,barras',
             'producto' => 'required|regex:/^[a-zA-Z0-9\s\/.,-]+$/u',
-            'generico' => 'nullable|regex:/^[a-zA-Z\s]+$/u',
+            'generico' => 'nullable|regex:/^[a-zA-Z0-9\s\/.,-]+$/u',
             'precio_unitario' => 'required|numeric|gt:0'
         ]);
 
@@ -142,7 +142,7 @@ class ProductoController extends Controller
 
         $producto->created_by = auth()->id();
         $producto->created_at = Carbon::now();
-      
+        $producto->save();
 
         $producto->codigo = 'FAR-' . $producto->id;
 
@@ -161,8 +161,9 @@ class ProductoController extends Controller
             $producto->barras = $codigoEan13;
             $producto->codigo_generado = 'S';
         }
-         $producto->save();
-         Kardex::registrarKardex([
+        $producto->save();
+
+        Kardex::registrarKardex([
             'producto_id'     => $producto->id,
             'tipo_movimiento' => 'Producto',
             'accion'          => 'A',
@@ -170,9 +171,8 @@ class ProductoController extends Controller
             'precio_unitario' => $producto->precio_unitario,
             'porcentaje'      => $producto->porcentaje,
             'subtotal'        => $producto->precio_venta,
-            'user_id'         => auth()->id()
+            'user_id'         => $producto->user_id
         ]);
-       
 
         return redirect()->route('productos.index');
     }
@@ -285,7 +285,6 @@ class ProductoController extends Controller
 
         $producto->updated_by = auth()->id();
         $producto->updated_at = Carbon::now();
-         $producto->save();
         // $this->kardex($producto, 'M');
         Kardex::registrarKardex([
             'producto_id'     => $producto->id,
@@ -295,9 +294,9 @@ class ProductoController extends Controller
             'precio_unitario' => $producto->precio_unitario,
             'porcentaje'      => $producto->porcentaje,
             'subtotal'        => $producto->precio_venta,
-            'user_id'         => auth()->id()
+            'user_id'         => $producto->user_id
         ]);
-       
+        $producto->save();
 
         return redirect()->route('productos.index');
     }
@@ -328,7 +327,7 @@ class ProductoController extends Controller
                 'precio_unitario' => $producto->precio_unitario,
                 'porcentaje'      => $producto->porcentaje,
                 'subtotal'        => $producto->precio_venta,
-                'user_id'         => auth()->id()
+                'user_id'         => $producto->user_id
             ]);
             $producto->save();
 
