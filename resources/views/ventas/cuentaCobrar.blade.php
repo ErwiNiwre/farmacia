@@ -399,7 +399,7 @@
     <script>
         $(document).ready(function() {
             const ventaDetalles = @json($ventaDetalles);
-            console.log(ventaDetalles);
+           // console.log(ventaDetalles);
             const productosList = @json($producto);
             // console.log(ventaDetalles);
             $("#efectivo, #qr").TouchSpin({
@@ -584,16 +584,13 @@
                     
                     	{ "mData": null , 
                      "mRender": function(data, type, row) {
-						      	var btn_eliminar;
-                               // if(data.cantidad==data.cantidad_total)
-                                    //  return  btn_eliminar='<button type="button" id="btn_delete_compras_detail" value='+data.id+' class="waves-effect waves-light btn btn-danger mb-5" data-container="body" title="" data-bs-original-title="Eliminar"><i class="fa fa-bitbucket" aria-hidden="true"></i></button>';
-                                    // else
-                                    // return    btn_eliminar='';
-                                   return    btn_eliminar='<button type="button" id="btn_delete_venta_detail" value='+data.id+' class="waves-effect waves-light btn btn-danger mb-5" data-container="body" title="" data-bs-original-title="Eliminar"><i class="fa fa-bitbucket" aria-hidden="true"></i></button>';
-						        // return ' <button type="button" id="btn_edit_compras_detail" value='+data.id+' class="btn btn-secondary" data-bs-toggle="tooltip" data-container="body" title="" data-bs-original-title="Editar"><i class="fa fa-edit"></i></button>'+btn_eliminar;
-                                 
+						      	var button = '<div class="d-block text-dark flexbox">';
+                               
+                                       button+='<button type="button" id="btn_delete_venta_detail" value='+data.id+' class="waves-effect waves-light btn btn-danger mb-5" data-container="body" title="" data-bs-original-title="Eliminar"><i class="fa fa-bitbucket" aria-hidden="true"></i></button>';
+						         button+='</div>'; 
+                                       return button;
 						    }}
-
+                               
 
                 ],
                "data":ventaDetalles,
