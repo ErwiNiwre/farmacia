@@ -171,7 +171,7 @@ class ProductoController extends Controller
             'precio_unitario' => $producto->precio_unitario,
             'porcentaje'      => $producto->porcentaje,
             'subtotal'        => $producto->precio_venta,
-            'user_id'         => $producto->user_id
+            'user_id'         => auth()->id()
         ]);
 
         return redirect()->route('productos.index');
@@ -294,7 +294,7 @@ class ProductoController extends Controller
             'precio_unitario' => $producto->precio_unitario,
             'porcentaje'      => $producto->porcentaje,
             'subtotal'        => $producto->precio_venta,
-            'user_id'         => $producto->user_id
+            'user_id'         => auth()->id()
         ]);
         $producto->save();
 
@@ -327,7 +327,7 @@ class ProductoController extends Controller
                 'precio_unitario' => $producto->precio_unitario,
                 'porcentaje'      => $producto->porcentaje,
                 'subtotal'        => $producto->precio_venta,
-                'user_id'         => $producto->user_id
+                'user_id'         => auth()->id()
             ]);
             $producto->save();
 
