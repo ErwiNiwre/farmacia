@@ -186,16 +186,26 @@
                         orderable: false,
                         searchable: false,
                         "mRender": function(data, type, row) {
-                            btn_delete = "</div>";
-                            if (data.estado == 1)
-                                btn_delete =
-                                `<a onclick="return confirm(\'Esta seguro que desea eliminar el registo?\')" href="compras/${data.id}/destroy" class="btn btn-danger" data-bs-toggle="tooltip" title="Eliminar"><i class="fa fa-bitbucket"></i></a></div>`;
-
-                            return ' <div class="d-block text-dark flexbox"><button type="button" onclick="modalCompras(' +
+                            button='<div class="d-block text-dark flexbox">';
+                            
+                           if (permisos.show) {
+                                 button +=' <button type="button" onclick="modalCompras(' +
                                 data.id + ')" id="btn_view_compras" value=' + data.id +
-                                ' class="btn btn-info" data-bs-toggle="tooltip" title="Ver Compra"><i class="mdi mdi-eye"></i></button>' +
-                                `<a href="compras/${data.id}/edit"  id="btn_edit_compras"   class="btn btn-secondary" data-bs-toggle="tooltip" title="Editar"><i class="fa fa-edit"></i></a>` +
-                                btn_delete;
+                                ' class="btn btn-info" data-bs-toggle="tooltip" title="Ver Compra"><i class="mdi mdi-eye"></i></button>';
+                            }
+                             if (permisos.edit) {
+                           button+=  
+                                `<a href="compras/${data.id}/edit"  id="btn_edit_compras"   class="btn btn-secondary" data-bs-toggle="tooltip" title="Editar"><i class="fa fa-edit"></i></a>` 
+                                ;
+                            }
+                            if (permisos.destroy) {
+                                 if (data.estado == 1)
+                                button +=
+                                `<a onclick="return confirm(\'Esta seguro que desea eliminar el registo?\')" href="compras/${data.id}/destroy" class="btn btn-danger" data-bs-toggle="tooltip" title="Eliminar"><i class="fa fa-bitbucket"></i></a>`;
+                            }
+                            
+                            button+="</div>";
+                            return button;
 
                         }
                     }

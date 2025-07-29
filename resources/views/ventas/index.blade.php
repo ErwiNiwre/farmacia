@@ -181,7 +181,11 @@
 @section('page-script')
     <script>
         $(document).ready(function() {
-
+            const permisos = {
+                edit: @json(auth()->user()->can('compra.edit')),
+                destroy: @json(auth()->user()->can('compra.destroy')),
+                show: @json(auth()->user()->can('compra.show'))
+            };
             const ventas = @json($ventas);
             var table_ventas = $('#dt_ventas').DataTable({
 
@@ -225,21 +229,30 @@
                         //  className: 'text-center',
                         "mRender": function(data, type, row) {
                             var fecha = moment(data.venta_fecha).format('YYYY-MM-DD');
-                            var btn_delete = "</div>";
-                            var btn_cuenta_cobrar="";
-                            // alert(data.id);
-                            // alert(fecha+'=='+moment().format('YYYY-MM-DD'));
-                            if (fecha == moment().format('YYYY-MM-DD'))
-                                btn_delete = '<button type="button" id="btn_delete_ventas" value=' +
-                                data.id +
-                                ' class="btn btn-danger" data-bs-toggle="tooltip" title="Eliminar" ><i class="mdi mdi-delete" ></i></button></div>';
-                            if(data.tipo=='Cuentas por Cobrar')
-                                btn_cuenta_cobrar=`<a  href="ventas/${data.id}/cuentaCobrar"     class="btn btn-google" data-bs-toggle="tooltip" title="Cuentas por Cobrar"><i class="fa fa-money"></i></a>`;
+                            var button='<div class="d-block text-dark flexbox">';
+                           
 
-                            return '<div class="d-block text-dark flexbox"><button type="button" onclick="modalVentas(' +
+                             
+                            
+                            if(permisos.show){
+                                button+= '<button type="button" onclick="modalVentas(' +
                                 data.id + ')" id="btn_view_compras" value=' + data.id +
-                                ' class="btn btn-info" data-bs-toggle="tooltip"  data-bs-original-title="Ver Compra"><i class="mdi mdi-eye"></i></button>' +btn_cuenta_cobrar+
-                                btn_delete;
+                                ' class="btn btn-info" data-bs-toggle="tooltip"  data-bs-original-title="Ver Compra"><i class="mdi mdi-eye"></i></button>';
+                            }
+                             if(permisos.edit){ 
+                            if(data.tipo=='Cuentas por Cobrar'){
+                                button+=`<a  href="ventas/${data.id}/cuentaCobrar"     class="btn btn-google" data-bs-toggle="tooltip" title="Cuentas por Cobrar"><i class="fa fa-money"></i></a>`;
+                            }
+                             }
+                            
+                            if (permisos.destroy) {
+                                 if (fecha == moment().format('YYYY-MM-DD'))
+                                button+= '<button type="button" id="btn_delete_ventas" value=' +
+                                data.id +
+                                ' class="btn btn-danger" data-bs-toggle="tooltip" title="Eliminar" ><i class="mdi mdi-delete" ></i></button>';
+                            }  
+                             button+='</div>';  
+                            return button;
                         }
                     },
                     {
