@@ -194,10 +194,10 @@
                                             @foreach ($producto as $productos)
                                                 @if (old('producto_id') == $productos->id)
                                                     <option value="{{ $productos->id }}" selected>
-                                                        {{ $productos->productos }}</option>
+                                                        {{ $productos->descripcion }}</option>
                                                 @else
                                                     <option value="{{ $productos->id }}">
-                                                        {{ $productos->producto }}
+                                                        {{ $productos->descripcion }}
                                                     </option>
                                                 @endif
                                             @endforeach
@@ -342,7 +342,7 @@
             
              const compraDetalles = @json($compraDetalles);
              const productosList = @json($producto);
-
+console.log(compraDetalles);
             $('#modal-create-compra-detail').on('shown.bs.modal', function () {
     $('#create_producto_id').select2({
         dropdownParent: $('#modal-create-compra-detail'), 
@@ -396,7 +396,7 @@
                          "data": "id"
                     },
                     {
-                        "data": 'producto'
+                        "data": 'descripcion'
                     },
                     {
                         "data": "vencimiento"
@@ -413,13 +413,15 @@
                     },
                     	{ "mData": null , 
                      "mRender": function(data, type, row) {
-						      	var  button='<div class="d-block text-dark flexbox">';
+						      	var button='';
+                               // alert(data.cantidad+'=='+data.cantidad_total)
                                 if(data.cantidad==data.cantidad_total)
                                         button+='<button type="button" id="btn_delete_compras_detail" value='+data.id+' class="waves-effect waves-light btn btn-danger mb-5" data-container="body" title="" data-bs-original-title="Eliminar"><i class="fa fa-bitbucket" aria-hidden="true"></i></button>';
-                                      button+="</div>";
-                                    return    button;
-						    }
-                        }
+                                    
+                                    return    button+='';
+						        
+                                 
+						    }}
                     
  
     

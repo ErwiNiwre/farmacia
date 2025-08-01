@@ -288,15 +288,33 @@ class CompraController extends Controller
                 'compra_detalles.precio_unitario',
                 'compra_detalles.cantidad',
                 'compra_detalles.subtotal',
-                'compra_detalles.cantidad_total'
+                'compra_detalles.cantidad_total',
+                 DB::raw("CONCAT(productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
             )
 
             ->join('productos', 'productos.id', '=', 'compra_detalles.producto_id')
+            ->join('concentraciones', 'productos.concentracion_id', '=', 'concentraciones.id')
+    ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
+    ->join('presentaciones', 'productos.presentacion_id', '=', 'presentaciones.id')
             ->where('compra_detalles.compra_id', "=", $id)
             ->whereNull('compra_detalles.deleted_at')
             ->orderBy('compra_detalles.id', 'desc')
             ->get();
-        $producto = Producto::All();
+         $producto = DB::table('productos')
+    ->join('concentraciones', 'productos.concentracion_id', '=', 'concentraciones.id')
+    ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
+    ->join('presentaciones', 'productos.presentacion_id', '=', 'presentaciones.id')
+    ->select(
+        'productos.id',
+        'barras',
+        'producto',
+        'tipo_producto',
+        'codigo',
+        'cantidad',
+        'precio_unitario',
+        DB::raw("CONCAT(productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
+    )
+    ->get();
         $permissions = Compra::get();
 
         // return $especialidad;
