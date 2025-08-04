@@ -51,6 +51,7 @@ class VentaController extends Controller
                 'efectivo',
                 'qr',
                 'metodo_pago',
+                'observacion',
                 DB::raw("CASE 
                     WHEN metodo_pago = 'E' THEN 'Efectivo'
                     WHEN metodo_pago = 'Q' THEN 'QR'
@@ -100,8 +101,9 @@ class VentaController extends Controller
         'cantidad',
         'precio_unitario',
         'precio_venta',
+        
         DB::raw("CONCAT(productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
-    )
+    )->whereNull('productos.deleted_at')
     ->get();
 
         $permissions = Venta::get();
@@ -133,6 +135,7 @@ class VentaController extends Controller
 
         DB::beginTransaction();
         try {
+            //dd($request);
             $venta = new Venta();
             $venta->venta_fecha = date("Y-m-d H:i:s");
             $venta->user_id =  $session_auth->id;
@@ -317,6 +320,7 @@ class VentaController extends Controller
             ->where('venta_detalles.venta_id', "=", $id)
             ->whereNull('venta_detalles.deleted_at')
             ->orderBy('venta_detalles.id', 'desc')
+            ->whereNull('productos.deleted_at')
             ->get();
 
         return response()->json([
@@ -404,6 +408,7 @@ class VentaController extends Controller
         'precio_venta',
         DB::raw("CONCAT(productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
     )
+    ->whereNull('productos.deleted_at')
     ->get();
 
         $permissions = Venta::get();
@@ -424,6 +429,41 @@ class VentaController extends Controller
     /**
      * Update the specified resource in storage.
      */
+
+      /* public function update(Request $request, $id)
+    {
+       $session_auth = auth()->user();
+       $session_name = "";
+
+        if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
+            $session_name = $session_auth->username;
+        } else {
+            $session_name = $session_auth->nombre;
+        }
+        //dd($request);
+        $ventas = Venta::find($id);
+        if (!$ventas) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Venta no encontrada'
+            ]);
+        }
+        $ventas->cliente = $request->cliente_update;
+        $ventas->observacion = $request->observacion_update;
+        $ventas->updated_by = $session_auth->id;
+        $ventas->updated_at = Carbon::now();
+       
+
+        
+         $ventas->save();
+       
+        return response()->json([
+            'status' => 200,
+            'message' => 'Datos Actualizados'
+        ]);
+    
+
+    }*/
     public function update(Request $request, $id)
     {
        $session_auth = auth()->user();
@@ -442,13 +482,20 @@ class VentaController extends Controller
                 'message' => 'Venta no encontrada'
             ]);
         }
+
+        if($request->estado_update==1){
+        $ventas->cliente = $request->cliente_update;
+        $ventas->observacion = $request->observacion_update;
+        }else{
+            
         $ventas->cliente = $request->cliente;
+        $ventas->observacion = $request->observacion;        
         $ventas->tipo = $request->tipo;
         $ventas->total = $request->total;
         $ventas->metodo_pago = $request->metodo_pago;
         $ventas->efectivo = $request->efectivo;
         $ventas->qr = $request->qr;
-        $ventas->observacion = $request->observacion;
+        }
         $ventas->updated_by = $session_auth->id;
         $ventas->updated_at = Carbon::now();
        

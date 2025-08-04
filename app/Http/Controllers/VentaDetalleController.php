@@ -38,7 +38,7 @@ class VentaDetalleController extends Controller
     {
        $session_auth = auth()->user();
         $session_name = "";
-         //dd($request->all());
+      //   dd($request);
         // exit;
         if ($session_auth->id == 1 && $session_auth->username == 'AdminCMF') {
             $session_name = $session_auth->username;
@@ -111,6 +111,7 @@ class VentaDetalleController extends Controller
             //dd($request->edit_cantidad - $cantidad_anterior);
             
             $venta = Venta::find($request->create_venta_id);
+            //$venta->observacion=$request->observacion_create
             $venta->total+=$ventaDetalle->subtotal;
              $venta->save();
                 //$total_anterior=$venta->total;

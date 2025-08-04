@@ -26,14 +26,15 @@
                             <thead class="bg-success">
                                 <tr>
                                     <th>Id</th>
-                                    <th style="width: 10%;">Número de Venta</th>
-                                    <th style="width: 15%;">Fecha</th>
+                                    <th style="width: 5%;">Número de Venta</th>
+                                    <th style="width: 10%;">Fecha</th>
                                     <th style="width: 20%;">Cliente</th>
+                                    <th style="width: 15%;">Obaservacion</th>
                                     <th style="width: 10%;">Tipo de Movimiento</th>
-                                    <th style="width: 15%;">Método de Pago</th>
+                                    <th style="width: 10%;">Método de Pago</th>
 
-                                    <th style="width: 15%; "class=" text-end">Total</th>
-                                    <th style="width: 10%;">Acciones</th>
+                                    <th style="width: 10%; "class=" text-end">Total</th>
+                                    <th style="width: 15%;">Acciones</th>
                                     <th style="width: 5%;" class="text-center">Recibo</th>
                                 </tr>
                             </thead>
@@ -43,7 +44,7 @@
                                     <th>Número de Venta</th>
                                     <th>Fecha</th>
                                     <th>Cliente</th>
-
+                                    <th>Observacion</th>
                                     <th>Tipo de Movimiento</th>
                                     <th>Método de Pago</th>
                                     <th>Total</th>
@@ -68,7 +69,7 @@
                     <h5 class="modal-title"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="max-height: 500px; overflow-y: auto;">
                     <div class="box-header with-border">
                         <div class="col-12">
                             <div class="page-header">
@@ -187,6 +188,7 @@
                 show: @json(auth()->user()->can('compra.show'))
             };
             const ventas = @json($ventas);
+           // console.log(ventas)
             var table_ventas = $('#dt_ventas').DataTable({
 
                 //bFilter: true,
@@ -206,6 +208,15 @@
                     },
                     {
                         "data": "cliente"
+                    },
+                    {
+                        "data": "observacion",
+                        "render": function (data, type, row) {
+                            if (type === 'display') {
+                                return (data || '').replace(/(\r\n|\n|\r)/g, '<br>');
+                            }
+                            return data;
+                        }
                     },
                     {
                         "data": "tipo"
@@ -380,9 +391,9 @@ function modalVentas(id){
                              $('#total').text(response.data.ventas[0].total+" BS");
                               $('#fecha').text(fecha);
                               $('#total_subtotal').text(" BS. "+response.data.ventas[0].total);
-                              if(response.data.ventas[0].tipo=='Salida Directa'){
+                              if(response.data.ventas[0].tipo=='Salida Directa'|| response.data.ventas[0].tipo=='Cuentas por Cobrar'||response.data.ventas[0].observacion && response.data.ventas[0].observacion.length > 0){
                                $( "#display_observacion" ).show();
-                               $('#observacion').text(response.data.ventas[0].observacion);}
+                               $('#observacion').html(response.data.ventas[0].observacion.replace(/(\r\n|\r|\n)/g, '<br>'));}
                             // $('#purchase_date').text(response.data.purchase.purchase_date);
                             // $('#supplier').text(response.data.purchase.supplier);
                             // $('#purchase').text(response.data.purchase.purchase);

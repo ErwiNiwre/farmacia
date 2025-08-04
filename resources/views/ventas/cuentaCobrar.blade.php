@@ -67,7 +67,7 @@
                                 <div class="col-xs-5 col-sm-5 col-md-6 col-lg-5 col-xl-5 col-xxl-5 col-xxxl-5">
                                     <div class="form-group">
                                         <label class="form-label">Cliente</label>
-                                        <input type="text" id="cliente" name="cliente" class="form-control"
+                                        <input type="text" readonly id="cliente" name="cliente" class="form-control"
                                             value="{{ $ventas->cliente }}" placeholder="Cliente">
 
                                     </div>
@@ -149,18 +149,23 @@
                                 <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-xxl-5 col-xxxl-5">
                                     <div class="form-group">
                                         <label class="form-label">Observacion</label>
-                                        <textarea  type="text" id="observacion" name="observacion" class="form-control" placeholder="Observacion">{{ isset($ventas) ? $ventas->observacion : old('observacion') }} </textarea>
+                                        <textarea readonly type="text" id="observacion" name="observacion" class="form-control" placeholder="Observacion">{{ isset($ventas) ? $ventas->observacion : old('observacion') }} </textarea>
 
                                     </div>
                                 </div>
 
-
+                              <div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 col-xl-7 col-xxl-7 col-xxxl-7">
+                            <div class="d-flex justify-content-between mt-15 pull-right">
+                                <button type="button" id="btn_editar_venta" value="{{ $ventas->id }}" class="btn btn-secondary" data-bs-toggle="tooltip" data-container="body" title="" data-bs-original-title="Editar Venta"><i class="fa fa-edit"></i></button>
+                            </div>
+                            
+                        </div>
                             </div>
                             
 
                                
                             </div>
-
+                               
                             
                         </div>
 
@@ -236,6 +241,57 @@
         </div>
         </div>
     </section>
+    
+    <!-- Modal-Edit-compra -->
+<div class="modal center-modal fade" id="modal-edit-venta" data-bs-backdrop="static" tabindex="-1" >
+    
+    <div class="modal-dialog" style="max-width: 900px">
+        
+        <form id="update_ventas">
+            @csrf
+            @method('PUT')
+            {{-- <input type="hidden" id="compra_id" name="purchase_id"> --}}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar la Venta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="white-text">&times;</span></button>
+                </div>
+                <div class="modal-body" style="max-height: 500px; overflow-y: auto;">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12 text-end">
+                            <div id="purchase_date"></div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12">
+                            <div class="form-group">
+                                <label class="form-label">Cliente</label>
+                                <input type="text"  value="{{ $ventas->cliente }}" id="cliente_update" name="cliente_update" class="form-control" placeholder="cliente_update">
+                            </div>
+                        </div>
+                      
+
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Observacion</label>
+                                        <textarea  type="text" id="observacion_update" name="observacion_update" class="form-control" placeholder="observacion_update">{{ isset($ventas) ? $ventas->observacion : old('observacion') }} </textarea>
+
+                                    </div>
+                                </div>
+                                 <input type="hidden" id="estado_update" name="estado_update" class="form-control"
+                                        value="1">
+
+
+                           
+                        
+                    </div>
+                </div>
+                <div class="modal-footer modal-footer-uniform">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" id="update_compas_btn" class="btn btn-primary float-end">Guardar</button>
+                  </div>
+            </div>
+        </form>
+    </div>
+</div>
     <!-- Modal-create-detalle -->
 <div class="modal center-modal fade" id="modal-create-venta-detail" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
     
@@ -301,6 +357,7 @@
                             </div>
                         </div>
                     </div>
+                     
                 </div>
                 <div class="modal-footer modal-footer-uniform">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
@@ -419,7 +476,18 @@
     });
 });
             toggleSaveButton();
-         
+          function autoResizeTextarea($el) {
+            $el.css('height', 'auto'); // Reinicia altura
+            $el.css('height', $el[0].scrollHeight + 'px'); // Ajusta a contenido
+        }
+         const $textarea = $('#observacion, #observacion_update');
+           if ($textarea.length) {
+            autoResizeTextarea($textarea); // Al cargar
+
+            $textarea.on('input', function () {
+                autoResizeTextarea($(this)); // Al escribir
+            });
+        }
             function busquedaProductosList(indice,atributo){
                  result_producto="";   
                  ventaDetalles.forEach(function(result) {
@@ -520,6 +588,16 @@
                 //validateCreateDetail();
                 
             });
+
+              $(document).on('click', '#btn_editar_venta', function(){
+              //  alert("");
+               // event.preventDefault();
+                var id = $(this).val();
+                 $("#modal-edit-venta").modal('show');
+                
+            });
+
+
             $('#edit_precio_unitario, #edit_cantidad').on('input', function () {
                 //alert($("#edit_cantidad").val());
                 let precio_unidad = $("#edit_precio_unitario").val();
@@ -587,6 +665,7 @@
 						      	var button = '<div class="d-block text-dark flexbox">';
                                
                                        button+='<button type="button" id="btn_delete_venta_detail" value='+data.id+' class="waves-effect waves-light btn btn-danger mb-5" data-container="body" title="" data-bs-original-title="Eliminar"><i class="fa fa-bitbucket" aria-hidden="true"></i></button>';
+                                       
 						         button+='</div>'; 
                                        return button;
 						    }}
@@ -670,7 +749,28 @@
                 $('#cambio_display').text(cambio.toFixed(2));
 
             }
-            
+             $('#update_ventas').on('submit', function(event) {
+                event.preventDefault(); // Evita el envío normal del formulario
+
+                //var id = $('#compra_id').val();
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: "{{ route('ventas.update', ':id') }}".replace(':id', '{{ $ventas->id }}'),
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if(response.status === 200) {
+                            location.reload(); // Recargar o actualizar la vista según sea necesario
+                        } else {
+                            alert('Ocurrió un error al guardar los cambios.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Ocurrió un error: ' + error);
+                    }
+                });
+            });
+
              $('#edit_detalle').on('submit', function(event) {
                 event.preventDefault(); 
                 
@@ -697,7 +797,7 @@
             });
 
 
-            $('#updateventas').on('submit', function(event) {
+               $('#updateventas').on('submit', function(event) {
                 event.preventDefault(); 
                 
                 var venta_detalle_id=  $("#edit_venta_id").val();
@@ -779,6 +879,9 @@
                     }
                 
             });
+
+            
+          
 
             });
               $('#metodo_pago').change(function() {
