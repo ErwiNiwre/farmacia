@@ -272,8 +272,7 @@
                                     $.trim($('#producto_id').find('option:selected').text()),
                                     '<div class="form-group">' + productos.cantidad + '</div>',
                                     `<div class="form-group"><input type="number" class="form-control" lang="en"  name="cantidades[]" value="1" min="0" step="0.1"></div>`,
-                                    `<div class="form-group"><input type="number" class="form-control" lang="en" name="unidad_precios[]" value=` +
-                                    productos.precio_venta + ` min="0"  step="0.1"></div>`,
+                                    `<div class="form-group"><input type="text" class="form-control" name="unidad_precios[]" value="`+productos.precio_venta+`" pattern="\d+(\.\d{1,2})?" inputmode="decimal"></div>`,
                                     `<div class="form-group">` + productos.precio_venta + `</div>`,
                                     '<button type="button" value=' + productos.id +
                                     ' name="removeRow" class="btn btn-danger" data-bs-toggle="tooltip" data-container="body" data-bs-original-title="Eliminar"><i class="mdi mdi-delete"></i></button>'
@@ -365,9 +364,9 @@
                             $('#producto_id').find('option:selected').val(),
                             $.trim($('#producto_id').find('option:selected').text()),
                             '<div class="form-group">' + productos.cantidad + '</div>',
-                            `<div class="form-group"><input type="number" class="form-control" name="cantidades[]" value="1" min="0" step="0.1"></div>`,
-                            `<div class="form-group"><input type="number" lang="en" class="form-control" name="unidad_precios[]" value=` +
-                            productos.precio_venta + ` min="1"></div>`,
+                            `<div class="form-group"><input type="number" class="form-control" name="cantidades[]" value="1"  min="0" ></div>`,
+                            `<div class="form-group"><input type="text"  class="form-control" name="unidad_precios[]" value=` +
+                            productos.precio_venta + ` pattern="\d+(\.\d{1,2})?" inputmode="decimal" min="1"></div>`,
                             `<div class="form-group">` + productos.precio_venta + `</div>`,
                             '<button type="button"  name="removeRow"  class="btn btn-danger" data-bs-toggle="tooltip" data-container="body" data-bs-original-title="Eliminar" ><i class="mdi mdi-delete" ></i></button>'
                         ]).draw(false);
