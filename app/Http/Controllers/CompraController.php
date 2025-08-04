@@ -83,7 +83,7 @@ class CompraController extends Controller
         'cantidad',
         'precio_unitario',
         DB::raw("CONCAT(productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
-    )
+    )->whereNull('productos.deleted_at')
     ->get();
 
         $permissions = Compra::get();
@@ -118,7 +118,7 @@ class CompraController extends Controller
         DB::beginTransaction();
         try {
             $compra = new Compra();
-
+           
             $compra->compra_fecha = date("Y-m-d H:i:s");
             $compra->user_id =  $session_auth->id;
             $compra->proveedor = Str::upper(preg_replace('/\s+/', ' ', trim($request->proveedor)));
@@ -137,6 +137,7 @@ class CompraController extends Controller
 
 
             $compra_detalles = json_decode($request->input('productos'), true);
+            
             $mayoresPrecioUnidad = collect($compra_detalles)
                 ->groupBy('producto_id')
                 ->map(function ($items) {
@@ -165,11 +166,16 @@ class CompraController extends Controller
                     $compraDetalle->precio_unitario = 0;
                     $compraDetalle->subtotal = 0;
                 }
-
+                // dd($compraDetalle->precio_unitario * $compraDetalle->cantidad.'= '.$detalle['subtotal']);
                 if ($detalle['subtotal'] == ($compraDetalle->precio_unitario * $compraDetalle->cantidad)) {
-                    $compraDetalle->subtotal = $detalle['subtotal'];
-                }
 
+                    $compraDetalle->subtotal = $detalle['subtotal'];
+                }else{
+                    $compraDetalle->subtotal = round($compraDetalle->precio_unitario * $compraDetalle->cantidad, 2);
+
+                }
+                
+               // dd($compraDetalle->subtotal);
                 $compraDetalle->save();
                 // $this->kardex($compra, $compraDetalle, 'A');
                 Kardex::registrarKardex([
@@ -313,7 +319,7 @@ class CompraController extends Controller
         'cantidad',
         'precio_unitario',
         DB::raw("CONCAT(productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
-    )
+    )->whereNull('productos.deleted_at')
     ->get();
         $permissions = Compra::get();
 
