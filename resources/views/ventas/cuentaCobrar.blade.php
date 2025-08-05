@@ -341,7 +341,7 @@
                         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-xxl-4 col-xxxl-4">
                             <div class="form-group">
                                 <label class="form-label">Precio Unitario</label>
-                                <input type="number" id="create_precio_unitario" name="create_precio_unitario" min="0" step="any" class="form-control" placeholder="Precio Unitario">
+                                <input type="text" id="create_precio_unitario" name="create_precio_unitario" min="0" pattern="\d+(\.\d{1,2})?" inputmode="decimal" class="form-control" placeholder="Precio Unitario">
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-xxl-4 col-xxxl-4">
@@ -613,8 +613,52 @@
                 //togglecreatePurchaseDetailButton();
                 //calculateTotalcreate();
             });
+$('#create_precio_unitario').on('input', function () {
+    let valor = $(this).val().replace(',', '.');
 
-             $('#create_precio_unitario, #create_cantidad').on('input', function () {
+    // Permite solo números y un punto decimal
+    valor = valor.replace(/[^0-9.]/g, '');
+
+    // Eliminar puntos adicionales si hay más de uno
+    const partes = valor.split('.');
+    if (partes.length > 2) {
+        valor = partes[0] + '.' + partes[1];
+    }
+
+    // Limitar a 2 decimales
+    if (partes.length === 2 && partes[1].length > 2) {
+        valor = partes[0] + '.' + partes[1].substring(0, 2);
+    }
+
+    // Actualizar el input con el valor limpio
+    $(this).val(valor);
+
+    // Obtener los valores limpios como números
+    const precio_unidad_create = parseFloat(valor);
+    const cantidad_create = parseFloat($("#create_cantidad").val().replace(',', '.')) || 0;
+    const stock = parseFloat($('#create_stock').val()) || 0;
+
+    // Validar cantidad vs stock
+    if (cantidad_create > stock) {
+        alert("La cantidad supera las existencias");
+        $('#create_cantidad').val(stock);
+    }
+
+    // Calcular subtotal solo si el precio es válido
+    let subtotal_create = 0;
+    if (!isNaN(precio_unidad_create)) {
+        subtotal_create = (precio_unidad_create * cantidad_create).toFixed(2);
+    }
+
+    // Asignar valores
+    $("#create_subtotal_label").val(subtotal_create);
+    $("#create_subtotal").val(subtotal_create);
+
+    // Validaciones adicionales
+    validateCreateDetail();
+    calculateTotal();
+});
+             $('#create_cantidad').on('input', function () {
                 //alert($("#edit_cantidad").val());
                 let precio_unidad_create = $("#create_precio_unitario").val();
                 let cantidad_create= $("#create_cantidad").val();

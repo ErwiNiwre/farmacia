@@ -272,8 +272,7 @@
                                     $.trim($('#producto_id').find('option:selected').text()),
                                     '<div class="form-group">' + productos.cantidad + '</div>',
                                     `<div class="form-group"><input type="number" class="form-control" lang="en"  name="cantidades[]" value="1" min="0" step="0.1"></div>`,
-                                    `<div class="form-group"><input type="number" class="form-control" lang="en" name="unidad_precios[]" value=` +
-                                    productos.precio_venta + ` min="0"  step="0.1"></div>`,
+                                    `<div class="form-group"><input type="text" class="form-control" name="unidad_precios[]" value="`+productos.precio_venta+`" pattern="\d+(\.\d{1,2})?" inputmode="decimal"></div>`,
                                     `<div class="form-group">` + productos.precio_venta + `</div>`,
                                     '<button type="button" value=' + productos.id +
                                     ' name="removeRow" class="btn btn-danger" data-bs-toggle="tooltip" data-container="body" data-bs-original-title="Eliminar"><i class="mdi mdi-delete"></i></button>'
@@ -365,9 +364,9 @@
                             $('#producto_id').find('option:selected').val(),
                             $.trim($('#producto_id').find('option:selected').text()),
                             '<div class="form-group">' + productos.cantidad + '</div>',
-                            `<div class="form-group"><input type="number" class="form-control" name="cantidades[]" value="1" min="0" step="0.1"></div>`,
-                            `<div class="form-group"><input type="number" lang="en" class="form-control" name="unidad_precios[]" value=` +
-                            productos.precio_venta + ` min="1"></div>`,
+                            `<div class="form-group"><input type="number" class="form-control" name="cantidades[]" value="1"  min="0" ></div>`,
+                            `<div class="form-group"><input type="text"  class="form-control" name="unidad_precios[]" value=` +
+                            productos.precio_venta + ` pattern="\d+(\.\d{1,2})?" inputmode="decimal" min="1"></div>`,
                             `<div class="form-group">` + productos.precio_venta + `</div>`,
                             '<button type="button"  name="removeRow"  class="btn btn-danger" data-bs-toggle="tooltip" data-container="body" data-bs-original-title="Eliminar" ><i class="mdi mdi-delete" ></i></button>'
                         ]).draw(false);
@@ -417,7 +416,77 @@
 
             }
 
-            $('#venta_details_table').on('input', 'input[name="unidad_precios[]"], input[name="cantidades[]"]',
+
+            $('#venta_details_table').on('input', 'input[name="unidad_precios[]"]', function () {
+    const $row = $(this).closest('tr');
+    let price = $(this).val().replace(',', '.'); // Convertir coma a punto
+
+    // Validar: quitar todo lo que no sea número o punto decimal
+    price = price.replace(/[^0-9.]/g, '');
+
+    // Evitar múltiples puntos decimales
+    const partes = price.split('.');
+    if (partes.length > 2) {
+        price = partes[0] + '.' + partes[1];
+    }
+
+    // Limitar a 4 decimales si hay decimales
+    if (partes.length === 2) {
+        partes[1] = partes[1].substring(0, 2);
+        price = partes[0] + '.' + partes[1];
+    }
+
+    // Validar si el número es válido
+   
+
+    // Establecer el valor corregido
+    $(this).val(price);
+
+    // Obtener cantidad (y asegurar que sea número)
+    const cantidadInput = $row.find('input[name="cantidades[]"]').val().replace(',', '.');
+    const cantidad = parseFloat(cantidadInput);
+    const precioFloat = parseFloat(price);
+
+    // Calcular subtotal
+    let subtotal = 0;
+    if (!isNaN(cantidad) && !isNaN(precioFloat)) {
+        subtotal = (cantidad * precioFloat).toFixed(2);
+    }
+
+    $row.find('td:eq(4)').text(`${subtotal}`);
+
+    calculateTotal();
+    toggleSaveButton();
+});
+
+            $('#venta_details_table').on('blur', 'input[name="unidad_precios[]"]', function () {
+    let value = $(this).val().replace(',', '.').trim();
+    const $row = $(this).closest('tr');
+
+    // Si el valor está vacío o es cero, poner 1
+    if (value === '' || parseFloat(value) === 0) {
+        $(this).val('1');
+        value = '1';
+    }
+
+    const number = parseFloat(value);
+
+    // Si el valor sigue siendo inválido después de corrección, dejarlo vacío
+    if (isNaN(number)) {
+        $(this).val('');
+        $row.find('td:eq(4)').text(`0.00`);
+    } else {
+        // Calcular y mostrar el subtotal
+        const cantidad = parseFloat($row.find('input[name="cantidades[]"]').val().replace(',', '.')) || 0;
+        const subtotal = (cantidad * number).toFixed(2);
+        $row.find('td:eq(4)').text(`${subtotal}`);
+    }
+
+    calculateTotal();
+    toggleSaveButton();
+});
+
+   $('#venta_details_table').on('input', 'input[name="cantidades[]"]',
                 function() {
                     const $row = $(this).closest('tr');
                     let price = $row.find('input[name="unidad_precios[]"]').val();
