@@ -152,7 +152,7 @@
                     return false;
                 }
             });
-
+           
             function busquedaProductosList(indice, atributo) {
                 result_producto = "";
                 productosList.forEach(function(result) {
@@ -209,7 +209,7 @@
                             $('#producto_id').find('option:selected').val(),
                             $.trim($('#producto_id').find('option:selected').text()),
                             `<div class="form-group"><input type="date" class="form-control" name="vencimiento[]" ></div>`,
-                            `<div class="form-group"><input type="number" class="form-control" name="unidad_precios[]" value="1" min="0" step="any"></div>`,
+                            `<div class="form-group"><input type="text" class="form-control unidad-precio" name="unidad_precios[]" value="1" min="0" placeholder="0.0000"></div>`,
                             `<div class="form-group"><input type="number" class="form-control" name="cantidades[]" value="1" min="1"></div>`,
                             `1.00`,
                             '<button type="button" name="removeRow" class="btn btn-danger" data-bs-toggle="tooltip" data-container="body" data-bs-original-title="Eliminar"><i class="mdi mdi-delete"></i></button>'
@@ -284,7 +284,7 @@
                     $('#producto_id').find('option:selected').val(),
                     $.trim($('#producto_id').find('option:selected').text()),
                     `<div class="form-group"><input type="date" class="form-control" name="vencimiento[]" ></div>`,
-                    `<div class="form-group"><input type="number" class="form-control" name="unidad_precios[]" value="1" min="0" step="any"></div>`,
+                    `<div class="form-group"><input type="text" class="form-control" name="unidad_precios[]"  value="1" min="0"   placeholder="0.0000"></div>`,
                     `<div class="form-group"><input type="number" class="form-control" name="cantidades[]" value="1" min="1"></div>`,
                     `1.00`,
                     '<button type="button" name="removeRow" class="btn btn-danger" data-bs-toggle="tooltip" data-container="body" data-bs-original-title="Eliminar"><i class="mdi mdi-delete"></i></button>'
@@ -298,7 +298,7 @@
 
                 $('#compras_details_table tbody tr').each(function() {
                     const $subtotalCell = $(this).find('td:eq(4)');
-
+                    //alert($subtotalCell.text());
 
                     if ($subtotalCell.length > 0) {
                         const subtotal = parseFloat($subtotalCell.text().replace('Bs. ', ''));
@@ -314,8 +314,60 @@
                 $('#price_table').text('Bs. ' + total.toFixed(2));
                 $('#total').val(total.toFixed(2));
             }
+       
+            $('#compras_details_table').on('input', 'input[name="unidad_precios[]"]', function () {
+    let price = $(this).val().replace(',', '.');
 
-            $('#compras_details_table').on('input', 'input[name="unidad_precios[]"], input[name="cantidades[]"]',
+    // Eliminar caracteres no válidos excepto el punto
+    price = price.replace(/[^0-9.]/g, '');
+
+    // Solo un punto decimal
+    const partes = price.split('.');
+    if (partes.length > 2) {
+        price = partes[0] + '.' + partes[1];
+    }
+
+    // Limitar a 4 decimales
+    if (partes.length === 2) {
+        partes[1] = partes[1].substring(0, 4);
+        price = partes[0] + '.' + partes[1];
+    }
+
+    // Reasignar valor limpio
+    $(this).val(price);
+
+    // Actualizar subtotal (solo si el número es válido)
+    const $row = $(this).closest('tr');
+    const cantidadInput = $row.find('input[name="cantidades[]"]').val().replace(',', '.');
+    const cantidad = parseFloat(cantidadInput);
+    const precioFloat = parseFloat(price);
+
+    let subtotal = 0;
+    if (!isNaN(cantidad) && !isNaN(precioFloat)) {
+        subtotal = (cantidad * precioFloat).toFixed(2);
+    }
+
+    $row.find('td:eq(4)').text(`${subtotal}`);
+
+    calculateTotal();
+    toggleSaveButton();
+});
+
+// Evento BLUR → si el valor final es inválido, dejarlo vacío
+$('#compras_details_table').on('blur', 'input[name="unidad_precios[]"]', function () {
+    let value = $(this).val().replace(',', '.');
+    const number = parseFloat(value);
+
+    if (isNaN(number)) {
+        $(this).val('');
+        const $row = $(this).closest('tr');
+        $row.find('td:eq(4)').text(`0.00`);
+        calculateTotal();
+        toggleSaveButton();
+    }
+});
+
+                  $('#compras_details_table').on('input', 'input[name="cantidades[]"]',
                 function() {
                     const $row = $(this).closest('tr');
                     let price = $row.find('input[name="unidad_precios[]"]').val();
@@ -332,7 +384,24 @@
                 calculateTotal();
                 toggleSaveButton();
             });
-
+             $('#compras_details_table').on('blur', 'input[name="unidad_precios[]"]',
+                function() {
+                    
+        let valor = $(this).val();
+        
+        if (valor === '' || isNaN(valor)) {
+            $(this).val('1');
+            const $row = $(this).closest('tr');
+                    let price = $row.find('input[name="unidad_precios[]"]').val();
+                    const cantidad = $row.find('input[name="cantidades[]"]').val();
+                    const subtotal = (cantidad * price).toFixed(2);
+                    $row.find('td:eq(4)').text(`${subtotal}`);
+           // alert("");
+             calculateTotal();
+                    toggleSaveButton();
+        }
+        
+                })
             $('#createcompras').on('submit', function(event) {
                 event.preventDefault();
                 $('#btn_save').prop('disabled', true);
@@ -434,6 +503,8 @@
             }
         });
 
+        
+          
         function toggleSaveButton() {
             const proveedorValue = $('#proveedor').val().trim();
             const tipoValue = $('#tipo').val().trim();

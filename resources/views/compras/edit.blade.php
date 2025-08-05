@@ -215,7 +215,7 @@
                         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-xxl-4 col-xxxl-4">
                             <div class="form-group">
                                 <label class="form-label">Precio Unitario</label>
-                                <input type="number" id="create_precio_unitario" name="edit_precio_unitario" min="0" step="any" class="form-control" placeholder="Precio Unitario">
+                                <input type="text" id="create_precio_unitario" name="edit_precio_unitario"  min="0"   placeholder="0.0000" class="form-control" placeholder="Precio Unitario">
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-xxl-4 col-xxxl-4">
@@ -342,7 +342,7 @@
             
              const compraDetalles = @json($compraDetalles);
              const productosList = @json($producto);
-console.log(compraDetalles);
+//console.log(compraDetalles);
             $('#modal-create-compra-detail').on('shown.bs.modal', function () {
     $('#create_producto_id').select2({
         dropdownParent: $('#modal-create-compra-detail'), 
@@ -474,18 +474,57 @@ console.log(compraDetalles);
                 });
             });
 
-            $('#create_precio_unitario, #create_cantidad').on('input', function () {
+            $('#create_cantidad').on('input', function () {
                 let precio_unidad = $("#create_precio_unitario").val();
                 let create_cantidad= $("#create_cantidad").val();
                 let subtotal = (precio_unidad * create_cantidad).toFixed(2);
                 $("#create_subtotal_label").val(subtotal);
                 $("#create_compra_id").val({{ $compras->id }});
                 $("#create_subtotal").val(subtotal);
+
+                
                 validateCreateDetail();
                 calculateTotal()
                 //togglecreatePurchaseDetailButton();
                 //calculateTotalcreate();
             });
+            $('#create_precio_unitario').on('input', function () {
+    let valor = $(this).val().replace(',', '.');
+
+    // Permitir solo números y un solo punto
+    valor = valor.replace(/[^0-9.]/g, '');
+
+    // Eliminar puntos adicionales
+    const partes = valor.split('.');
+    if (partes.length > 2) {
+        valor = partes[0] + '.' + partes[1];
+       
+    }
+
+    // Limitar a 4 decimales
+    if (partes.length === 2 && partes[1].length > 4) {
+        valor = partes[0] + '.' + partes[1].substring(0, 4);
+    }
+
+    // Asignar el valor limpio al input
+    $(this).val(valor);
+
+    // Validar si es un número válido antes de continuar
+    const precio_unidad = parseFloat(valor);
+    const create_cantidad = parseFloat($("#create_cantidad").val().replace(',', '.')) || 0;
+
+    let subtotal = 0;
+    if (!isNaN(precio_unidad)) {
+        subtotal = (precio_unidad * create_cantidad).toFixed(2);
+    }
+
+    $("#create_subtotal_label").val(subtotal);
+    $("#create_subtotal").val(subtotal);
+    $("#create_compra_id").val({{ $compras->id }});
+
+    validateCreateDetail();
+    calculateTotal();
+});
 
             $('#create_detalle').on('submit', function(event) {
                 event.preventDefault(); 
