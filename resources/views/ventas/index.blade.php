@@ -183,12 +183,12 @@
     <script>
         $(document).ready(function() {
             const permisos = {
-                edit: @json(auth()->user()->can('compra.edit')),
-                destroy: @json(auth()->user()->can('compra.destroy')),
-                show: @json(auth()->user()->can('compra.show'))
+                edit: @json(auth()->user()->can('venta.edit')),
+                destroy: @json(auth()->user()->can('venta.destroy')),
+                show: @json(auth()->user()->can('venta.show'))
             };
             const ventas = @json($ventas);
-           // console.log(ventas)
+            // console.log(ventas)
             var table_ventas = $('#dt_ventas').DataTable({
 
                 //bFilter: true,
@@ -211,7 +211,7 @@
                     },
                     {
                         "data": "observacion",
-                        "render": function (data, type, row) {
+                        "render": function(data, type, row) {
                             if (type === 'display') {
                                 return (data || '').replace(/(\r\n|\n|\r)/g, '<br>');
                             }
@@ -240,29 +240,31 @@
                         //  className: 'text-center',
                         "mRender": function(data, type, row) {
                             var fecha = moment(data.venta_fecha).format('YYYY-MM-DD');
-                            var button='<div class="d-block text-dark flexbox">';
-                           
+                            var button = '<div class="d-block text-dark flexbox">';
 
-                             
-                            
-                            if(permisos.show){
-                                button+= '<button type="button" onclick="modalVentas(' +
-                                data.id + ')" id="btn_view_compras" value=' + data.id +
-                                ' class="btn btn-info" data-bs-toggle="tooltip"  data-bs-original-title="Ver Compra"><i class="mdi mdi-eye"></i></button>';
+
+
+
+                            if (permisos.show) {
+                                button += '<button type="button" onclick="modalVentas(' +
+                                    data.id + ')" id="btn_view_compras" value=' + data.id +
+                                    ' class="btn btn-info" data-bs-toggle="tooltip"  data-bs-original-title="Ver Compra"><i class="mdi mdi-eye"></i></button>';
                             }
-                             if(permisos.edit){ 
-                            if(data.tipo=='Cuentas por Cobrar'){
-                                button+=`<a  href="ventas/${data.id}/cuentaCobrar"     class="btn btn-google" data-bs-toggle="tooltip" title="Cuentas por Cobrar"><i class="fa fa-money"></i></a>`;
+                            if (permisos.edit) {
+                                if (data.tipo == 'Cuentas por Cobrar') {
+                                    button +=
+                                        `<a  href="ventas/${data.id}/cuentaCobrar"     class="btn btn-google" data-bs-toggle="tooltip" title="Cuentas por Cobrar"><i class="fa fa-money"></i></a>`;
+                                }
                             }
-                             }
-                            
+
                             if (permisos.destroy) {
-                                 if (fecha == moment().format('YYYY-MM-DD'))
-                                button+= '<button type="button" id="btn_delete_ventas" value=' +
-                                data.id +
-                                ' class="btn btn-danger" data-bs-toggle="tooltip" title="Eliminar" ><i class="mdi mdi-delete" ></i></button>';
-                            }  
-                             button+='</div>';  
+                                if (fecha == moment().format('YYYY-MM-DD'))
+                                    button +=
+                                    '<button type="button" id="btn_delete_ventas" value=' +
+                                    data.id +
+                                    ' class="btn btn-danger" data-bs-toggle="tooltip" title="Eliminar" ><i class="mdi mdi-delete" ></i></button>';
+                            }
+                            button += '</div>';
                             return button;
                         }
                     },
@@ -360,45 +362,49 @@
 
 
         });
-  
-function modalVentas(id){
-                   
-                
-    $.ajax({
-                    type: "GET",
-                    url: "{{ route('ventas.show', ':id') }}".replace(':id', id),
-                    success: function(response) {
-                        if(response.status === 200){
-                           // console.log(response.data.ventas);
-                          // console.log(response.data.ventas[0].venta_fecha);
-                             var fecha = moment(response.data.ventas[0].venta_fecha)
-                .format('DD-MM-YYYY');
-                 
-                  $( "#display_observacion" ).hide();
-                var metodo_pago=response.data.ventas[0].metodo_pago;
-                // if(metodo_pago=='E')
-                // metodo_pago='EFECTIVO';
-                // if(metodo_pago=='Q')
-                // metodo_pago='QR';
-                // if(metodo_pago=='M')
-                // metodo_pago='EFECTIVO Y QR';
-                // if(metodo_pago=='N')
-                // metodo_pago='NINGUNO';
-                          
-                             $('#cliente').text(response.data.ventas[0].cliente);
-                            $('#metodo_pago').text(metodo_pago);
-                            $('#numero_venta').text(response.data.ventas[0].numero_venta);
-                             $('#total').text(response.data.ventas[0].total+" BS");
-                              $('#fecha').text(fecha);
-                              $('#total_subtotal').text(" BS. "+response.data.ventas[0].total);
-                              if(response.data.ventas[0].tipo=='Salida Directa'|| response.data.ventas[0].tipo=='Cuentas por Cobrar'||response.data.ventas[0].observacion && response.data.ventas[0].observacion.length > 0){
-                               $( "#display_observacion" ).show();
-                               $('#observacion').html(response.data.ventas[0].observacion.replace(/(\r\n|\r|\n)/g, '<br>'));}
-                            // $('#purchase_date').text(response.data.purchase.purchase_date);
-                            // $('#supplier').text(response.data.purchase.supplier);
-                            // $('#purchase').text(response.data.purchase.purchase);
-                             var tbody = $('#tbl_venta_detalles tbody');
-                             tbody.empty();
+
+        function modalVentas(id) {
+
+
+            $.ajax({
+                type: "GET",
+                url: "{{ route('ventas.show', ':id') }}".replace(':id', id),
+                success: function(response) {
+                    if (response.status === 200) {
+                        // console.log(response.data.ventas);
+                        // console.log(response.data.ventas[0].venta_fecha);
+                        var fecha = moment(response.data.ventas[0].venta_fecha)
+                            .format('DD-MM-YYYY');
+
+                        $("#display_observacion").hide();
+                        var metodo_pago = response.data.ventas[0].metodo_pago;
+                        // if(metodo_pago=='E')
+                        // metodo_pago='EFECTIVO';
+                        // if(metodo_pago=='Q')
+                        // metodo_pago='QR';
+                        // if(metodo_pago=='M')
+                        // metodo_pago='EFECTIVO Y QR';
+                        // if(metodo_pago=='N')
+                        // metodo_pago='NINGUNO';
+
+                        $('#cliente').text(response.data.ventas[0].cliente);
+                        $('#metodo_pago').text(metodo_pago);
+                        $('#numero_venta').text(response.data.ventas[0].numero_venta);
+                        $('#total').text(response.data.ventas[0].total + " BS");
+                        $('#fecha').text(fecha);
+                        $('#total_subtotal').text(" BS. " + response.data.ventas[0].total);
+                        if (response.data.ventas[0].tipo == 'Salida Directa' || response.data.ventas[0].tipo ==
+                            'Cuentas por Cobrar' || response.data.ventas[0].observacion && response.data.ventas[
+                                0].observacion.length > 0) {
+                            $("#display_observacion").show();
+                            $('#observacion').html(response.data.ventas[0].observacion.replace(/(\r\n|\r|\n)/g,
+                                '<br>'));
+                        }
+                        // $('#purchase_date').text(response.data.purchase.purchase_date);
+                        // $('#supplier').text(response.data.purchase.supplier);
+                        // $('#purchase').text(response.data.purchase.purchase);
+                        var tbody = $('#tbl_venta_detalles tbody');
+                        tbody.empty();
 
                         var ventaDetalles = response.data.ventaDetalles;
 
