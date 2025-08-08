@@ -167,6 +167,7 @@ class CompraDetalleController extends Controller
 
                 $detalle_max = CompraDetalle::where('producto_id', $comprasDetalle->producto_id)
                     ->where('id', '!=', $comprasDetalle->id)
+                    ->whereNull('compra_detalles.deleted_at')
                     ->orderByDesc('precio_unitario')
                     ->first();
                 if ($detalle_max)
@@ -181,7 +182,7 @@ class CompraDetalleController extends Controller
                 $productos = Producto::find($comprasDetalle->producto_id);
                 // $productos->cantidad = $productos->cantidad - $comprasDetalle->cantidad;
 
-                if ($precio_maximo > $precio_maximo_kardex && Carbon::parse($detalle_max->created_at)->gt(Carbon::parse($kardex->fecha))) {
+                if ($precio_maximo > $precio_maximo_kardex && !empty($detalle_max->created_at) && Carbon::parse($detalle_max->created_at)->gt(Carbon::parse($kardex->fecha))) {
                     $productos->precio_unitario = $precio_maximo;
                     $productos->precio_venta = (($productos->porcentaje / 100) * $precio_maximo) + $precio_maximo;
                 } else {
