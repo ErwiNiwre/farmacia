@@ -397,7 +397,7 @@ class VentaController extends Controller
             ->join('concentraciones', 'productos.concentracion_id', '=', 'concentraciones.id')
             ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
             ->join('presentaciones', 'productos.presentacion_id', '=', 'presentaciones.id')
-            ->select(
+            ->select( 
         'productos.id',
         'barras',
         'producto',

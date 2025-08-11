@@ -286,7 +286,7 @@
                         var fecha = moment(response.data.compras.compra_fecha)
                             .format('DD-MM-YYYY');
                         let observacion_show=response.data.compras.observacion||''
-
+                        $("#display_observacion").hide();
                         $('#proveedor').text(response.data.compras.proveedor);
                         $('#tipo').text(response.data.compras.tipo);
                         $('#numero_compra').text(response.data.compras.numero_compra);
