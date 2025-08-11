@@ -491,7 +491,10 @@ class CompraController extends Controller
                         'user_id'         => $compras->user_id
                     ]);
                     $productos->save();
-                    $productos->ajustarStock(-$compraDetalle->cantidad);
+                    
+                    if($productos->clasificacion==0){
+                $productos->ajustarStock(-$compraDetalle->cantidad);
+                }
                 }
             }
             CompraDetalle::where('compra_id', '=', $compras->id)->delete();

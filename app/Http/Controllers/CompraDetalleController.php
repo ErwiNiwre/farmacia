@@ -78,7 +78,14 @@ class CompraDetalleController extends Controller
             $compraDetalle->save();
             $producto = Producto::find($request->create_producto_id);
             //$producto->cantidad = $producto->cantidad + $request->edit_cantidad;
-            $producto->ajustarStock($request->edit_cantidad);
+           
+            if($producto->clasificacion==1){
+                    $compraDetalle->cantidad_total = 0;
+                    $compraDetalle->save();
+                    
+                }else{
+                 $producto->ajustarStock($request->edit_cantidad);
+                }
             if ($request->create_estado == "1") {
 
                 $producto->precio_unitario = $request->edit_precio_unitario;
@@ -191,12 +198,8 @@ class CompraDetalleController extends Controller
                     $productos->precio_venta = (($productos->porcentaje / 100) * $precio_maximo_kardex) + $precio_maximo_kardex;
                 }
                 $productos->save();
-                if($producto->clasificacion==1){
-                    $comprasDetalle->cantidad_total = 0;
-                    $comprasDetalle->save();
-                    
-                }else{
-                $producto->ajustarStock($detalle['cantidad']);
+                if($productos->clasificacion==0){
+                $productos->ajustarStock(-$comprasDetalle->cantidad);
                 }
 
                 $comprasDetalle->delete();

@@ -156,7 +156,7 @@
             };
 
             const detalle = @json($detalle);
-            console.log(detalle);
+           // console.log(detalle);
             var table_compras = $('#dt_compras').DataTable({
                 //"ajax": "{{ route('getListCompras') }}",
                 //bFilter: true,
