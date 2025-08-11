@@ -419,27 +419,27 @@
 
             $('#venta_details_table').on('input', 'input[name="unidad_precios[]"]', function () {
     const $row = $(this).closest('tr');
-    let price = $(this).val().replace(',', '.'); // Convertir coma a punto
+    let price = $(this).val().replace(',', '.'); 
 
-    // Validar: quitar todo lo que no sea número o punto decimal
+    
     price = price.replace(/[^0-9.]/g, '');
 
-    // Evitar múltiples puntos decimales
+   
     const partes = price.split('.');
     if (partes.length > 2) {
         price = partes[0] + '.' + partes[1];
     }
 
-    // Limitar a 4 decimales si hay decimales
+    
     if (partes.length === 2) {
         partes[1] = partes[1].substring(0, 2);
         price = partes[0] + '.' + partes[1];
     }
 
-    // Validar si el número es válido
+
    
 
-    // Establecer el valor corregido
+    
     $(this).val(price);
 
     // Obtener cantidad (y asegurar que sea número)
@@ -632,22 +632,22 @@
                     var unidad_precio = $(row).find('input[name="unidad_precios[]"]').val();
                     var cantidad = $(row).find('input[name="cantidades[]"]').val();
                     var subtotal = $(row).find('td:eq(4)').text().replace('Bs. ',
-                        ''); // Obtener el subtotal
+                        ''); 
                     var cantidad_total = $(row).find('td:eq(1)').text();
 
 
                     if (!producto_id || !unidad_precio || !cantidad || !subtotal) {
-                        return; // Ignorar filas con datos incompletos
+                        return; 
                     }
 
-                    // Crear el objeto servicio
+                   
                     var producto_venta = {
                         producto_id: producto_id,
                         //vencimiento: vencimiento,
                         unidad_precio: parseFloat(unidad_precio) ||
-                            0, // Asegurar que price sea un número
-                        cantidad: parseInt(cantidad) || 0, // Asegurar que quantity sea un número
-                        subtotal: parseFloat(subtotal) || 0, // Asegurar que subtotal sea un número
+                            0,
+                        cantidad: parseInt(cantidad) || 0, 
+                        subtotal: parseFloat(subtotal) || 0, 
                         cantidad_total: cantidad_total
                     };
 

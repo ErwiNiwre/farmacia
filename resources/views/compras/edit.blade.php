@@ -27,6 +27,9 @@
                                
                                 <dt>Tipo:</dt>
                                 <dd>{{ $compras->tipo }}</dd>
+                                <dt>Observacion:</dt>
+                                <dd>{!! nl2br(e($compras->observacion)) !!}</dd>
+                   
                                 
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-3 col-xxl-3 col-xxxl-3">
@@ -155,6 +158,21 @@
                                         
                                     </div>
                         </div>
+                         <div class="row">
+                                 
+
+                               <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xl-8 col-xxl-8 col-xxxl-8">
+                                    <div class="form-group">
+                                        <label class="form-label">Observacion</label>
+                                        <textarea type="text" id="observacion" name="observacion" class="form-control" placeholder="Observacion"> {{ isset($compras) ? $compras->observacion : old('observacion') }}</textarea>
+
+                                    </div>
+                                </div>
+
+
+                            
+                            </div>
+                        
                         
                     </div>
                 </div>
@@ -350,6 +368,8 @@
     });
 });
 
+ 
+
 
 
              $('#price_table').text({{$compras->total}});
@@ -415,7 +435,7 @@
                      "mRender": function(data, type, row) {
 						      	var button='';
                                // alert(data.cantidad+'=='+data.cantidad_total)
-                                if(data.cantidad==data.cantidad_total)
+                                if(data.cantidad==data.cantidad_total || data.clasificacion == 1)
                                         button+='<button type="button" id="btn_delete_compras_detail" value='+data.id+' class="waves-effect waves-light btn btn-danger mb-5" data-container="body" title="" data-bs-original-title="Eliminar"><i class="fa fa-bitbucket" aria-hidden="true"></i></button>';
                                     
                                     return    button+='';
