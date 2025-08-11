@@ -26,11 +26,11 @@
                             <thead class="bg-success">
                                 <tr>
                                     <th>Id</th>
-                                    <th style="width: 10%;">Número de Compra</th>
-                                    <th style="width: 15%;">Fecha</th>
+                                    <th style="width: 5%;">Número de Compra</th>
+                                    <th style="width: 10%;">Fecha</th>
                                     <th style="width: 20%;">Tipo de Movimiento</th>
-
-                                    <th style="width: 25%;">Proveedor</th>
+                                    <th style="width: 15%;">Observacion</th>
+                                    <th style="width: 20%;">Proveedor</th>
                                     <th style="width: 15%;" class=" text-end">Total</th>
                                     <th style="width: 15%;" class=" text-center">Acciones</th>
                                 </tr>
@@ -41,7 +41,7 @@
                                     <th>Número de Compra</th>
                                     <th>Fecha</th>
                                     <th>Tipo de Movimiento</th>
-
+                                    <th>Observacion</th>
                                     <th>Proveedor</th>
                                     <th>Total</th>
                                     <th style="visibility:collapse; display:none;"></th>
@@ -85,7 +85,12 @@
                                         class="text-blue fs-20" id="tipo"></strong> <br>
                                     <strong class="text-blue fs-20">Número de Compra: </strong><strong
                                         class="text-blue fs-20" id="numero_compra"> </strong> <br>
-
+                                </address>
+                                <address id="display_observacion" style="display: none">
+                                
+                                    <strong class="text-blue fs-30">Observación </strong><strong class="text-blue fs-20">
+                                    </strong><br>
+                                    <strong class="text-blue fs-20"></strong><strong class="text-blue fs-20" id="observacion"> </strong>
                                 </address>
                             </div>
                             <!-- /.col -->
@@ -151,7 +156,7 @@
             };
 
             const detalle = @json($detalle);
-
+           // console.log(detalle);
             var table_compras = $('#dt_compras').DataTable({
                 //"ajax": "{{ route('getListCompras') }}",
                 //bFilter: true,
@@ -172,10 +177,20 @@
                     {
                         "data": 'tipo'
                     },
+                    {
+                        "data": "observacion",
+                        "render": function(data, type, row) {
+                            if (type === 'display') {
+                                return (data || '').replace(/(\r\n|\n|\r)/g, '<br>');
+                            }
+                            return data;
+                        }
+                    },
 
                     {
                         "data": "proveedor"
                     },
+                     
                     {
                         "data": "total",
                         "className": "text-end"
@@ -199,7 +214,8 @@
                                 ;
                             }
                             if (permisos.destroy) {
-                                 if (data.estado == 1)
+                                //alert( data.estado);
+                                 if (data.estado == 1  )
                                 button +=
                                 `<a onclick="return confirm(\'Esta seguro que desea eliminar el registo?\')" href="compras/${data.id}/destroy" class="btn btn-danger" data-bs-toggle="tooltip" title="Eliminar"><i class="fa fa-bitbucket"></i></a>`;
                             }
@@ -269,6 +285,7 @@
                     if (response.status === 200) {
                         var fecha = moment(response.data.compras.compra_fecha)
                             .format('DD-MM-YYYY');
+                        let observacion_show=response.data.compras.observacion||''
 
                         $('#proveedor').text(response.data.compras.proveedor);
                         $('#tipo').text(response.data.compras.tipo);
@@ -278,7 +295,11 @@
                         // alert(fecha.isValid );
 
                         $('#total_subtotal').text(" BS. " + response.data.compras.total);
+                        if(response.data.compras.observacion){
+                            $("#display_observacion").show();
+                        $('#observacion').html(observacion_show.replace(/(\r\n|\r|\n)/g,'<br>'));
 
+                            }
                         // $('#purchase_date').text(response.data.purchase.purchase_date);
                         // $('#supplier').text(response.data.purchase.supplier);
                         // $('#purchase').text(response.data.purchase.purchase);

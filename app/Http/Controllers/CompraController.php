@@ -37,12 +37,36 @@ class CompraController extends Controller
 
         $compras = Compra::all();
         $detalle = Compra::query()
-            ->select('compras.id', 'compras.compra_fecha', 'compras.numero_compra', 'compras.proveedor', 'compras.tipo', 'compras.total')
-            ->addSelect(DB::raw('(SELECT cantidad=cantidad_total as estado 
-                                  FROM public.compra_detalles  
-                                  WHERE compra_id=compras.id 
-                                  ORDER BY estado ASC limit 1) as estado'))
-            ->get();
+    ->select(
+        'compras.id',
+        'compras.compra_fecha',
+        'compras.numero_compra',
+        'compras.proveedor',
+        'compras.tipo',
+        'compras.total',
+        'compras.observacion',
+        DB::raw('MAX(productos.clasificacion) as clasificacion'),
+        DB::raw("
+            BOOL_AND(
+                CASE 
+                    WHEN productos.clasificacion = '1' THEN true
+                    ELSE compra_detalles.cantidad = compra_detalles.cantidad_total
+                END
+            ) as estado
+        ")
+    )
+    ->join('compra_detalles', 'compra_detalles.compra_id', '=', 'compras.id')
+    ->join('productos', 'productos.id', '=', 'compra_detalles.producto_id')
+    ->groupBy(
+        'compras.id',
+        'compras.compra_fecha',
+        'compras.numero_compra',
+        'compras.proveedor',
+        'compras.tipo',
+        'compras.total',
+        'compras.observacion'
+    )
+    ->get();
 
         return view(
             'compras.index',
@@ -130,8 +154,8 @@ class CompraController extends Controller
                 $compra->total = $request->total;
             else
                 $compra->total = 0;
-
-            $compra->created_by = $session_auth->id;
+             $compra->created_by = $session_auth->id;
+            $compra->observacion = $request->observacion;
 
             $compra->save();
 
@@ -188,7 +212,13 @@ class CompraController extends Controller
                     'user_id'         => $session_auth->id
                 ]);
                 // $producto->cantidad = $producto->cantidad + $detalle['cantidad'];
+                if($producto->clasificacion==1){
+                    $compraDetalle->cantidad_total = 0;
+                    $compraDetalle->save();
+                    
+                }else{
                 $producto->ajustarStock($detalle['cantidad']);
+                }
 
 
                 if ($detalle['estado'] == 1 && $compra->tipo == 'Compra') {
@@ -290,6 +320,7 @@ class CompraController extends Controller
                 'compra_detalles.id as id',
                 'productos.id as producto_id',
                 'productos.producto',
+                'productos.clasificacion',
                 'compra_detalles.vencimiento',
                 'compra_detalles.precio_unitario',
                 'compra_detalles.cantidad',
@@ -359,6 +390,7 @@ class CompraController extends Controller
             ]);
         }
         $compras->proveedor = $request->proveedor;
+        $compras->observacion = $request->observacion;
         //$compras->tipo = $request->tipo;
         //$compraDetalles = CompraDetalle::where('compra_id', '=', $compras->id)->get();
         /*foreach ($compraDetalles as $compraDetalle) {
@@ -422,6 +454,7 @@ class CompraController extends Controller
 
                 $detalle_max = CompraDetalle::where('producto_id', $compraDetalle->producto_id)
                     ->where('compra_id', '!=', $compras->id)
+                    ->whereNull('compra_detalles.deleted_at')
                     ->orderByDesc('precio_unitario')
                     ->first();
                 if ($detalle_max)
@@ -438,7 +471,7 @@ class CompraController extends Controller
 
 
 
-                    if ($precio_maximo > $precio_maximo_kardex && Carbon::parse($detalle_max->created_at)->gt(Carbon::parse($kardex->fecha))) {
+                    if ($precio_maximo > $precio_maximo_kardex  && !empty($detalle_max->created_at) &&  Carbon::parse($detalle_max->created_at)->gt(Carbon::parse($kardex->fecha))) {
                         $productos->precio_unitario = $precio_maximo;
                         $productos->precio_venta = (($productos->porcentaje / 100) * $precio_maximo) + $precio_maximo;
                     } else {
@@ -458,7 +491,10 @@ class CompraController extends Controller
                         'user_id'         => $compras->user_id
                     ]);
                     $productos->save();
-                    $productos->ajustarStock(-$compraDetalle->cantidad);
+                    
+                    if($productos->clasificacion==0){
+                $productos->ajustarStock(-$compraDetalle->cantidad);
+                }
                 }
             }
             CompraDetalle::where('compra_id', '=', $compras->id)->delete();
