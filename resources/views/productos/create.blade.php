@@ -50,15 +50,32 @@
                                     </div>
                                 </div>
                                 <div class="col">
-                                    <div class="form-group">
-                                        <label class="mb-3">Generar Codigo</label>
-                                        <div class="c-inputs-stacked">
-                                            <input type="checkbox" id="codigo_generado" name="codigo_generado"
-                                                class="filled-in chk-col-info" value="{{ old('codigo_generado') }}"
-                                                {{ old('codigo_generado') ? 'checked' : '' }} />
-                                            <label for="codigo_generado" class="me-30">
-                                                <span id="label_codigo_generado">No</span>
-                                            </label>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label class="mb-3">Generar Codigo</label>
+                                                <div class="c-inputs-stacked">
+                                                    <input type="checkbox" id="codigo_generado" name="codigo_generado"
+                                                        class="filled-in chk-col-info" value="{{ old('codigo_generado') }}"
+                                                        {{ old('codigo_generado') ? 'checked' : '' }} />
+                                                    <label for="codigo_generado" class="me-30">
+                                                        <span id="label_codigo_generado">No</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label class="mb-3">Caso Especial</label>
+                                                <div class="c-inputs-stacked">
+                                                    <input type="checkbox" id="clasificacion" name="clasificacion"
+                                                        class="filled-in chk-col-info" value="{{ old('clasificacion') }}"
+                                                        {{ old('clasificacion') ? 'checked' : '' }} />
+                                                    <label for="clasificacion" class="me-30">
+                                                        <span id="label_clasificacion">No</span>
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -172,6 +189,25 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="form-label">Codigo SIN</label>
+                                        <select id="codigo_sin_id" name="codigo_sin_id" class="form-select select2"
+                                            style="width: 100%;">
+                                            @foreach ($codigosSin as $codigoSin)
+                                                @if (old('codigo_sin_id') == $codigoSin->id)
+                                                    <option value="{{ $codigoSin->id }}" selected>
+                                                        {{ $codigoSin->descripcion . ' - ' . $codigoSin->codigo }}
+                                                    </option>
+                                                @else
+                                                    <option value="{{ $codigoSin->id }}">
+                                                        {{ $codigoSin->descripcion . ' - ' . $codigoSin->codigo }}
+                                                    </option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col">
@@ -241,6 +277,9 @@
 
             $('#codigo_generado').on('change', actualizarEstado);
 
+            actualizarClasificacion();
+            $('#clasificacion').on('change', actualizarClasificacion);
+
             $("#stock_minimo").TouchSpin({
                 min: 1,
                 max: 1000
@@ -304,6 +343,16 @@
                     if ($('#barras').val() === 'S/B') {
                         $('#barras').val('');
                     }
+                }
+            }
+
+            function actualizarClasificacion() {
+                if ($('#clasificacion').is(':checked')) {
+                    $('#clasificacion').val(1);
+                    $('#label_clasificacion').text('Sí');
+                } else {
+                    $('#clasificacion').val(0);
+                    $('#label_clasificacion').text('No');
                 }
             }
         });

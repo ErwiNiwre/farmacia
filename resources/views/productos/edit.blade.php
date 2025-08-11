@@ -52,16 +52,34 @@
                                     </div>
                                 </div>
                                 <div class="col">
-                                    <div class="form-group">
-                                        <label class="mb-3">Generar Codigo</label>
-                                        <div class="c-inputs-stacked">
-                                            <input type="checkbox" id="codigo_generado" name="codigo_generado"
-                                                class="filled-in chk-col-info"
-                                                value="{{ isset($producto) ? $producto->codigo_generado : old('codigo_generado') }}"
-                                                {{ $producto->codigo_generado == 'S' ? 'checked' : '' }} />
-                                            <label for="codigo_generado" class="me-30">
-                                                <span id="label_codigo_generado">No</span>
-                                            </label>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label class="mb-3">Generar Codigo</label>
+                                                <div class="c-inputs-stacked">
+                                                    <input type="checkbox" id="codigo_generado" name="codigo_generado"
+                                                        class="filled-in chk-col-info"
+                                                        value="{{ isset($producto) ? $producto->codigo_generado : old('codigo_generado') }}"
+                                                        {{ $producto->codigo_generado == 'S' ? 'checked' : '' }} />
+                                                    <label for="codigo_generado" class="me-30">
+                                                        <span id="label_codigo_generado">No</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label class="mb-3">Caso Especial</label>
+                                                <div class="c-inputs-stacked">
+                                                    <input type="checkbox" id="clasificacion" name="clasificacion"
+                                                        class="filled-in chk-col-info"
+                                                        value="{{ isset($producto) ? $producto->clasificacion : old('clasificacion') }}"
+                                                        {{ $producto->clasificacion == '1' ? 'checked' : '' }} />
+                                                    <label for="clasificacion" class="me-30">
+                                                        <span id="label_clasificacion">No</span>
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -115,7 +133,8 @@
                                                     </option>
                                                 @else
                                                     <option value="{{ $marca->id }}">
-                                                        {{ $marca->marca }}</option>
+                                                        {{ $marca->marca }}
+                                                    </option>
                                                 @endif
                                             @endforeach
                                         </select>
@@ -135,7 +154,8 @@
                                                     </option>
                                                 @else
                                                     <option value="{{ $accionTerapeuticas->id }}">
-                                                        {{ $accionTerapeuticas->accion_terapeutica }}</option>
+                                                        {{ $accionTerapeuticas->accion_terapeutica }}
+                                                    </option>
                                                 @endif
                                             @endforeach
                                         </select>
@@ -153,7 +173,8 @@
                                                     </option>
                                                 @else
                                                     <option value="{{ $presentacion->id }}">
-                                                        {{ $presentacion->presentacion }}</option>
+                                                        {{ $presentacion->presentacion }}
+                                                    </option>
                                                 @endif
                                             @endforeach
                                         </select>
@@ -171,7 +192,27 @@
                                                     </option>
                                                 @else
                                                     <option value="{{ $unidadMedida->id }}">
-                                                        {{ $unidadMedida->unidad_medida }}</option>
+                                                        {{ $unidadMedida->unidad_medida }}
+                                                    </option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="form-label">Codigo SIN</label>
+                                        <select id="codigo_sin_id" name="codigo_sin_id" class="form-select select2"
+                                            style="width: 100%;">
+                                            @foreach ($codigosSin as $codigoSin)
+                                                @if ($producto->codigo_sin_id == $codigoSin->id)
+                                                    <option value="{{ $codigoSin->id }}" selected>
+                                                        {{ $codigoSin->descripcion . ' - ' . $codigoSin->codigo }}
+                                                    </option>
+                                                @else
+                                                    <option value="{{ $codigoSin->id }}">
+                                                        {{ $codigoSin->descripcion . ' - ' . $codigoSin->codigo }}
+                                                    </option>
                                                 @endif
                                             @endforeach
                                         </select>
@@ -246,8 +287,10 @@
             $('.select2').select2();
 
             actualizarEstado();
-
             $('#codigo_generado').on('change', actualizarEstado);
+
+            actualizarClasificacion();
+            $('#clasificacion').on('change', actualizarClasificacion);
 
             $("#stock_minimo").TouchSpin({
                 min: 1,
@@ -308,6 +351,16 @@
                     $('#barras').removeClass('has-success');
                     $('#codigo_generado').val(0);
                     $('#label_codigo_generado').text('No');
+                }
+            }
+
+            function actualizarClasificacion() {
+                if ($('#clasificacion').is(':checked')) {
+                    $('#clasificacion').val(1);
+                    $('#label_clasificacion').text('Sí');
+                } else {
+                    $('#clasificacion').val(0);
+                    $('#label_clasificacion').text('No');
                 }
             }
         });
