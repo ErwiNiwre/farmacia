@@ -43,6 +43,20 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                 
+
+                                <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xl-8 col-xxl-8 col-xxxl-8">
+                                    <div class="form-group">
+                                        <label class="form-label">Observacion</label>
+                                        <textarea type="text" id="observacion" name="observacion" class="form-control" placeholder="Observacion"> </textarea>
+
+                                    </div>
+                                </div>
+
+
+                            
+                            </div>
                         </div>
 
                     </div>
@@ -145,7 +159,7 @@
             const productosList = @json($producto);
             toggleSaveButton();
             $('#createcompras').keydown(function(event) {
-                if (event.keyCode == 13) {
+                if (event.keyCode == 13 && !event.target.matches("textarea")) {
                     //  alert('You pressed enter! Form submission will be disabled.')
                     // console.log(event);
                     event.preventDefault();
@@ -409,6 +423,7 @@ $('#compras_details_table').on('blur', 'input[name="unidad_precios[]"]', functio
                 var compras = $('#compras').val();
                 var tipo = $('#tipo').val();
                 var total = $('#total').val();
+                var observacion = $('#observacion').val();
                 var productos = updateProductDetails();
 
                 if (productos.length === 0) {
@@ -425,6 +440,7 @@ $('#compras_details_table').on('blur', 'input[name="unidad_precios[]"]', functio
                         'compras': compras,
                         'tipo': tipo,
                         'total': total,
+                        'observacion': observacion,
                         'productos': productos,
                         "_token": "{{ csrf_token() }}"
                     },
