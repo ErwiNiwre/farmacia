@@ -30,6 +30,7 @@
                                 <thead class="bg-primary">
                                     <tr>
                                         <th>Id</th>
+                                        <th>Cod.</th>
                                         <th>Producto</th>
                                         <th>Generico</th>
                                         <th>Concentración</th>
@@ -274,6 +275,9 @@
                 columns: [{
                         data: 'id',
                         visible: false
+                    },
+                    {
+                        data: 'codigo'
                     },
                     {
                         data: 'producto'

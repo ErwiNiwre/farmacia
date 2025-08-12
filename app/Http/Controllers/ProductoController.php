@@ -9,6 +9,7 @@ use App\Models\Presentacion;
 use App\Models\Producto;
 use App\Models\UnidadMedida;
 use App\Models\Kardex;
+use App\Models\CodigoSin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -54,6 +55,7 @@ class ProductoController extends Controller
             ->map(function ($producto) {
                 return [
                     'id'              => $producto->id,
+                    'codigo'        => $producto->codigo,
                     'producto'        => $producto->producto,
                     'generico'        => $producto->generico,
                     'tipo_producto'   => $producto->tipo_producto === 'M' ? 'Medicamento' : 'Insumo',
@@ -98,6 +100,7 @@ class ProductoController extends Controller
         $presentaciones = Presentacion::get();
         $accionTerapeuticas = AccionTerapeutica::get();
         $unidadMedidas = UnidadMedida::get();
+        $codigosSin = CodigoSin::get();
 
         return view(
             'productos.create',
@@ -108,7 +111,8 @@ class ProductoController extends Controller
                 'marcas',
                 'presentaciones',
                 'accionTerapeuticas',
-                'unidadMedidas'
+                'unidadMedidas',
+                'codigosSin'
             )
         );
     }
@@ -120,8 +124,8 @@ class ProductoController extends Controller
     {
         $request->validate([
             'barras' => 'required|unique:productos,barras',
-            'producto' => 'required|regex:/^[a-zA-Z0-9\s\/.,-]+$/u',
-            'generico' => 'nullable|regex:/^[a-zA-Z0-9\s\/.,-]+$/u',
+            'producto' => 'required|regex:/^[a-zA-Z0-9\s\/.,% -]+$/u',
+            'generico' => 'nullable|regex:/^[a-zA-Z0-9\s\/.,% -]+$/u',
             'precio_unitario' => 'required|numeric|gt:0'
         ]);
 
@@ -139,6 +143,11 @@ class ProductoController extends Controller
         $producto->precio_unitario = $request->precio_unitario;
         $producto->porcentaje = $request->porcentaje;
         $producto->precio_venta = $request->precio_venta;
+        // nuevas columnas
+        if ($request->clasificacion == 1) {
+            $producto->clasificacion = 1;
+        }
+        $producto->codigo_sin_id = $request->codigo_sin_id;
 
         $producto->created_by = auth()->id();
         $producto->created_at = Carbon::now();
@@ -229,6 +238,7 @@ class ProductoController extends Controller
         $presentaciones = Presentacion::get();
         $accionTerapeuticas = AccionTerapeutica::get();
         $unidadMedidas = UnidadMedida::get();
+        $codigosSin = CodigoSin::get();
 
         return view(
             'productos.edit',
@@ -240,7 +250,8 @@ class ProductoController extends Controller
                 'marcas',
                 'presentaciones',
                 'accionTerapeuticas',
-                'unidadMedidas'
+                'unidadMedidas',
+                'codigosSin'
             )
         );
     }
@@ -282,6 +293,14 @@ class ProductoController extends Controller
         $producto->precio_unitario = $request->precio_unitario;
         $producto->porcentaje = $request->porcentaje;
         $producto->precio_venta = $request->precio_venta;
+
+        // nuevas columnas
+        if ($request->clasificacion == 1) {
+            $producto->clasificacion = 1;
+        } else {
+            $producto->clasificacion = 0;
+        }
+        $producto->codigo_sin_id = $request->codigo_sin_id;
 
         $producto->updated_by = auth()->id();
         $producto->updated_at = Carbon::now();
