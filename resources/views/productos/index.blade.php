@@ -16,13 +16,18 @@
                     <div class="box-header middle">
                         <h3 class="box-title">Lista de Productos</h3>
                         @can('producto.create')
-                            <a class="btn btn-success pull-right" data-bs-toggle="tooltip" data-container="body" title=""
-                                data-bs-original-title="Nuevo Rol" href="{{ route('productos.create') }}"><i
-                                    class="fa fa-plus"></i></a>
+                            <a class="waves-effect waves-light btn btn-success-light pull-right" data-bs-toggle="tooltip"
+                                data-container="body" title="" data-bs-original-title="Nuevo Producto"
+                                href="{{ route('productos.create') }}"><i class="fa fa-plus"></i></a>
                         @endcan
-                        <a class="btn btn-light pull-right me-10" data-bs-toggle="tooltip" data-container="body"
-                            title="" data-bs-original-title="Exportar Excel"
-                            href="{{ route('productos.exportarExcel') }}"><i class="fa  fa-file-excel-o"></i></a>
+                        <a class="waves-effect waves-light btn btn-primary-light pull-right me-10" data-bs-toggle="tooltip"
+                            data-container="body" title="" data-bs-original-title="Exportar Excel"
+                            href="{{ route('productos.exportarExcel') }}"><i class="fa  fa-file-excel-o"></i>
+                        </a>
+                        <button type="button" class="waves-effect waves-light btn btn-warning-light pull-right me-10"
+                            id="btn_export_rango" data-bs-toggle="tooltip" title="Exportar Excel Facturacion">
+                            <i class="fa fa-cart-arrow-down"></i>
+                        </button>
                     </div>
                     <div class="box-body">
                         <div class="table-responsive">
@@ -256,6 +261,56 @@
             </form>
         </div>
     </div>
+
+    <!-- Modal-Exportacion-Rango-Producto -->
+    <div class="modal center-modal fade" id="modal-exportacion-rango-producto" data-bs-backdrop="static" tabindex="-1">
+        <div class="modal-dialog" style="max-width: 900px">
+            <form id="exportarRangoProducto" autocomplete="off">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Exportacion de Excel para Facturacion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div
+                                class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12 text-center bg-success-light rounded p-15 mb-10 bold">
+                                Seleccione el rango de registros (desde el número inicial hasta el número final) que desea
+                                exportar a Excel para facturación.
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label class="form-label">Inicio</label>
+                                            <input id="inicio" type="text" value="{{ old('inicio', 1) }}"
+                                                name="inicio" data-bts-button-down-class="btn btn-secondary"
+                                                data-bts-button-up-class="btn btn-secondary">
+                                            {!! $errors->first('inicio', '<small class="text-danger">:message</small>') !!}
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label class="form-label">Fin</label>
+                                            <input id="fin" type="text" value="{{ old('fin', 1) }}"
+                                                name="fin" data-bts-button-down-class="btn btn-secondary"
+                                                data-bts-button-up-class="btn btn-secondary">
+                                            {!! $errors->first('fin', '<small class="text-danger">:message</small>') !!}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer modal-footer-uniform">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary float-end">Confirmar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 @endsection
 
 @section('page-script')
@@ -266,6 +321,16 @@
                 destroy: @json(auth()->user()->can('producto.destroy')),
                 show: @json(auth()->user()->can('producto.show'))
             };
+
+            $("#inicio").TouchSpin({
+                min: 1,
+                max: 999999
+            });
+
+            $("#fin").TouchSpin({
+                min: 1,
+                max: 999999
+            });
 
             let tbl_Producto = $('#tbl_Producto').DataTable({
                 data: @json($productos),
@@ -472,6 +537,32 @@
                         alert('Ocurrió un error111: ' + error);
                     }
                 });
+            });
+
+            $(document).on('click', '#btn_export_rango', function() {
+                event.preventDefault();
+
+                $("#exportarRangoProducto")[0].reset();
+
+                $("#modal-exportacion-rango-producto").modal('show');
+            })
+
+            $('#exportarRangoProducto').on('submit', function(event) {
+                event.preventDefault();
+
+                let inicio = $('#inicio').val();
+                let fin = $('#fin').val();
+
+                if (!inicio || !fin) {
+                    alert('Debes ingresar un rango válido');
+                    return;
+                }
+                let url = "{{ route('productos.exportarRangoExcel', ['inicio' => 0, 'fin' => 0]) }}";
+                url = url.replace('/0/0', `/${inicio}/${fin}`);
+
+                window.location.href = url;
+
+                $('#modal-exportacion-rango-producto').modal('hide');
             });
         });
     </script>
