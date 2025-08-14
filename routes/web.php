@@ -44,6 +44,7 @@ Route::middleware('auth', 'verified')->group(function () {
    Route::put('/productos/{producto}', [ProductoController::class, 'update'])->name('productos.update');
    Route::delete('/productos/{producto}', [ProductoController::class, 'destroy'])->name('productos.destroy');
    Route::get('/productos/exportarExcel', [ProductoController::class, 'exportarExcel'])->name('productos.exportarExcel');
+   Route::get('/productos/exportarRangoExcel/{inicio}/{fin}', [ProductoController::class, 'exportarRangoExcel'])->name('productos.exportarRangoExcel');
 
    // Rutas para LaboratorioServicio
    Route::get('/laboratorioServicios', [LaboratorioServicioController::class, 'index'])->name('laboratorioServicios.index');
@@ -86,10 +87,9 @@ Route::middleware('auth', 'verified')->group(function () {
 
    Route::get('/compraDetalles/{compras}/destroy', [CompraDetalleController::class, 'destroy'])->name('compraDetalles.destroy');
    Route::put('/compraDetalles/store', [CompraDetalleController::class, 'store'])->name('compraDetalles.store');
-   
+
    //ruta para Venta Detalle
    Route::put('/ventaDetalle/store', [VentaDetalleController::class, 'store'])->name('ventaDetalle.store');
    Route::put('/ventaDetalle/{ventaDetalle}', [VentaDetalleController::class, 'update'])->name('ventaDetalle.update');
    Route::get('/ventaDetalle/{ventaDetalle}/destroy', [VentaDetalleController::class, 'destroy'])->name('ventaDetalle.destroy');
-   
 });
