@@ -379,7 +379,30 @@ class ProductoController extends Controller
     public function exportarRangoExcel($inicio, $fin)
     {
         $nombre = Carbon::now()->format('Y-m-d_H-i') . '_Facturacion_Prod.xlsx';
-        $excluir = [173, 222, 223, 224, 269, 363, 364, 400, 403, 404, 456, 457, 458, 589, 632, 633, 634, 635, 636, 637, 638, 639]; // adicionar ids de productos que no iran al sistema de facturacion
+        $excluir = [
+            173,
+            222,
+            223,
+            224,
+            269,
+            363,
+            364,
+            400,
+            403,
+            404,
+            456,
+            457,
+            458,
+            589,
+            632,
+            633,
+            634,
+            635,
+            636,
+            637,
+            638,
+            639
+        ]; // adicionar ids de productos que no iran al sistema de facturacion
         return Excel::download(
             new ProductosRangeExport($inicio, $fin, $excluir),
             $nombre
