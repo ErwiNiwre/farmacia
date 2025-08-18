@@ -200,12 +200,15 @@ class InvitadosController extends Controller
         $compra_detalles = DB::table('compra_detalles')
             ->select(
                 'compra_detalles.id as id',
-                'productos.producto',
+                DB::raw("CONCAT(productos.producto, ' - ', concentraciones.concentracion, ' - ', presentaciones.presentacion, ' - ', marcas.marca) as producto"),
                 'compra_detalles.cantidad',
                 'compra_detalles.precio_unitario',
                 'compra_detalles.subtotal'
             )
             ->join('productos', 'productos.id', '=', 'compra_detalles.producto_id')
+            ->join('concentraciones', 'concentraciones.id', '=', 'productos.concentracion_id')
+            ->join('marcas', 'marcas.id', '=', 'productos.marca_id')
+            ->join('presentaciones', 'presentaciones.id', '=', 'productos.presentacion_id')
             ->where('compra_detalles.compra_id', "=", $id)
             ->whereNull('compra_detalles.deleted_at')
             ->orderBy('compra_detalles.id', 'asc')

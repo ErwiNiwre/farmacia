@@ -87,10 +87,10 @@
                                         class="text-blue fs-20" id="numero_compra"> </strong> <br>
                                 </address>
                                 <address id="display_observacion" style="display: none">
-                                
                                     <strong class="text-blue fs-30">Observación </strong><strong class="text-blue fs-20">
                                     </strong><br>
-                                    <strong class="text-blue fs-20"></strong><strong class="text-blue fs-20" id="observacion"> </strong>
+                                    <strong class="text-blue fs-20"></strong><strong class="text-blue fs-20"
+                                        id="observacion"> </strong>
                                 </address>
                             </div>
                             <!-- /.col -->
@@ -98,7 +98,6 @@
                                 <address>
                                     <strong class="text-blue fs-24">TOTAL </strong><br>
                                     <strong id="total" class="text-blue fs-20"> </strong><br>
-
                                 </address>
                             </div>
                         </div>
@@ -156,7 +155,7 @@
             };
 
             const detalle = @json($detalle);
-           // console.log(detalle);
+            // console.log(detalle);
             var table_compras = $('#dt_compras').DataTable({
                 //"ajax": "{{ route('getListCompras') }}",
                 //bFilter: true,
@@ -190,7 +189,7 @@
                     {
                         "data": "proveedor"
                     },
-                     
+
                     {
                         "data": "total",
                         "className": "text-end"
@@ -201,26 +200,28 @@
                         orderable: false,
                         searchable: false,
                         "mRender": function(data, type, row) {
-                            button='<div class="d-block text-dark flexbox">';
-                            
-                           if (permisos.show) {
-                                 button +=' <button type="button" onclick="modalCompras(' +
-                                data.id + ')" id="btn_view_compras" value=' + data.id +
-                                ' class="btn btn-info" data-bs-toggle="tooltip" title="Ver Compra"><i class="mdi mdi-eye"></i></button>';
+                            button = '<div class="d-block text-dark flexbox">';
+
+                            if (permisos.show) {
+                                button += ' <button type="button" onclick="modalCompras(' +
+                                    data.id + ')" id="btn_view_compras" value=' + data.id +
+                                    ' class="btn btn-info" data-bs-toggle="tooltip" title="Ver Compra"><i class="mdi mdi-eye"></i></button>';
                             }
-                             if (permisos.edit) {
-                           button+=  
-                                `<a href="compras/${data.id}/edit"  id="btn_edit_compras"   class="btn btn-secondary" data-bs-toggle="tooltip" title="Editar"><i class="fa fa-edit"></i></a>` 
-                                ;
+                            if (permisos.edit) {
+                                button +=
+                                    `<a href="compras/${data.id}/edit"  id="btn_edit_compras"   class="btn btn-secondary" data-bs-toggle="tooltip" title="Editar"><i class="fa fa-edit"></i></a>`;
                             }
                             if (permisos.destroy) {
                                 //alert( data.estado);
-                                 if (data.estado == 1  )
-                                button +=
-                                `<a onclick="return confirm(\'Esta seguro que desea eliminar el registo?\')" href="compras/${data.id}/destroy" class="btn btn-danger" data-bs-toggle="tooltip" title="Eliminar"><i class="fa fa-bitbucket"></i></a>`;
+                                if (data.estado == 1)
+                                    button +=
+                                    `<a onclick="return confirm(\'Esta seguro que desea eliminar el registo?\')" href="compras/${data.id}/destroy" class="btn btn-danger" data-bs-toggle="tooltip" title="Eliminar"><i class="fa fa-bitbucket"></i></a>`;
                             }
-                            
-                            button+="</div>";
+
+                            button +=
+                                `<a href="compras/${data.id}/print" target="_blank" class="btn btn-warning" data-bs-toggle="tooltip" title="Imprimir Recibo Compra" ><i class="fa fa-file-pdf-o"></i></a> `;
+
+                            button += "</div>";
                             return button;
 
                         }
@@ -285,7 +286,7 @@
                     if (response.status === 200) {
                         var fecha = moment(response.data.compras.compra_fecha)
                             .format('DD-MM-YYYY');
-                        let observacion_show=response.data.compras.observacion||''
+                        let observacion_show = response.data.compras.observacion || ''
                         $("#display_observacion").hide();
                         $('#proveedor').text(response.data.compras.proveedor);
                         $('#tipo').text(response.data.compras.tipo);
@@ -295,11 +296,11 @@
                         // alert(fecha.isValid );
 
                         $('#total_subtotal').text(" BS. " + response.data.compras.total);
-                        if(response.data.compras.observacion){
+                        if (response.data.compras.observacion) {
                             $("#display_observacion").show();
-                        $('#observacion').html(observacion_show.replace(/(\r\n|\r|\n)/g,'<br>'));
+                            $('#observacion').html(observacion_show.replace(/(\r\n|\r|\n)/g, '<br>'));
 
-                            }
+                        }
                         // $('#purchase_date').text(response.data.purchase.purchase_date);
                         // $('#supplier').text(response.data.purchase.supplier);
                         // $('#purchase').text(response.data.purchase.purchase);
