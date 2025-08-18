@@ -102,7 +102,7 @@ class VentaController extends Controller
         'precio_unitario',
         'precio_venta',
         
-        DB::raw("CONCAT(productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
+        DB::raw("CONCAT(productos.codigo, ' - ',productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
     )->whereNull('productos.deleted_at')
     ->get();
 
@@ -380,7 +380,7 @@ class VentaController extends Controller
                 'venta_detalles.subtotal',
                // 'ventas.venta_fecha',
                 DB::raw("TO_CHAR(venta_detalles.created_at, 'YYYY-MM-DD') as fecha"),
-                 DB::raw("CONCAT(productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
+                 DB::raw("CONCAT(productos.codigo, ' - ',productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
                 //'venta_detalles.cantidad_total'
                 
             )
@@ -406,7 +406,7 @@ class VentaController extends Controller
         'cantidad',
         'precio_unitario',
         'precio_venta',
-        DB::raw("CONCAT(productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
+        DB::raw("CONCAT(productos.codigo, ' - ',productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
     )
     ->whereNull('productos.deleted_at')
     ->get();
