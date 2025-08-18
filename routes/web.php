@@ -22,6 +22,7 @@ use App\Http\Controllers\VentaDetalleController;
 Route::get('/', [InvitadosController::class, 'farmacia'])->name('invitados.farmacia');
 Route::get('/servicios', [InvitadosController::class, 'servicios'])->name('invitados.servicios');
 Route::get('/pdf', [InvitadosController::class, 'print'])->name('invitados.print');
+Route::get('/pdfRecibo', [InvitadosController::class, 'printRecibo'])->name('invitados.printRecibo');
 
 Route::middleware('auth', 'verified')->group(function () {
    // Pagina Inicial

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Compra;
 use App\Models\Producto;
 use App\Models\Venta;
 use App\Models\VentaDetalle;
@@ -170,6 +171,62 @@ class InvitadosController extends Controller
             ->setOption('margin-bottom', '5mm')
             ->setOption('margin-right', '0mm')
             ->setOption('margin-left', '5mm')
+            ->setOption('disable-smart-shrinking', true)
+            ->setOption('encoding', 'utf-8')
+            ->setOption('no-stop-slow-scripts', true)
+            ->stream('recibo');
+    }
+
+    public function printRecibo()
+    {
+        $id = 15;
+        $compras = Compra::find($id);
+
+        $id_recibo = str_pad($compras->id, 6, '0', STR_PAD_LEFT);
+        $compras->compra_fecha = Carbon::parse($compras->compra_fecha)->format('d-m-Y H:i:s');
+        $compras->user_id = str_pad($compras->user_id, 4, '0', STR_PAD_LEFT);
+        $compras->numero_compra = str_pad($compras->numero_compra, 6, '0', STR_PAD_LEFT);
+
+        // literal
+        $formatter = new \NumberFormatter("es", \NumberFormatter::SPELLOUT);
+
+        $entero = floor($compras->total);
+        $decimal = round(($compras->total - $entero) * 100);
+
+        $literalEntero = mb_strtoupper($formatter->format($entero), 'UTF-8');
+
+        $totalLiteral = trim($literalEntero . ' ' . str_pad($decimal, 2, '0', STR_PAD_LEFT) . '/100 ' . mb_strtoupper('BOLIVIANOS', 'UTF-8'));
+
+        $compra_detalles = DB::table('compra_detalles')
+            ->select(
+                'compra_detalles.id as id',
+                'productos.producto',
+                'compra_detalles.cantidad',
+                'compra_detalles.precio_unitario',
+                'compra_detalles.subtotal'
+            )
+            ->join('productos', 'productos.id', '=', 'compra_detalles.producto_id')
+            ->where('compra_detalles.compra_id', "=", $id)
+            ->whereNull('compra_detalles.deleted_at')
+            ->orderBy('compra_detalles.id', 'asc')
+            ->get();
+
+        // return $compras;
+        // return $compra_detalles;
+        return \PDF::loadView(
+            'pdf.appRecibo',
+            compact(
+                'compras',
+                'id_recibo',
+                'compra_detalles',
+                'totalLiteral'
+            )
+        )
+            ->setPaper('letter')
+            ->setOption('margin-top', '10mm')
+            ->setOption('margin-bottom', '10mm')
+            ->setOption('margin-right', '10mm')
+            ->setOption('margin-left', '15mm')
             ->setOption('disable-smart-shrinking', true)
             ->setOption('encoding', 'utf-8')
             ->setOption('no-stop-slow-scripts', true)
