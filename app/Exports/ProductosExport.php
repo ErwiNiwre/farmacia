@@ -34,6 +34,8 @@ class ProductosExport implements FromCollection, WithHeadings, WithTitle, WithSt
             ->map(function ($producto) {
                 return [
                     'id'              => $producto->id,
+                    'codigo'          => $producto->codigo,
+                    'tipo'            => $producto->tipo_producto == 'M' ? 'Medicamento' : 'Insumo',
                     'producto'        => $producto->producto,
                     'generico'        => $producto->generico,
                     'concentracion'   => $producto->concentracion,
@@ -44,7 +46,11 @@ class ProductosExport implements FromCollection, WithHeadings, WithTitle, WithSt
                     'precio_venta'    => $producto->precio_venta,
                     'stock'           => $producto->stock_minimo,
                     'cantidad'        => $producto->cantidad,
-                    'estado'          => $producto->estado,
+                    'estado'          => match ($producto->estado) {
+                        'M' => 'Menor-Stock',
+                        'D' => 'Disponible',
+                        default => 'Agotado',
+                    }
                 ];
             });
     }
@@ -53,6 +59,8 @@ class ProductosExport implements FromCollection, WithHeadings, WithTitle, WithSt
     {
         return [
             'Id',
+            'Codigo',
+            'Tipo',
             'Nombre Comercial',
             'Nombre Generico',
             'Concentracion',
@@ -92,7 +100,7 @@ class ProductosExport implements FromCollection, WithHeadings, WithTitle, WithSt
                 }
 
                 // Aplicar color de fondo y bordes a los encabezados (fila 1)
-                $event->sheet->getStyle('A1:L1')->applyFromArray([
+                $event->sheet->getStyle('A1:N1')->applyFromArray([
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                         'startColor' => ['rgb' => 'BDD7EE'], // azul claro
