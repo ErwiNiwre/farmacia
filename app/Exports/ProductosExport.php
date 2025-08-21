@@ -95,7 +95,7 @@ class ProductosExport implements FromCollection, WithHeadings, WithTitle, WithSt
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 // Ajuste automático de columnas (A a L = 12 columnas)
-                foreach (range('A', 'L') as $col) {
+                foreach (range('A', 'N') as $col) {
                     $event->sheet->getDelegate()->getColumnDimension($col)->setAutoSize(true);
                 }
 
