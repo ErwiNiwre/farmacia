@@ -54,7 +54,7 @@ class ProductosRangeExport implements FromCollection, WithHeadings, WithTitle, W
                     'fac_codigo'          => $producto->codigo,
                     'fac_serie'           => '0',
                     'fac_imei'            => '0',
-                    'fac_descripcion'     => $producto->producto . ' ' . $producto->concentracion . ' ' . $producto->presentacion . ' ' . $producto->marca,
+                    'fac_descripcion'     => $producto->producto . ' - ' . $producto->concentracion . ' - ' . $producto->presentacion . ' - ' . $producto->marca,
                     'fac_precio_unitario' => $producto->precio_venta,
                     'fac_categoria'       => $producto->tipo_producto == 'M' ? 'MEDICAMENTOS' : 'INSUMOS',
                     'fac_cod_prod_sin'    => $producto->codigo_sin,

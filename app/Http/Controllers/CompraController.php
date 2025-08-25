@@ -37,16 +37,16 @@ class CompraController extends Controller
 
         $compras = Compra::all();
         $detalle = Compra::query()
-    ->select(
-        'compras.id',
-        'compras.compra_fecha',
-        'compras.numero_compra',
-        'compras.proveedor',
-        'compras.tipo',
-        'compras.total',
-        'compras.observacion',
-        DB::raw('MAX(productos.clasificacion) as clasificacion'),
-        DB::raw("
+            ->select(
+                'compras.id',
+                'compras.compra_fecha',
+                'compras.numero_compra',
+                'compras.proveedor',
+                'compras.tipo',
+                'compras.total',
+                'compras.observacion',
+                DB::raw('MAX(productos.clasificacion) as clasificacion'),
+                DB::raw("
             BOOL_AND(
                 CASE 
                     WHEN productos.clasificacion = '1' THEN true
@@ -54,19 +54,19 @@ class CompraController extends Controller
                 END
             ) as estado
         ")
-    )
-    ->join('compra_detalles', 'compra_detalles.compra_id', '=', 'compras.id')
-    ->join('productos', 'productos.id', '=', 'compra_detalles.producto_id')
-    ->groupBy(
-        'compras.id',
-        'compras.compra_fecha',
-        'compras.numero_compra',
-        'compras.proveedor',
-        'compras.tipo',
-        'compras.total',
-        'compras.observacion'
-    )
-    ->get();
+            )
+            ->join('compra_detalles', 'compra_detalles.compra_id', '=', 'compras.id')
+            ->join('productos', 'productos.id', '=', 'compra_detalles.producto_id')
+            ->groupBy(
+                'compras.id',
+                'compras.compra_fecha',
+                'compras.numero_compra',
+                'compras.proveedor',
+                'compras.tipo',
+                'compras.total',
+                'compras.observacion'
+            )
+            ->get();
 
         return view(
             'compras.index',
@@ -95,20 +95,20 @@ class CompraController extends Controller
 
         //$producto = Producto::All();
         $producto = DB::table('productos')
-    ->join('concentraciones', 'productos.concentracion_id', '=', 'concentraciones.id')
-    ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
-    ->join('presentaciones', 'productos.presentacion_id', '=', 'presentaciones.id')
-    ->select(
-        'productos.id',
-        'barras',
-        'producto',
-        'tipo_producto',
-        'codigo',
-        'cantidad',
-        'precio_unitario',
-        DB::raw("CONCAT(productos.codigo, ' - ',productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
-    )->whereNull('productos.deleted_at')
-    ->get();
+            ->join('concentraciones', 'productos.concentracion_id', '=', 'concentraciones.id')
+            ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
+            ->join('presentaciones', 'productos.presentacion_id', '=', 'presentaciones.id')
+            ->select(
+                'productos.id',
+                'barras',
+                'producto',
+                'tipo_producto',
+                'codigo',
+                'cantidad',
+                'precio_unitario',
+                DB::raw("CONCAT(productos.codigo, ' - ',productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
+            )->whereNull('productos.deleted_at')
+            ->get();
 
         $permissions = Compra::get();
 
@@ -142,7 +142,7 @@ class CompraController extends Controller
         DB::beginTransaction();
         try {
             $compra = new Compra();
-           
+
             $compra->compra_fecha = date("Y-m-d H:i:s");
             $compra->user_id =  $session_auth->id;
             $compra->proveedor = Str::upper(preg_replace('/\s+/', ' ', trim($request->proveedor)));
@@ -154,14 +154,14 @@ class CompraController extends Controller
                 $compra->total = $request->total;
             else
                 $compra->total = 0;
-             $compra->created_by = $session_auth->id;
+            $compra->created_by = $session_auth->id;
             $compra->observacion = $request->observacion;
 
             $compra->save();
 
 
             $compra_detalles = json_decode($request->input('productos'), true);
-            
+
             $mayoresPrecioUnidad = collect($compra_detalles)
                 ->groupBy('producto_id')
                 ->map(function ($items) {
@@ -194,12 +194,11 @@ class CompraController extends Controller
                 if ($detalle['subtotal'] == ($compraDetalle->precio_unitario * $compraDetalle->cantidad)) {
 
                     $compraDetalle->subtotal = $detalle['subtotal'];
-                }else{
+                } else {
                     $compraDetalle->subtotal = round($compraDetalle->precio_unitario * $compraDetalle->cantidad, 2);
-
                 }
-                
-               // dd($compraDetalle->subtotal);
+
+                // dd($compraDetalle->subtotal);
                 $compraDetalle->save();
                 // $this->kardex($compra, $compraDetalle, 'A');
                 Kardex::registrarKardex([
@@ -212,12 +211,11 @@ class CompraController extends Controller
                     'user_id'         => $session_auth->id
                 ]);
                 // $producto->cantidad = $producto->cantidad + $detalle['cantidad'];
-                if($producto->clasificacion==1){
+                if ($producto->clasificacion == 1) {
                     $compraDetalle->cantidad_total = 0;
                     $compraDetalle->save();
-                    
-                }else{
-                $producto->ajustarStock($detalle['cantidad']);
+                } else {
+                    $producto->ajustarStock($detalle['cantidad']);
                 }
 
 
@@ -326,32 +324,32 @@ class CompraController extends Controller
                 'compra_detalles.cantidad',
                 'compra_detalles.subtotal',
                 'compra_detalles.cantidad_total',
-                 DB::raw("CONCAT(productos.codigo, ' - ',productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
+                DB::raw("CONCAT(productos.codigo, ' - ',productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
             )
 
             ->join('productos', 'productos.id', '=', 'compra_detalles.producto_id')
             ->join('concentraciones', 'productos.concentracion_id', '=', 'concentraciones.id')
-    ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
-    ->join('presentaciones', 'productos.presentacion_id', '=', 'presentaciones.id')
+            ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
+            ->join('presentaciones', 'productos.presentacion_id', '=', 'presentaciones.id')
             ->where('compra_detalles.compra_id', "=", $id)
             ->whereNull('compra_detalles.deleted_at')
             ->orderBy('compra_detalles.id', 'desc')
             ->get();
-         $producto = DB::table('productos')
-    ->join('concentraciones', 'productos.concentracion_id', '=', 'concentraciones.id')
-    ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
-    ->join('presentaciones', 'productos.presentacion_id', '=', 'presentaciones.id')
-    ->select(
-        'productos.id',
-        'barras',
-        'producto',
-        'tipo_producto',
-        'codigo',
-        'cantidad',
-        'precio_unitario',
-        DB::raw("CONCAT(productos.codigo, ' - ', productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
-    )->whereNull('productos.deleted_at')
-    ->get();
+        $producto = DB::table('productos')
+            ->join('concentraciones', 'productos.concentracion_id', '=', 'concentraciones.id')
+            ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
+            ->join('presentaciones', 'productos.presentacion_id', '=', 'presentaciones.id')
+            ->select(
+                'productos.id',
+                'barras',
+                'producto',
+                'tipo_producto',
+                'codigo',
+                'cantidad',
+                'precio_unitario',
+                DB::raw("CONCAT(productos.codigo, ' - ',productos.producto, ' - ', concentraciones.concentracion, ' - ', marcas.marca, ' - ', presentaciones.presentacion) AS descripcion")
+            )->whereNull('productos.deleted_at')
+            ->get();
         $permissions = Compra::get();
 
         // return $especialidad;
@@ -491,10 +489,10 @@ class CompraController extends Controller
                         'user_id'         => $compras->user_id
                     ]);
                     $productos->save();
-                    
-                    if($productos->clasificacion==0){
-                $productos->ajustarStock(-$compraDetalle->cantidad);
-                }
+
+                    if ($productos->clasificacion == 0) {
+                        $productos->ajustarStock(-$compraDetalle->cantidad);
+                    }
                 }
             }
             CompraDetalle::where('compra_id', '=', $compras->id)->delete();
@@ -502,5 +500,70 @@ class CompraController extends Controller
 
             return redirect()->route('compras.index');
         }
+    }
+
+    public function print($id)
+    {
+        $compras = Compra::find($id);
+
+        if (!$compras) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'No hay datos de la Compra'
+            ], 404);
+        }
+
+
+        $compra_detalles = DB::table('compra_detalles')
+            ->select(
+                'compra_detalles.id as id',
+                DB::raw("CONCAT(productos.producto, ' - ', concentraciones.concentracion, ' - ', presentaciones.presentacion, ' - ', marcas.marca) as producto"),
+                'compra_detalles.cantidad',
+                'compra_detalles.precio_unitario',
+                'compra_detalles.subtotal'
+            )
+            ->join('productos', 'productos.id', '=', 'compra_detalles.producto_id')
+            ->join('concentraciones', 'concentraciones.id', '=', 'productos.concentracion_id')
+            ->join('marcas', 'marcas.id', '=', 'productos.marca_id')
+            ->join('presentaciones', 'presentaciones.id', '=', 'productos.presentacion_id')
+            ->where('compra_detalles.compra_id', "=", $id)
+            ->whereNull('compra_detalles.deleted_at')
+            ->orderBy('compra_detalles.id', 'asc')
+            ->get();
+
+        $id_recibo = str_pad($compras->id, 6, '0', STR_PAD_LEFT);
+        $compras->compra_fecha = Carbon::parse($compras->compra_fecha)->format('d-m-Y H:i:s');
+        $compras->user_id = str_pad($compras->user_id, 4, '0', STR_PAD_LEFT);
+        $compras->numero_compra = str_pad($compras->numero_compra, 6, '0', STR_PAD_LEFT);
+
+        // literal
+        $formatter = new \NumberFormatter("es", \NumberFormatter::SPELLOUT);
+
+        $entero = floor($compras->total);
+        $decimal = round(($compras->total - $entero) * 100);
+
+        $literalEntero = mb_strtoupper($formatter->format($entero), 'UTF-8');
+
+        $totalLiteral = trim($literalEntero . ' ' . str_pad($decimal, 2, '0', STR_PAD_LEFT) . '/100 ' . mb_strtoupper('BOLIVIANOS', 'UTF-8'));
+
+        // return $venta_detalles;
+        return \PDF::loadView(
+            'pdf.appRecibo',
+            compact(
+                'compras',
+                'id_recibo',
+                'compra_detalles',
+                'totalLiteral'
+            )
+        )
+            ->setPaper('letter')
+            ->setOption('margin-top', '10mm')
+            ->setOption('margin-bottom', '10mm')
+            ->setOption('margin-right', '10mm')
+            ->setOption('margin-left', '15mm')
+            ->setOption('disable-smart-shrinking', true)
+            ->setOption('encoding', 'utf-8')
+            ->setOption('no-stop-slow-scripts', true)
+            ->stream('recibo');
     }
 }
