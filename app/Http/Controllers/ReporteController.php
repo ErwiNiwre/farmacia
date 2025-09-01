@@ -65,7 +65,7 @@ class ReporteController extends Controller
         ->whereBetween('v.venta_fecha', [$fecha_inicio, $fecha_fin])
         ->whereNull('vd.deleted_at')
         ->whereNull('v.deleted_at')
-        ->when($tipo_movimiento != 'Todas', function($query) use ($tipo_movimiento) {
+        ->when($tipo_movimiento != 'Todos', function($query) use ($tipo_movimiento) {
             
             $query->where('v.tipo', $tipo_movimiento);
         })
@@ -116,7 +116,7 @@ class ReporteController extends Controller
     ->whereNull('vd.deleted_at')
     ->whereNull('v.deleted_at')
     ->whereBetween('v.venta_fecha', [$fecha_inicio, $fecha_fin]) 
-     ->when($tipo_movimiento != 'Todas', function($query) use ($tipo_movimiento) {
+     ->when($tipo_movimiento != 'Todos', function($query) use ($tipo_movimiento) {
             
             $query->where('v.tipo', $tipo_movimiento);
         })
@@ -170,7 +170,7 @@ class ReporteController extends Controller
     ->where('cd.vencimiento', '<', now()) 
     ->where('cd.cantidad_total', '>', 0)  
     ->where('p.clasificacion', '=', 0)   
-    ->when($tipo_movimiento != 'Todas', function($query) use ($tipo_movimiento) {
+    ->when($tipo_movimiento != 'Todos', function($query) use ($tipo_movimiento) {
             
             $query->where('c.tipo', $tipo_movimiento);
         })
@@ -217,7 +217,7 @@ $productos_por_caducar = DB::table('compra_detalles as cd')
     )
     ->whereBetween('cd.vencimiento', [now(), $fecha_limite]) 
     ->where('cd.cantidad_total', '>', 0)  
-    ->when($tipo_movimiento != 'Todas', function($query) use ($tipo_movimiento) {
+    ->when($tipo_movimiento != 'Todos', function($query) use ($tipo_movimiento) {
             
             $query->where('c.tipo', $tipo_movimiento);
         })
@@ -273,7 +273,7 @@ $productos_por_caducar = DB::table('compra_detalles as cd')
         'pr.presentacion'
     )
     ->whereBetween('c.compra_fecha', [$fecha_inicio, $fecha_fin])
-    ->when($tipo_movimiento != 'Todas', function($query) use ($tipo_movimiento) {
+    ->when($tipo_movimiento != 'Todos', function($query) use ($tipo_movimiento) {
         $query->where('c.tipo', $tipo_movimiento);
     })
     ->whereNull('cd.deleted_at')
@@ -324,7 +324,7 @@ $productos_por_caducar = DB::table('compra_detalles as cd')
         DB::raw('SUM(cd.cantidad) as cantidad_total')
     )
     ->whereBetween('co.compra_fecha', [$fecha_inicio, $fecha_fin])
-    ->when($tipo_movimiento != 'Todas', function($query) use ($tipo_movimiento) {
+    ->when($tipo_movimiento != 'Todos', function($query) use ($tipo_movimiento) {
         $query->where('co.tipo', $tipo_movimiento);
     })
     ->groupBy('p.id', 'p.producto', 'p.codigo', 'c.concentracion', 'm.marca', 'pr.presentacion', 'co.tipo', 'co.proveedor')
