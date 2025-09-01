@@ -122,6 +122,13 @@
                 </a>
             </li>
         @endcan
+        
+            <li>
+                <a href="{{ route('reportes.index') }}">
+                    <i class="fa fa-line-chart fa-stethoscope"></i>Reportes
+                </a>
+            </li>
+       
         {{-- 
         <li>
             <a href="{{ route('patients.index') }}">
