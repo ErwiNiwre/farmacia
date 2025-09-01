@@ -13,6 +13,7 @@ use App\Http\Controllers\CompraDetalleController;
 use App\Http\Controllers\InvitadosController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\VentaDetalleController;
+use App\Http\Controllers\ReporteController;
 
 // Route::get('/', function () {
 //    return view('extranet.welcome');
@@ -94,4 +95,13 @@ Route::middleware('auth', 'verified')->group(function () {
    Route::put('/ventaDetalle/store', [VentaDetalleController::class, 'store'])->name('ventaDetalle.store');
    Route::put('/ventaDetalle/{ventaDetalle}', [VentaDetalleController::class, 'update'])->name('ventaDetalle.update');
    Route::get('/ventaDetalle/{ventaDetalle}/destroy', [VentaDetalleController::class, 'destroy'])->name('ventaDetalle.destroy');
+
+   //ruta para Reportes
+   Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
+    Route::get('/reportes/reporteVentasFecha/{fecha_inicio}/{fecha_fin}/{formato_ventas_fecha}/{tipo_movimiento}', [ReporteController::class, 'reporteVentasFecha'])->name('reportes.reporteVentasFecha');
+     Route::get('/reportes/reporteProductosVendidos/{fecha_inicio}/{fecha_fin}/{formato}/{tipo_movimiento}/{cantidad}', [ReporteController::class, 'reporteProductosVendidos'])->name('reportes.reporteProductosVendidos');
+     Route::get('/reportes/reporteProductosCaducados/{tipo_movimiento}/{formato}', [ReporteController::class, 'reporteProductosCaducados'])->name('reportes.reporteProductosCaducados');
+      Route::get('/reportes/reporteProductosPorCaducar/{fecha_limite}/{tipo_movimiento}/{formato}', [ReporteController::class, 'reporteProductosPorCaducar'])->name('reportes.reporteProductosPorCaducar');
+   Route::get('/reportes/reporteComprasFecha/{fecha_inicio}/{fecha_fin}/{formato}/{tipo_movimiento}', [ReporteController::class, 'reporteComprasFecha'])->name('reportes.reporteComprasFecha');
+   Route::get('/reportes/reporteProductosMasComprados/{fecha_inicio}/{fecha_fin}/{formato}/{tipo_movimiento}/{cantidad}', [ReporteController::class, 'reporteProductosMasComprados'])->name('reportes.reporteProductosMasComprados');
 });
