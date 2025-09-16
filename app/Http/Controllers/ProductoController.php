@@ -420,7 +420,8 @@ class ProductoController extends Controller
             655,
             656,
             657,
-            658
+            658,
+            681
         ]; // adicionar ids de productos que no iran al sistema de facturacion
         return Excel::download(
             new ProductosRangeExport($inicio, $fin, $excluir),
