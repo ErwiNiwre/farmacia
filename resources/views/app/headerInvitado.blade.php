@@ -54,10 +54,10 @@
                 <i class="fa fa-fw fa-shopping-basket"></i>Farmacia
             </a>
         </li>
-        <li>
+        {{-- <li>
             <a href="{{ route('invitados.servicios') }}">
                 <i class="fa fa-fw fa-stethoscope"></i>Servicios
             </a>
-        </li>
+        </li> --}}
     </ul>
 </nav>

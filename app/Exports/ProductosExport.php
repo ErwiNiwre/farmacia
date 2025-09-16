@@ -32,6 +32,12 @@ class ProductosExport implements FromCollection, WithHeadings, WithTitle, WithSt
             ->orderBy('productos.id', 'asc')
             ->get()
             ->map(function ($producto) {
+                $porcentaje = (float) $producto->porcentaje;
+                if (fmod($porcentaje, 1) == 0) {
+                    $porcentajeFormatted = (int) $porcentaje;
+                } else {
+                    $porcentajeFormatted = number_format($porcentaje, 2, '.', '');
+                }
                 return [
                     'id'              => $producto->id,
                     'codigo'          => $producto->codigo,
@@ -42,7 +48,7 @@ class ProductosExport implements FromCollection, WithHeadings, WithTitle, WithSt
                     'marca'           => $producto->marca,
                     'presentacion'    => $producto->presentacion,
                     'precio_unitario' => $producto->precio_unitario,
-                    'porcentaje'      => number_format($producto->porcentaje, 0),
+                    'porcentaje'      => $porcentajeFormatted . ' %',
                     'precio_venta'    => $producto->precio_venta,
                     'stock'           => $producto->stock_minimo,
                     'cantidad'        => $producto->cantidad,
