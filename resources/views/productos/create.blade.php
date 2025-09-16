@@ -298,9 +298,9 @@
 
             $("#porcentaje").TouchSpin({
                 min: 0,
-                max: 100,
-                // step: 0.1,
-                // decimals: 2,
+                max: 500,
+                step: 0.01,
+                decimals: 2,
                 // boostat: 1,
                 // maxboostedstep: 10,
                 postfix: '%'
