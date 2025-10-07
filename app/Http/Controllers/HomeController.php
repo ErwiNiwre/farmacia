@@ -79,7 +79,7 @@ class HomeController extends Controller
                 'accion_terapeutica',
                 'unidad_medida',
                 'estado',
-                'compra_detalles.cantidad',
+                'compra_detalles.cantidad_total as cantidad',
                 'compra_detalles.precio_unitario',
                 'precio_venta',
                 'vencimiento',
@@ -92,6 +92,7 @@ class HomeController extends Controller
             ->join('unidad_medidas', 'unidad_medidas.id', '=', 'productos.unidad_medida_id')
             ->join('compra_detalles', 'compra_detalles.producto_id', '=', 'productos.id')
             ->where('tipo_producto', 'I')
+            ->where('compra_detalles.cantidad_total', '<>', 0)
             ->whereBetween('compra_detalles.vencimiento', [
                 Carbon::now()->toDateString(),
                 Carbon::now()->addDays(40)->toDateString()
