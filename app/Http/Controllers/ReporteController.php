@@ -52,6 +52,7 @@ class ReporteController extends Controller
             'v.venta_fecha',
             'v.numero_venta',
             'v.cliente',
+            'v.observacion',
             'p.codigo',
             'p.tipo_producto',
             'p.producto',
@@ -73,9 +74,13 @@ class ReporteController extends Controller
         ->get();
 
         $total = $ventas->sum('subtotal');
+        
         if ($formato_ventas_fecha == 'Excel') {
+          
         return Excel::download(new VentasFechaExport($ventas, $fecha_inicio, $fecha_fin, $tipo_movimiento,$total), 'reporte-ventas-de-fecha '.$fecha_inicio.' a '.$fecha_fin.'.xlsx');
+         // dd($ventas);
     }
+    
     return \PDF::loadView(
         'pdf.reporteVentasFecha',
         compact('ventas',
