@@ -48,9 +48,11 @@ class ReporteController extends Controller
         ->join('concentraciones as c', 'p.concentracion_id', '=', 'c.id')
         ->join('marcas as m', 'p.marca_id', '=', 'm.id')
         ->join('presentaciones as pr', 'p.presentacion_id', '=', 'pr.id')
+		->join('users as u', 'v.user_id', '=', 'u.id')
         ->select(
             'v.venta_fecha',
             'v.numero_venta',
+			'v.tipo',
             'v.cliente',
             'v.observacion',
             'p.codigo',
@@ -61,7 +63,11 @@ class ReporteController extends Controller
             'pr.presentacion',
             'vd.cantidad',
             'vd.subtotal',
-            'vd.precio_unitario'
+            'vd.precio_unitario',			
+			'v.efectivo',
+			'v.qr',
+			'v.total',
+			'u.nombre'
         )
         ->whereBetween('v.venta_fecha', [$fecha_inicio, $fecha_fin])
         ->whereNull('vd.deleted_at')
