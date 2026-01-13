@@ -99,6 +99,7 @@ Route::middleware('auth', 'verified')->group(function () {
    //ruta para Reportes
    Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
     Route::get('/reportes/reporteVentasFecha/{fecha_inicio}/{fecha_fin}/{formato_ventas_fecha}/{tipo_movimiento}', [ReporteController::class, 'reporteVentasFecha'])->name('reportes.reporteVentasFecha');
+    Route::get('/reportes/reporteVentasTotales/{fecha_inicio}/{fecha_fin}/{formato_ventas_fecha}/{tipo_movimiento}', [ReporteController::class, 'reporteVentasTotales'])->name('reportes.reporteVentasTotales');
      Route::get('/reportes/reporteProductosVendidos/{fecha_inicio}/{fecha_fin}/{formato}/{tipo_movimiento}/{cantidad}', [ReporteController::class, 'reporteProductosVendidos'])->name('reportes.reporteProductosVendidos');
      Route::get('/reportes/reporteProductosCaducados/{tipo_movimiento}/{formato}', [ReporteController::class, 'reporteProductosCaducados'])->name('reportes.reporteProductosCaducados');
       Route::get('/reportes/reporteProductosPorCaducar/{fecha_limite}/{tipo_movimiento}/{formato}', [ReporteController::class, 'reporteProductosPorCaducar'])->name('reportes.reporteProductosPorCaducar');

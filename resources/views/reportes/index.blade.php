@@ -39,7 +39,14 @@
 									</a>
 								</div>
 							</div>
-						
+						<div class="col-6">
+								<div class="bg-lightest px-30 py-40 rounded20 mb-20">
+									<span class="mdi mdi-cash d-block fs-40"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span></span>
+									<a href="#" class="text-white fw-500 fs-18"  data-bs-toggle="modal" data-bs-target="#modal-ventas-totales">
+										Ventas Totales por Fecha
+									</a>
+								</div>
+							</div>
 						
 						</div>
 					</div>					
@@ -186,6 +193,74 @@
             </form>
         </div>
     </div>
+    <!-- Modal-Exportacion-Rango-Producto -->
+    <div class="modal center-modal fade"  id="modal-ventas-totales" data-bs-backdrop="static"  tabindex="-1">
+        <div class="modal-dialog" style="max-width: 900px">
+            <form id="reporteVentasTotales" autocomplete="off">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">REPORTE DE VENTAS TOTALES POR FECHA</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            {{-- <div
+                                class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12 text-center bg-warning-light rounded p-15 mb-10 bold " style="font-size: 20px">
+                               Ingrese el rango de fecha 
+                            </div> --}}
+                         
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label class="form-label">Desde</label>
+                                            <input id="fecha_inicio_totales" class="form-control" type="date" value="{{ date('Y-m-d') }}" name="fecha_inicio" >
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label class="form-label">Hasta</label>
+                                            <input id="fecha_fin_totales" type="date" class="form-control"  value="{{ date('Y-m-d') }}" name="fecha_fin">
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                   <div class="col">
+                                  <div class="form-group">
+                                <label class="form-label">Formato</label>
+                                <select id ="formato_ventas_fecha_totales" class="form-control select2" style="width: 100%;">
+													<option selected="selected">PDF</option>
+													<option>Excel</option>
+												</select>
+                            </div>
+                              </div>
+                               <div class="col">
+                                  <div class="form-group">
+                                <label class="form-label">Tipo de Movimiento</label>
+                                <select id ="tipo_movimiento_totales" class="form-control select2" style="width: 100%;">
+													<option selected="selected">Todos</option>
+													<option>Venta</option>
+                                                    <option>Salida Directa</option>
+                                                    <option>Cuentas por Cobrar</option>
+												</select>
+                            </div>
+                              </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer modal-footer-uniform">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary float-end">Confirmar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 	<div class="modal center-modal fade"  id="modal-productos-vendidos" data-bs-backdrop="static"  tabindex="-1">
         <div class="modal-dialog" style="max-width: 900px">
             <form id="reporteProductosVendidos" autocomplete="off">
@@ -526,6 +601,9 @@
       $('.select2').select2({
         dropdownParent: $('#modal-ventas-fecha') 
     });
+    $('.select2').select2({
+        dropdownParent: $('#modal-ventas-totales') 
+    });
 
     $('#modal-productos-vendidos .select2').select2({
         dropdownParent: $('#modal-productos-vendidos')
@@ -590,7 +668,29 @@
 
                 $('#modal-ventas-fecha').modal('hide');
             });
+        $('#reporteVentasTotales').on('submit', function(event) {
+           
+                event.preventDefault();
 
+                let fecha_inicio = $('#fecha_inicio_totales').val();
+                let fecha_fin = $('#fecha_fin_totales').val();
+                let tipo_formato = $('#formato_ventas_fecha_totales').val();
+				let tipo_movimiento = $('#tipo_movimiento_totales').val();
+
+                if (!fecha_inicio || !fecha_fin) {
+                    alert('Ingrese fechas validas');
+                    return;
+                }
+
+                let url = "{{ route('reportes.reporteVentasTotales', ['fecha_inicio' => ':fecha_inicio', 'fecha_fin' => ':fecha_fin', 'formato_ventas_fecha' => ':formato_ventas_fecha', 'tipo_movimiento' => ':tipo_movimiento']) }}";
+                url = url.replace(':fecha_inicio', fecha_inicio).replace(':fecha_fin', fecha_fin).replace(':formato_ventas_fecha', tipo_formato)
+				.replace(':tipo_movimiento', tipo_movimiento);
+                
+                console.log(url);
+                window.open(url, '_blank');
+
+                $('#modal-ventas-totales').modal('hide');
+            });
             
             $('#reporteProductosCaducos').on('submit', function(event) {
                 event.preventDefault();
