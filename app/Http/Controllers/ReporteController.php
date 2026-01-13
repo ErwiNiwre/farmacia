@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Exports\VentasFechaExport;
+use App\Exports\VentasTotalesExport;
 use App\Exports\ProductosVentasExport;
 use App\Exports\ProductosCaducadosExport;
 use App\Exports\ProductosPorCaducarExport;
@@ -48,9 +49,11 @@ class ReporteController extends Controller
         ->join('concentraciones as c', 'p.concentracion_id', '=', 'c.id')
         ->join('marcas as m', 'p.marca_id', '=', 'm.id')
         ->join('presentaciones as pr', 'p.presentacion_id', '=', 'pr.id')
+		->join('users as u', 'v.user_id', '=', 'u.id')
         ->select(
             'v.venta_fecha',
             'v.numero_venta',
+			'v.tipo',
             'v.cliente',
             'v.observacion',
             'p.codigo',
@@ -61,7 +64,11 @@ class ReporteController extends Controller
             'pr.presentacion',
             'vd.cantidad',
             'vd.subtotal',
-            'vd.precio_unitario'
+            'vd.precio_unitario',			
+			'v.efectivo',
+			'v.qr',
+			'v.total',
+			'u.nombre'
         )
         ->whereBetween('v.venta_fecha', [$fecha_inicio, $fecha_fin])
         ->whereNull('vd.deleted_at')
@@ -96,6 +103,71 @@ class ReporteController extends Controller
     ->setOption('encoding', 'utf-8')
     ->setOption('no-stop-slow-scripts', true)
     ->stream('reporte-ventas.pdf');
+}
+
+   public function reporteVentasTotales($fecha_inicio, $fecha_fin, $formato_ventas_fecha, $tipo_movimiento) 
+{
+    $ventas = DB::table('ventas as v')
+        // ->join('venta_detalles as vd', 'v.id', '=', 'vd.venta_id')
+        //->join('productos as p', 'vd.producto_id', '=', 'p.id')
+        // ->join('concentraciones as c', 'p.concentracion_id', '=', 'c.id')
+        // ->join('marcas as m', 'p.marca_id', '=', 'm.id')
+        // ->join('presentaciones as pr', 'p.presentacion_id', '=', 'pr.id')
+		 ->join('users as u', 'v.user_id', '=', 'u.id')
+        ->select(
+            'v.venta_fecha',
+            'v.numero_venta',
+			'v.tipo',
+            'v.cliente',
+            'v.observacion',
+            // 'p.codigo',
+            // 'p.tipo_producto',
+            // 'p.producto',
+            // 'c.concentracion',
+            // 'm.marca',
+            // 'pr.presentacion',
+            // 'vd.cantidad',
+            // 'vd.subtotal',
+            // 'vd.precio_unitario',			
+			'v.efectivo',
+			'v.qr',
+			'v.total',
+			'u.nombre'
+        )
+        ->whereBetween('v.venta_fecha', [$fecha_inicio, $fecha_fin])
+        //->whereNull('vd.deleted_at')
+        ->whereNull('v.deleted_at')
+        ->when($tipo_movimiento != 'Todos', function($query) use ($tipo_movimiento) {
+            
+            $query->where('v.tipo', $tipo_movimiento);
+        })
+        ->orderBy('v.venta_fecha', 'desc')
+        ->get();
+
+        $total = $ventas->sum('total');
+        
+        if ($formato_ventas_fecha == 'Excel') {
+          
+        return Excel::download(new VentasTotalesExport($ventas, $fecha_inicio, $fecha_fin, $tipo_movimiento,$total), 'reporte-ventas-totales-de-fecha '.$fecha_inicio.' a '.$fecha_fin.'.xlsx');
+      
+         // dd($ventas);
+    }
+    
+    return \PDF::loadView(
+        'pdf.reporteVentasTotales',
+        compact('ventas',
+        'fecha_inicio',
+        'fecha_fin',
+        'tipo_movimiento',
+        'total'
+        )
+    )
+    ->setOption('page-size', 'Letter')   
+    //->setOption('orientation', 'Landscape') 
+    ->setOption('disable-smart-shrinking', true)
+    ->setOption('encoding', 'utf-8')
+    ->setOption('no-stop-slow-scripts', true)
+    ->stream('reporte-ventas-Totales.pdf');
 }
 
    public function reporteProductosVendidos($fecha_inicio, $fecha_fin,$formato,$tipo_movimiento ,$cantidad) 
