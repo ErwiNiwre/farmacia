@@ -32,7 +32,6 @@
                                     <th style="width: 15%;">Obaservacion</th>
                                     <th style="width: 10%;">Tipo de Movimiento</th>
                                     <th style="width: 10%;">Método de Pago</th>
-
                                     <th style="width: 10%; "class=" text-end">Total</th>
                                     <th style="width: 15%;">Acciones</th>
                                     <th style="width: 5%;" class="text-center">Recibo</th>
@@ -60,7 +59,6 @@
             </div>
         </div>
     </div>
-
     <!-- Modal-Show-purchase -->
     <div class="modal center-modal fade" id="modal-show-ventas" data-bs-backdrop="static" tabindex="-1">
         <div class="modal-dialog" style="max-width: 900px">
@@ -82,10 +80,7 @@
                     </div>
                     <div class="row mb-3">
                         <div class="row invoice-info">
-
                             <div class="col-md-6 invoice-col">
-
-
                                 <address>
                                     <strong class="text-blue fs-20">Cliente: </strong><strong class="text-blue fs-20"
                                         id="cliente"></strong> <br>
@@ -93,10 +88,8 @@
                                         class="text-blue fs-20" id="numero_venta"></strong> <br>
                                     <strong class="text-blue fs-20">Metodo de Pago: </strong><strong class="text-blue fs-20"
                                         id="metodo_pago"> </strong> <br>
-
                                 </address>
                                 <address id="display_observacion" style="display: none">
-
                                     <strong class="text-blue fs-30">Observación </strong><strong class="text-blue fs-20">
                                     </strong><br>
                                     <strong class="text-blue fs-20"></strong><strong class="text-blue fs-20"
@@ -106,7 +99,6 @@
                             </div>
                             <!-- /.col -->
                             <div class="col-md-4 invoice-col text-end">
-
                                 <address>
                                     <strong class="text-blue fs-24">TOTAL </strong><br>
                                     <strong id="total" class="text-blue fs-20"> </strong><br>
@@ -122,7 +114,6 @@
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 col-xxxl-12">
                             <div class="table-responsive">
-
                                 <table id="tbl_venta_detalles" class="table table-bordered" style="width: 100%;">
                                     <thead>
                                         <tr>
@@ -133,7 +124,6 @@
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
-
                                 </table>
                             </div>
                         </div>
@@ -143,7 +133,6 @@
                             <div class="total-payment">
                                 <h3><b id="total_subtotal"></b></h3>
                             </div>
-
                         </div>
                         <!-- /.col -->
                     </div>
@@ -154,8 +143,6 @@
             </div>
         </div>
     </div>
-
-
     <!-- modal Area -->
     <div class="modal fade" id="modal-eliminar" data-bs-backdrop="static">
         <div class="modal-dialog" role="document">
@@ -224,15 +211,10 @@
                     {
                         "data": "metodo_pago"
                     },
-
-
-
                     {
                         "data": "total",
                         className: 'text-end'
                     },
-
-
                     {
                         "mData": null,
                         orderable: false,
@@ -278,9 +260,6 @@
                             return `<a href="ventas/${data.id}/print" target="_blank"  id="btn_print_ventas" class="btn btn-warning" data-bs-toggle="tooltip" title="Imprimir Recibo" ><i class="fa fa-file-pdf-o" ></i></a> `;
                         }
                     }
-
-
-
                 ],
                 "data": ventas,
                 "columnDefs": [{
@@ -305,9 +284,6 @@
                 "language": {
                     "url": "{{ asset('lang/datatable.es-ES.json') }}"
                 },
-
-
-
             });
             table_ventas.on('draw', function() {
                 const tooltipTriggerList = [].slice.call(document.querySelectorAll(
@@ -322,24 +298,18 @@
                 $(this).html('<input type="text" class="form-control shadow" placeholder="' + title +
                     '" />');
             });
-
             $(document).on('click', '#btn_delete_ventas', function() {
                 event.preventDefault();
                 var id = $(this).val();
                 $('#btn_eliminar').val(id)
                 $("#modal-eliminar").modal('show');
                 //toggleeditPurchaseDetailButton();
-
-
-
             });
 
             $(document).on('click', '#btn_eliminar', function() {
                 event.preventDefault();
                 var id = $(this).val();
                 $('#modal-eliminar').modal('hide')
-
-
                 $.ajax({
                     type: "GET",
                     url: "{{ route('ventas.destroy', ':id') }}".replace(':id', id),
@@ -359,13 +329,9 @@
                 });
 
             });
-
-
         });
 
         function modalVentas(id) {
-
-
             $.ajax({
                 type: "GET",
                 url: "{{ route('ventas.show', ':id') }}".replace(':id', id),
@@ -375,7 +341,6 @@
                         // console.log(response.data.ventas[0].venta_fecha);
                         var fecha = moment(response.data.ventas[0].venta_fecha)
                             .format('DD-MM-YYYY');
-
                         $("#display_observacion").hide();
                         var metodo_pago = response.data.ventas[0].metodo_pago;
                         // if(metodo_pago=='E')
@@ -399,10 +364,7 @@
                             $("#display_observacion").show();
                             $('#observacion').html(response.data.ventas[0].observacion.replace(/(\r\n|\r|\n)/g,
                                 '<br>'));
-                        }
-                        // $('#purchase_date').text(response.data.purchase.purchase_date);
-                        // $('#supplier').text(response.data.purchase.supplier);
-                        // $('#purchase').text(response.data.purchase.purchase);
+                        }                        
                         var tbody = $('#tbl_venta_detalles tbody');
                         tbody.empty();
 
@@ -420,9 +382,7 @@
                                     </tr>
                                 `;
                             tbody.append(row);
-                        });
-
-                        // $('#amount').text(response.data.purchase.amount+" Bs.");
+                        });                     
                     }
 
                     $('#modal-show-ventas').modal('show');

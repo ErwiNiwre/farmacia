@@ -76,11 +76,8 @@
                                             name="efectivo" data-bts-button-down-class="btn btn-secondary"
                                             data-bts-button-up-class="btn btn-secondary">
                                         {!! $errors->first('efectivo', '<small class="text-danger">:message</small>') !!}
-
                                     </div>
                                 </div>
-
-
                                 <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 col-xl-3 col-xxl-3 col-xxxl-3">
                                     <div id="display_qr" style="display:none" class="form-group">
                                         <label class="form-label">QR</label>
@@ -88,11 +85,8 @@
                                             data-bts-button-down-class="btn btn-secondary"
                                             data-bts-button-up-class="btn btn-secondary">
                                         {!! $errors->first('qr', '<small class="text-danger">:message</small>') !!}
-
-
                                     </div>
                                 </div>
-
                                 <div
                                     class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 col-xxl-4 col-xxxl-4 badge badge-success text-center">
 
@@ -100,33 +94,24 @@
                                 </div>
                             </div>
                             <div class="row" id="observacion_section" style="display: none">
-
                                 <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-xxl-5 col-xxxl-5">
                                     <div class="form-group">
                                         <label class="form-label">Observacion</label>
                                         <textarea type="text" id="observacion" name="observacion" class="form-control" placeholder="Observacion"> </textarea>
-
                                     </div>
                                 </div>
-
-
                             </div>
                         </div>
-
                     </div>
-
             </div>
-
             <div class="box">
                 <div class="box-body wizard-content">
                     <div class="middle">
-                        <h5 class="box-title text-info mb-3"><i class="fa fa-file-text-o me-15"></i>Detalle de la
-                            Compra</h5>
+                        <h5 class="box-title text-info mb-3"><i class="fa fa-file-text-o me-15"></i>Detalle de la Compra
+                        </h5>
                     </div>
                     <hr class="my-15">
                     <section>
-
-
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -173,9 +158,7 @@
                                             <th class="text-center">Stock<br>Registrado</th>
                                             <th class="text-center">Cantidad</th>
                                             <th class="text-center">Precio/Unidad(BS)</th>
-
                                             <th class="text-center">SubTotal(BS)</th>
-
                                             <th class="text-center">Baja</th>
                                         </tr>
                                     </thead>
@@ -195,8 +178,6 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
             <div class="box-footer text-end">
                 <a href="{{ route('ventas.index') }}" class="btn btn-warning me-1"><i class="ti-trash"></i> Cancelar</a>
@@ -239,40 +220,25 @@
 
                     if (indice == result[atributo])
                         result_producto = result;
-
-
                 });
-
-
                 return result_producto;
-
             }
-
-
             $('#barras').keydown(function(event) {
-
                 var resul_producto_id = "";
-
                 if (event.keyCode == 13) {
                     var productos = busquedaProductosList($("#barras").val(), "barras");
-
-
-
-                    // alert(productos.cantidad-1+'>'+0)
                     if (productos) {
                         if (parseFloat(productos.cantidad - 1) >= 0) {
                             if (verificarProductoDt(productos.id) == false) {
-
-
-
-                                //alert(productos.precio_venta);
                                 $("#producto_id").val(productos.id).change();
                                 table.row.add([
                                     $('#producto_id').find('option:selected').val(),
                                     $.trim($('#producto_id').find('option:selected').text()),
                                     '<div class="form-group">' + productos.cantidad + '</div>',
                                     `<div class="form-group"><input type="number" class="form-control" lang="en"  name="cantidades[]" value="1" min="0" step="0.1"></div>`,
-                                    `<div class="form-group"><input type="text" class="form-control" name="unidad_precios[]" value="`+productos.precio_venta+`" pattern="\d+(\.\d{1,2})?" inputmode="decimal"></div>`,
+                                    `<div class="form-group"><input type="text" class="form-control" name="unidad_precios[]" value="` +
+                                    productos.precio_venta +
+                                    `" pattern="\d+(\.\d{1,2})?" inputmode="decimal"></div>`,
                                     `<div class="form-group">` + productos.precio_venta + `</div>`,
                                     '<button type="button" value=' + productos.id +
                                     ' name="removeRow" class="btn btn-danger" data-bs-toggle="tooltip" data-container="body" data-bs-original-title="Eliminar"><i class="mdi mdi-delete"></i></button>'
@@ -297,15 +263,10 @@
                 }
 
             });
-
-
-
             $('#cliente').on('input', toggleSaveButton);
             $('#efectivo, #qr').on('input', (calculoCambio));
             $('#observacion').on('input', toggleSaveButton);
             $('#efectivo, #qr').on('input', (toggleSaveButton));
-
-
             const table = $('#venta_details_table').DataTable({
                 "ordering": false,
                 "columnDefs": [{
@@ -357,7 +318,7 @@
             $('#addRow').on('click', function() {
                 $("#barras").val("");
                 var productos = busquedaProductosList($("#producto_id").val(), "id");
-               // console.log(productos);
+                // console.log(productos);
                 if (parseFloat(productos.cantidad - 1) >= 0) {
                     if (verificarProductoDt(productos.id) == false) {
                         table.row.add([
@@ -366,7 +327,8 @@
                             '<div class="form-group">' + productos.cantidad + '</div>',
                             `<div class="form-group"><input type="number" class="form-control" name="cantidades[]" value="1"  min="0" ></div>`,
                             `<div class="form-group"><input type="text"  class="form-control" name="unidad_precios[]" value=` +
-                            productos.precio_venta + ` pattern="\d+(\.\d{1,2})?" inputmode="decimal" min="1"></div>`,
+                            productos.precio_venta +
+                            ` pattern="\d+(\.\d{1,2})?" inputmode="decimal" min="1"></div>`,
                             `<div class="form-group">` + productos.precio_venta + `</div>`,
                             '<button type="button"  name="removeRow"  class="btn btn-danger" data-bs-toggle="tooltip" data-container="body" data-bs-original-title="Eliminar" ><i class="mdi mdi-delete" ></i></button>'
                         ]).draw(false);
@@ -417,96 +379,91 @@
             }
 
 
-            $('#venta_details_table').on('input', 'input[name="unidad_precios[]"]', function () {
-    const $row = $(this).closest('tr');
-    let price = $(this).val().replace(',', '.'); 
-
-    
-    price = price.replace(/[^0-9.]/g, '');
-
-   
-    const partes = price.split('.');
-    if (partes.length > 2) {
-        price = partes[0] + '.' + partes[1];
-    }
-
-    
-    if (partes.length === 2) {
-        partes[1] = partes[1].substring(0, 2);
-        price = partes[0] + '.' + partes[1];
-    }
+            $('#venta_details_table').on('input', 'input[name="unidad_precios[]"]', function() {
+                const $row = $(this).closest('tr');
+                let price = $(this).val().replace(',', '.');
 
 
-   
+                price = price.replace(/[^0-9.]/g, '');
 
-    
-    $(this).val(price);
 
-    // Obtener cantidad (y asegurar que sea número)
-    const cantidadInput = $row.find('input[name="cantidades[]"]').val().replace(',', '.');
-    const cantidad = parseFloat(cantidadInput);
-    const precioFloat = parseFloat(price);
+                const partes = price.split('.');
+                if (partes.length > 2) {
+                    price = partes[0] + '.' + partes[1];
+                }
 
-    // Calcular subtotal
-    let subtotal = 0;
-    if (!isNaN(cantidad) && !isNaN(precioFloat)) {
-        subtotal = (cantidad * precioFloat).toFixed(2);
-    }
 
-    $row.find('td:eq(4)').text(`${subtotal}`);
+                if (partes.length === 2) {
+                    partes[1] = partes[1].substring(0, 2);
+                    price = partes[0] + '.' + partes[1];
+                }
 
-    calculateTotal();
-    toggleSaveButton();
-});
 
-            $('#venta_details_table').on('blur', 'input[name="unidad_precios[]"]', function () {
-    let value = $(this).val().replace(',', '.').trim();
-    const $row = $(this).closest('tr');
 
-    // Si el valor está vacío o es cero, poner 1
-    if (value === '' || parseFloat(value) === 0) {
-        $(this).val('1');
-        value = '1';
-    }
 
-    const number = parseFloat(value);
 
-    // Si el valor sigue siendo inválido después de corrección, dejarlo vacío
-    if (isNaN(number)) {
-        $(this).val('');
-        $row.find('td:eq(4)').text(`0.00`);
-    } else {
-        // Calcular y mostrar el subtotal
-        const cantidad = parseFloat($row.find('input[name="cantidades[]"]').val().replace(',', '.')) || 0;
-        const subtotal = (cantidad * number).toFixed(2);
-        $row.find('td:eq(4)').text(`${subtotal}`);
-    }
+                $(this).val(price);
 
-    calculateTotal();
-    toggleSaveButton();
-});
+                // Obtener cantidad (y asegurar que sea número)
+                const cantidadInput = $row.find('input[name="cantidades[]"]').val().replace(',', '.');
+                const cantidad = parseFloat(cantidadInput);
+                const precioFloat = parseFloat(price);
 
-   $('#venta_details_table').on('input', 'input[name="cantidades[]"]',
+                // Calcular subtotal
+                let subtotal = 0;
+                if (!isNaN(cantidad) && !isNaN(precioFloat)) {
+                    subtotal = (cantidad * precioFloat).toFixed(2);
+                }
+
+                $row.find('td:eq(4)').text(`${subtotal}`);
+
+                calculateTotal();
+                toggleSaveButton();
+            });
+
+            $('#venta_details_table').on('blur', 'input[name="unidad_precios[]"]', function() {
+                let value = $(this).val().replace(',', '.').trim();
+                const $row = $(this).closest('tr');
+
+                // Si el valor está vacío o es cero, poner 1
+                if (value === '' || parseFloat(value) === 0) {
+                    $(this).val('1');
+                    value = '1';
+                }
+
+                const number = parseFloat(value);
+
+                // Si el valor sigue siendo inválido después de corrección, dejarlo vacío
+                if (isNaN(number)) {
+                    $(this).val('');
+                    $row.find('td:eq(4)').text(`0.00`);
+                } else {
+                    // Calcular y mostrar el subtotal
+                    const cantidad = parseFloat($row.find('input[name="cantidades[]"]').val().replace(',',
+                        '.')) || 0;
+                    const subtotal = (cantidad * number).toFixed(2);
+                    $row.find('td:eq(4)').text(`${subtotal}`);
+                }
+
+                calculateTotal();
+                toggleSaveButton();
+            });
+
+            $('#venta_details_table').on('input', 'input[name="cantidades[]"]',
                 function() {
                     const $row = $(this).closest('tr');
                     let price = $row.find('input[name="unidad_precios[]"]').val();
-
-                    original = $row.find('td:eq(1)').text();
-
-                    const cantidad = $row.find('input[name="cantidades[]"]').val();
-                    const subtotal = (cantidad * price).toFixed(2);
-
-                    $row.find('td:eq(4)').text(`${subtotal}`);
-
-                    if (cantidad <= parseFloat($row.find('td:eq(1)').text())) {
-                        calculateTotal();
-                        toggleSaveButton();
-                    } else {
-                        alert("la cantidad excede las existencias del producto");
-                        $row.find('input[name="cantidades[]"]').val($row.find('td:eq(1)').text());
-                        calculateTotal();
+                    const stockDisponible = parseFloat($row.find('td:eq(1)').text());
+                    let cantidad = parseFloat($row.find('input[name="cantidades[]"]').val());
+                    if (cantidad > stockDisponible) {
+                        alert("La cantidad excede las existencias del producto");
+                        cantidad = stockDisponible;
+                        $row.find('input[name="cantidades[]"]').val(stockDisponible);
                     }
-
+                    const subtotal = (cantidad * price).toFixed(2);
+                    $row.find('td:eq(4)').text(`${subtotal}`);
+                    calculateTotal();
+                    toggleSaveButton();
                 });
 
             $('#venta_details_table').on('click', 'button[name="removeRow"]', function() {
@@ -632,22 +589,22 @@
                     var unidad_precio = $(row).find('input[name="unidad_precios[]"]').val();
                     var cantidad = $(row).find('input[name="cantidades[]"]').val();
                     var subtotal = $(row).find('td:eq(4)').text().replace('Bs. ',
-                        ''); 
+                        '');
                     var cantidad_total = $(row).find('td:eq(1)').text();
 
 
                     if (!producto_id || !unidad_precio || !cantidad || !subtotal) {
-                        return; 
+                        return;
                     }
 
-                   
+
                     var producto_venta = {
                         producto_id: producto_id,
                         //vencimiento: vencimiento,
                         unidad_precio: parseFloat(unidad_precio) ||
                             0,
-                        cantidad: parseInt(cantidad) || 0, 
-                        subtotal: parseFloat(subtotal) || 0, 
+                        cantidad: parseInt(cantidad) || 0,
+                        subtotal: parseFloat(subtotal) || 0,
                         cantidad_total: cantidad_total
                     };
 
@@ -663,7 +620,7 @@
 
                 $('#display_efectivo, #display_qr').hide();
 
-               
+
                 if (valor === 'E') {
                     $('#display_efectivo').show();
                     $('#qr').val(0);
@@ -691,7 +648,7 @@
             const QrValue = parseFloat($('#qr').val());
             const cambio = parseFloat($('#cambio_display').text());
             const observacionValue = $('#observacion').val().trim();
-            const totalValue=$('#total').val()>0;
+            const totalValue = $('#total').val() > 0;
             //alert($('#total').val());
             const clienteFilled = clienteValue.length > 0;
             const EfectivoFilled = (EfectivoValue + QrValue) > 0;
@@ -713,16 +670,16 @@
             let saveButtonEnabled;
             if ($('#tipo').val() == 'Venta')
                 saveButtonEnabled = clienteFilled && EfectivoFilled && allProductsFilled && CambioFilled && totalValue;
-            else if($('#tipo').val() == 'Salida Directa')
+            else if ($('#tipo').val() == 'Salida Directa')
                 saveButtonEnabled = allProductsFilled && clienteFilled && ObservacionFilled;
-            else if($('#tipo').val() == 'Cuentas por Cobrar')
+            else if ($('#tipo').val() == 'Cuentas por Cobrar')
                 saveButtonEnabled = allProductsFilled && clienteFilled && ObservacionFilled && totalValue;
             $('#btn_save').prop('disabled', !saveButtonEnabled);
         }
 
         $("#tipo").change(function() {
 
-            if ($("#tipo").val() == 'Salida Directa' || $("#tipo").val() =='Cuentas por Cobrar') {
+            if ($("#tipo").val() == 'Salida Directa' || $("#tipo").val() == 'Cuentas por Cobrar') {
                 $('#observacion_section').show();
                 toggleSaveButton();
             } else {
