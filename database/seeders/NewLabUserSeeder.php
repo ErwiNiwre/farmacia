@@ -18,7 +18,7 @@ class NewLabUserSeeder extends Seeder
             ['id' =>  '8', 'username' =>  'MM9878605', 'nombre' => 'Maribel Dayanne Mamani Mamani ', 'email' => null, 'password' => bcrypt('9878605')]
         ]);
 
-        User::find(7)->assignRole('Cajero');
+        User::find(8)->assignRole('Cajero');
 
         // Adjust Table Sequence users
         DB::statement("SELECT setval(pg_get_serial_sequence('users', 'id'), coalesce(max(id), 0)+1, false) FROM users");
