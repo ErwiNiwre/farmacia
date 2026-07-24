@@ -18,7 +18,7 @@ class NewInternUserSeeder extends Seeder
             ['id' =>  '9', 'username' =>  'GC7051353', 'nombre' => 'Erika Elizabeth Gutierrez Castillo  ', 'email' => null, 'password' => bcrypt('7051353')]
         ]);
 
-        User::find(8)->assignRole('Cajero');
+        User::find(9)->assignRole('Cajero');
 
         // Adjust Table Sequence users
         DB::statement("SELECT setval(pg_get_serial_sequence('users', 'id'), coalesce(max(id), 0)+1, false) FROM users");
